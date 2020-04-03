@@ -1,10 +1,10 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
-#include "../src/Search.h"
+#include "Search.hpp"
 
-using namespace MLibs::Tester;
+using namespace Ruff::Tester;
 
 TEST_CASE("Testing AStar Search")
 {
-	CHECK(findEasyPath);
+	CHECK(findEasyPath());
 }

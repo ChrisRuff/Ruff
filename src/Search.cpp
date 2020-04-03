@@ -1,6 +1,6 @@
-#include "Search.h"
+#include "Search.hpp"
 
-namespace MLibs
+namespace Ruff
 {
 	namespace Search
 	{
@@ -34,11 +34,6 @@ namespace MLibs
 				closed_list[x] = std::vector<bool>(map[x].size());
 				for(size_t y = 0; y < map[x].size(); ++y)
 				{
-					allMap[x][y].cost[2] = DBL_MAX;
-					allMap[x][y].cost[1] = DBL_MAX;
-					allMap[x][y].cost[0] = DBL_MAX;
-					allMap[x][y].parentX = -1;
-					allMap[x][y].parentY = -1;
 					allMap[x][y].x = x;
 					allMap[x][y].y = y;
 					closed_list[x][y] = false;
@@ -55,8 +50,6 @@ namespace MLibs
 
 			std::vector<Node> open_list;
 			open_list.emplace_back(allMap[x][y]);
-			bool endFound = false;
-
 			while(!open_list.empty())
 			{
 				Node node;
@@ -93,13 +86,11 @@ namespace MLibs
 							{
 								allMap[x+xNew][y+yNew].parentX = x;
 								allMap[x+xNew][y+yNew].parentY = y;
-								endFound = true;
 								auto path = makePath(allMap, endNode);
 								return std::optional<std::vector<Point2D<int>>>{convertToPoints(path)};
 							}
 							else if(!closed_list[x+xNew][y+yNew])
 							{
-								std::cout << "Checking: " << Point2D<int>(x+xNew, y+yNew) << std::endl;
 								gNew = node.cost[0] + 1.0;
 								hNew = calculateH(x+xNew, y+yNew, end);
 								fNew = gNew + hNew;
@@ -167,6 +158,7 @@ namespace MLibs
 			}
 		}
 	}
+#ifdef BUILD_TESTERS
 	namespace Tester
 	{
 		bool findEasyPath()
@@ -175,20 +167,28 @@ namespace MLibs
 																						{ false, true,  true,  false, true,  true  },
 																						{ true,  true,  false, false, true,  false },
 																						{ true,  true,  true,  true,  true,  true  }};
+			std::vector<Point2D<int>> rightPath = \
+			{Point2D<int>(0,2), Point2D<int>(1,2), Point2D<int>(2,1), 
+			 Point2D<int>(3,2), Point2D<int>(3,3), Point2D<int>(2,4),
+			 Point2D<int>(1,5), Point2D<int>(0,5)};
+
 			Point2D<int> start(0,2), end(0,5);
 			Search::AStar searcher(map);
 			auto pathRet = searcher.getPath(start, end);
-			assert(pathRet);
-
+			if(pathRet)
+			{
+				auto path = pathRet.value();
+				for(size_t i = 0; i < path.size(); ++i)
+				{
+					std::cout << path[i] << std::endl;
+					if(path[i] != rightPath[i])
+					{
+						return false;
+					}
+				}
+			}
 			return true;
 		}
-		void testAStar()
-		{
-			assert (findEasyPath());
-		}
-		void testSearch()
-		{
-			testAStar();
-		}
 	}
+#endif
 }

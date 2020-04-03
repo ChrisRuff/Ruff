@@ -17,8 +17,8 @@
 // Packages
 
 // Source files
-#include "Point.h" // Point2D
-namespace MLibs
+#include "Point.hpp" // Point2D
+namespace Ruff
 {
 	namespace Search
 	{
@@ -36,34 +36,32 @@ namespace MLibs
 			int parentY;
 
 			// g - h - f
-			std::array<float, 3> cost;
+			std::array<double, 3> cost;
 
-			Node(Point2D<int> pt) : x(pt.x), y(pt.y)
+			Node(Point2D<int> pt) : x(pt.x), y(pt.y), parentX(0), parentY(0),
+				cost({DBL_MAX, DBL_MAX, DBL_MAX})
 			{
 			}
-			Node() 
+			Node() : x(-1), y(-1), parentX(-1), parentY(-1),
+				cost({DBL_MAX, DBL_MAX, DBL_MAX})
 			{
-				x = -1;
-				y = -1;
-				parentX = -1;
-				parentY = -1;
+			}
+			/* --------------------------------------------------------------------------*/
+			/**
+			 * @Synopsis  Compares two nodes by returning f costs
+			 *
+			 * @Param lhs Left node
+			 * @Param rhs Right node
+			 *
+			 * @Returns Whether or not lhs is less than rhs 
+			 */
+			/* ----------------------------------------------------------------------------*/
+			inline friend bool operator<(const Node& lhs, const Node& rhs) 
+			{
+				return lhs.cost[2] < rhs.cost[2];
 			}
 		};
 
-		/* --------------------------------------------------------------------------*/
-		/**
-		 * @Synopsis  Compares two nodes by returning f costs
-		 *
-		 * @Param lhs Left node
-		 * @Param rhs Right node
-		 *
-		 * @Returns Whether or not lhs is less than rhs 
-		 */
-		/* ----------------------------------------------------------------------------*/
-		inline bool operator<(const Node& lhs, const Node& rhs) 
-		{
-			return lhs.cost[2] < rhs.cost[2];
-		}
 
 		/* --------------------------------------------------------------------------*/
 		/**
@@ -127,7 +125,11 @@ namespace MLibs
 			/* ----------------------------------------------------------------------------*/
 			inline bool isValid(const int& x, const int& y) 
 			{
-				if(x >= 0 && x < this->map.size() && y >= 0 && y < this->map[x].size() && this->map[x][y])
+				if(x >= 0 && 
+						y >= 0 && 
+						x < static_cast<int>(this->map.size()) && 
+						y < static_cast<int>(this->map[x].size()) && 
+						this->map[x][y])
 				{
 					return true;
 				}
@@ -150,21 +152,41 @@ namespace MLibs
 			/* ----------------------------------------------------------------------------*/
 			static inline bool isEnd(const int& x, const int& y, const Node& end) 
 			{
-				std::cout << x << " " << y << std::endl;
 				if(x == end.x && y == end.y)
 				{
 					return true;
 				}
 				return false;
 			}
-			static inline double calculateH(const int& x, const int& y, const Node& end)
+			/* --------------------------------------------------------------------------*/
+			/**
+			 * @Synopsis  Calculates Euclidian distance between x, y, and the end
+			 *
+			 * @Param x 
+			 * @Param y
+			 * @Param end End Node
+			 *
+			 * @Returns Euclidian distance between (x,y) and the end
+			 */
+			/* ----------------------------------------------------------------------------*/
+			static inline double calculateH(const int& x, const int& y, const Node& end) 
 			{
 				// Euclidean distance from current position to end
 				double H = (std::sqrt((x - end.x) * (x - end.x) +
 						(y - end.y) * (y - end.y)));
 				return H;
 			}
-			static inline std::vector<Point2D<int>> convertToPoints(const std::optional<std::vector<Node>>& nodesOp)
+
+			/* --------------------------------------------------------------------------*/
+			/**
+			 * @Synopsis Converts a list of nodes to a list of Point2D<int>-s
+			 *
+			 * @Param nodesOp List of Nodes that represent a path
+			 *
+			 * @Returns List of Point2D<int> showing the path
+			 */
+			/* ----------------------------------------------------------------------------*/
+			static inline std::vector<Point2D<int>> convertToPoints(const std::optional<std::vector<Node>>& nodesOp) 
 			{
 				if(nodesOp)
 				{
@@ -184,13 +206,26 @@ namespace MLibs
 					return std::vector<Point2D<int>>{};
 				}
 			}
-		std::optional<std::vector<Node>> makePath(const std::vector<std::vector<Node>>& mapping, const Node& end);
+			/* --------------------------------------------------------------------------*/
+			/**
+			 * @Synopsis Follows the node path using the parent values to find the full path from the end node
+			 * to the start node
+			 *
+			 * @Param mapping Map of nodes representing the board
+			 * @Param end Destination being searched for 
+			 *
+			 * @Returns List of nodes that is the path from the start to end
+			 */
+			/* ----------------------------------------------------------------------------*/
+			std::optional<std::vector<Node>> makePath(const std::vector<std::vector<Node>>& mapping, const Node& end);
+
 		};
 	};
+#ifdef BUILD_TESTERS
 	namespace Tester
 	{
+		//ASTAR
 		bool findEasyPath();
-		void testAStar();
-		void testSearch();
 	};
+#endif
 };
