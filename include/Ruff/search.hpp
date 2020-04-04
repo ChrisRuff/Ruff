@@ -17,10 +17,10 @@
 // Packages
 
 // Source files
-#include "Point.hpp" // Point2D
-namespace Ruff
+#include "point.hpp" // Point2D
+namespace ruff
 {
-	namespace Search
+	namespace search
 	{
 		/* --------------------------------------------------------------------------*/
 		/**
@@ -30,22 +30,18 @@ namespace Ruff
 		/* ----------------------------------------------------------------------------*/
 		struct Node 
 		{
-			int x; 
-			int y;
-			int parentX;
-			int parentY;
+			int x{}; 
+			int y{};
+			int parentX{};
+			int parentY{};
 
 			// g - h - f
-			std::array<double, 3> cost;
+			std::array<double, 3> cost{DBL_MAX, DBL_MAX, DBL_MAX};
 
-			Node(Point2D<int> pt) : x(pt.x), y(pt.y), parentX(0), parentY(0),
-				cost({DBL_MAX, DBL_MAX, DBL_MAX})
+			Node(Point2D<int> pt) : x(pt.x), y(pt.y), parentX(0), parentY(0)
 			{
 			}
-			Node() : x(-1), y(-1), parentX(-1), parentY(-1),
-				cost({DBL_MAX, DBL_MAX, DBL_MAX})
-			{
-			}
+			Node() = default;
 			/* --------------------------------------------------------------------------*/
 			/**
 			 * @Synopsis  Compares two nodes by returning f costs
@@ -115,12 +111,13 @@ namespace Ruff
 			// #############################/ HELPER FUNCTIONS \###############################
 			/* --------------------------------------------------------------------------*/
 			/**
-			 * @Synopsis  
+			 * @Synopsis Checks if a x and y are within the range of the map and is not a 
+			 * wall
 			 *
-			 * @Param x
+			 * @Param x 
 			 * @Param y
 			 *
-			 * @Returns   
+			 * @Returns Whether or not the given x and y is a valid location on the given map
 			 */
 			/* ----------------------------------------------------------------------------*/
 			inline bool isValid(const int& x, const int& y) 
@@ -135,7 +132,16 @@ namespace Ruff
 				}
 				return false;
 			}
-			inline bool isValid(const Point2D<int> pt)
+			/* --------------------------------------------------------------------------*/
+			/**
+			 * @Synopsis Calls the above function with the given point
+			 *
+			 * @Param pt 
+			 *
+			 * @Returns   
+			 */
+			/* ----------------------------------------------------------------------------*/
+			inline bool isValid(const Point2D<int> pt) 
 			{
 				return isValid(pt.x, pt.y);
 			}
@@ -222,7 +228,7 @@ namespace Ruff
 		};
 	};
 #ifdef BUILD_TESTERS
-	namespace Tester
+	namespace tester
 	{
 		//ASTAR
 		bool findEasyPath();

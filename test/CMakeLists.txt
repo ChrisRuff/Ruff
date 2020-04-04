@@ -15,7 +15,7 @@ if( ${HAS_SOURCES} GREATER 0 )
 
   set_target_properties( ${TARGET_TEST}
     PROPERTIES
-    CXX_STANDARD 17
+    CXX_STANDARD 20
     CXX_STANDARD_REQUIRED True
     RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
   )
@@ -26,7 +26,7 @@ if( ${HAS_SOURCES} GREATER 0 )
 endif()
 
 target_include_directories( ${TARGET_TEST} PUBLIC ${PROJECT_BINARY_DIR}
-	${PROJECT_SOURCE_DIR}/include 
+	${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}
 	${PROJECT_SOURCE_DIR}/src 
 	/usr/include/doctest)
 

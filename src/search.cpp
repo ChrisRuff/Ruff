@@ -1,8 +1,8 @@
-#include "Search.hpp"
+#include "search.hpp"
 
-namespace Ruff
+namespace ruff
 {
-	namespace Search
+	namespace search
 	{
 		AStar::AStar(const std::vector<std::vector<bool>>& map) : map(map)
 		{
@@ -159,7 +159,7 @@ namespace Ruff
 		}
 	}
 #ifdef BUILD_TESTERS
-	namespace Tester
+	namespace tester
 	{
 		bool findEasyPath()
 		{                                                     //Start               //End
@@ -173,14 +173,13 @@ namespace Ruff
 			 Point2D<int>(1,5), Point2D<int>(0,5)};
 
 			Point2D<int> start(0,2), end(0,5);
-			Search::AStar searcher(map);
+			search::AStar searcher(map);
 			auto pathRet = searcher.getPath(start, end);
 			if(pathRet)
 			{
 				auto path = pathRet.value();
 				for(size_t i = 0; i < path.size(); ++i)
 				{
-					std::cout << path[i] << std::endl;
 					if(path[i] != rightPath[i])
 					{
 						return false;
