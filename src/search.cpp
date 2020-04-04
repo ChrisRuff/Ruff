@@ -55,7 +55,7 @@ namespace ruff
 				Node node;
 				do 
 				{
-					float temp = DBL_MAX;
+					double temp = doubleMax;
 					std::vector<Node>::iterator itNode;
 					for(std::vector<Node>::iterator it = open_list.begin();
 							it != open_list.end(); it = next(it))
@@ -94,7 +94,7 @@ namespace ruff
 								gNew = node.cost[0] + 1.0;
 								hNew = calculateH(x+xNew, y+yNew, end);
 								fNew = gNew + hNew;
-								if(allMap[x+xNew][y+yNew].cost[2] == DBL_MAX ||
+								if(allMap[x+xNew][y+yNew].cost[2] == doubleMax ||
 										allMap[x+xNew][y+yNew].cost[2] > fNew)
 								{
 									allMap[x+xNew][y+yNew].cost[2] = fNew;
@@ -178,6 +178,10 @@ namespace ruff
 			if(pathRet)
 			{
 				auto path = pathRet.value();
+				if(path.size() != rightPath.size())
+				{
+					return false;
+				}
 				for(size_t i = 0; i < path.size(); ++i)
 				{
 					if(path[i] != rightPath[i])
@@ -185,6 +189,10 @@ namespace ruff
 						return false;
 					}
 				}
+			}
+			else
+			{
+				return false;
 			}
 			return true;
 		}

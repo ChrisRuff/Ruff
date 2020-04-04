@@ -1,14 +1,12 @@
 #pragma once
 
 // STD
-#include <vector>
-#include <array>
-#include <string>
-#include <optional> 
-#include <cmath>  // sqrt
-#include <cfloat> // DBL_MAX
-#include <stack>
-#include <cassert>
+#include <vector>   //std::vector
+#include <array>    //std::array
+#include <optional> //std::optional
+#include <stack>    //std::stack
+#include <cassert>  //assert()
+#include <limits>   //std::numeric_limits<double>::max()
 
 #ifndef NDEBUG
 #include <iostream>
@@ -22,6 +20,7 @@ namespace ruff
 {
 	namespace search
 	{
+		constexpr double doubleMax = std::numeric_limits<double>::max();
 		/* --------------------------------------------------------------------------*/
 		/**
 		 * @Synopsis Struct that represents a node in the graph created by 
@@ -36,7 +35,7 @@ namespace ruff
 			int parentY{};
 
 			// g - h - f
-			std::array<double, 3> cost{DBL_MAX, DBL_MAX, DBL_MAX};
+			std::array<double, 3> cost{doubleMax, doubleMax, doubleMax};
 
 			Node(Point2D<int> pt) : x(pt.x), y(pt.y), parentX(0), parentY(0)
 			{
@@ -178,8 +177,8 @@ namespace ruff
 			static inline double calculateH(const int& x, const int& y, const Node& end) 
 			{
 				// Euclidean distance from current position to end
-				double H = (std::sqrt((x - end.x) * (x - end.x) +
-						(y - end.y) * (y - end.y)));
+				double H = ((x - end.x) * (x - end.x) +
+						(y - end.y) * (y - end.y));
 				return H;
 			}
 
