@@ -12,6 +12,7 @@ if( NOT WIN32 )
 	endfunction()
 endif()
 cmake_minimum_required(VERSION 3.16.5)
+set(CMAKE_BUILD_TYPE "Debug")
 
 project( Ruff VERSION 0.0.1 
 						DESCRIPTION "Ruff"
@@ -68,7 +69,9 @@ if(BUILD_TESTERS)
 	add_definitions(-DBUILD_TESTERS)
 endif()
 
+# Add target Ruff
 add_subdirectory(src)
+
 
 if(BUILD_TESTERS)
 	add_subdirectory(test)

@@ -1,4 +1,5 @@
 #include "match.hpp"
+#include <opencv2/xfeatures2d.hpp>
 
 namespace ruff
 {
@@ -17,7 +18,12 @@ namespace ruff
 			{
 				this->detector = cv::BRISK::create();
 			}
-			else
+			else if(detectorType == DetectorType::DAISY)
+			{
+				assert(("Daisy is only supported with FLANN matcher", matcherType == MatcherType::FLANN));
+				this->detector = cv::xfeatures2d::DAISY::create();
+			}
+			else if(detectorType == DetectorType::ORB)
 			{
 				this->detector = cv::ORB::create();
 			}
@@ -44,20 +50,41 @@ namespace ruff
 			std::vector<cv::KeyPoint> kpts1, kpts2;
 			cv::Mat desc1, desc2;
 
-			// Find features on both images
-			detector->detect(reference, kpts1);
-			detector->compute(reference, kpts1, desc1);
-			detector->detect(target, kpts2);
-			detector->compute(target, kpts2, desc2);
+			if(dType == DetectorType::DAISY)
+			{
+				// Add every pixel to the list of keypoints for each image
+				for (double xx = 50; xx < reference.size().width - 50; xx+=50) 
+				{
+					for (double yy = 50; yy < reference.size().height - 50; yy+=50) 
+					{
+						kpts1.push_back(cv::KeyPoint(xx, yy, 50.));
+					}
+				}
+				for (double xx = 50; xx < target.size().width - 50; xx+=50) 
+				{
+					for (double yy = 50; yy < target.size().height - 50; yy+=50) 
+					{
+						kpts2.push_back(cv::KeyPoint(xx, yy, 50.));
+					}
+				}
+				detector->compute(reference, kpts1, desc1);
+				detector->compute(target, kpts2, desc2);
+			}
+			else
+			{
+				// Find features on both images
+				detector->detect(reference, kpts1);
+				detector->compute(reference, kpts1, desc1);
+				detector->detect(target, kpts2);
+				detector->compute(target, kpts2, desc2);
+			}
 
 
-			// Flann required it's descriptors to be in CV_32F format'
 			if(mType == MatcherType::FLANN)
 			{
 				if(desc1.type()!=CV_32F) desc1.convertTo(desc1, CV_32F);
 				if(desc2.type()!=CV_32F) desc2.convertTo(desc2, CV_32F);
 			}
-
 
 			std::vector<cv::DMatch> good_matches;
 			if(knnMatch)

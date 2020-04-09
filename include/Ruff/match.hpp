@@ -24,8 +24,11 @@ namespace ruff
 		{
 			ORB,
 			AKAZE,
-			BRISK
+			BRISK,
+			DAISY
 		};
+		static const DetectorType DetectorTypes[] = {
+			DetectorType::ORB, DetectorType::AKAZE, DetectorType::BRISK, DetectorType::DAISY};
 
 		/* --------------------------------------------------------------------------*/
 		/**
@@ -37,6 +40,7 @@ namespace ruff
 			BF,
 			FLANN
 		};
+		static const MatcherType MatcherTypes[] = {MatcherType::BF , MatcherType::FLANN};
 
 		/* --------------------------------------------------------------------------*/
 		/**
@@ -76,7 +80,7 @@ namespace ruff
 			 * {good_matches, kpts1, kpts2}
 			 */
 			/* ----------------------------------------------------------------------------*/
-		kptMatch match(const cv::Mat& reference, const cv::Mat& target);
+			kptMatch match(const cv::Mat& reference, const cv::Mat& target);
 		};
 
 	};

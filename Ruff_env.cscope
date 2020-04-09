@@ -1,0 +1,2 @@
+CSCOPE_DB=/home/chris/Documents/Git_Repos/Ruff/cscope.out
+export CSCOPE_DB
