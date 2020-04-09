@@ -52,19 +52,20 @@ namespace ruff
 
 			if(dType == DetectorType::DAISY)
 			{
+				int diameter = 25;
 				// Add every pixel to the list of keypoints for each image
-				for (double xx = 50; xx < reference.size().width - 50; xx+=50) 
+				for (double xx = diameter; xx < reference.size().width - diameter; ++xx) 
 				{
-					for (double yy = 50; yy < reference.size().height - 50; yy+=50) 
+					for (double yy = diameter; yy < reference.size().height - diameter; ++yy) 
 					{
-						kpts1.push_back(cv::KeyPoint(xx, yy, 50.));
+						kpts1.push_back(cv::KeyPoint(xx, yy, diameter));
 					}
 				}
-				for (double xx = 50; xx < target.size().width - 50; xx+=50) 
+				for (double xx = diameter; xx < target.size().width - diameter; ++xx) 
 				{
-					for (double yy = 50; yy < target.size().height - 50; yy+=50) 
+					for (double yy = diameter; yy < target.size().height - diameter; ++yy) 
 					{
-						kpts2.push_back(cv::KeyPoint(xx, yy, 50.));
+						kpts2.push_back(cv::KeyPoint(xx, yy, diameter));
 					}
 				}
 				detector->compute(reference, kpts1, desc1);
