@@ -15,7 +15,7 @@ TEST_CASE("Matching")
 
 	// Enforces that all detector types can at least be ran
 	auto im1 = cv::imread("../test/1.png");
-	auto im2 = cv::imread("../test/2.png");
+	auto im2 = cv::imread("../test/1.png");
 	for(DetectorType dType : DetectorTypes)
 	{
 		for(MatcherType mType : MatcherTypes)
