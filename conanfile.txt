@@ -1,0 +1,6 @@
+[requires]
+opencv/4.1.1@conan/stable
+xtensor/0.20.8@omaralvarez/public-conan
+
+[generators]
+cmake
