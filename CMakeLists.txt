@@ -69,6 +69,8 @@ if(BUILD_TESTERS)
 	add_definitions(-DBUILD_TESTERS)
 endif()
 
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup()
 # Add target Ruff
 add_subdirectory(src)
 

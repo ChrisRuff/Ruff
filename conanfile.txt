@@ -1,6 +1,13 @@
 [requires]
-opencv/4.1.1@conan/stable
-xtensor/0.20.8@omaralvarez/public-conan
+opencv/4.0.1@conan/stable
+zlib/1.2.11@conan/stable
+xtensor/0.20.10@omaralvarez/public-conan
+doctest/2.3.7
+bzip2/1.0.8
 
 [generators]
 cmake
+
+[options]
+opencv:contrib=True
+
