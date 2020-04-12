@@ -34,10 +34,6 @@ if( ${HAS_SOURCES} GREATER 0 )
 		${OpenCV_INCLUDE_DIRS})
 endif()
 
-# Build CScope definitions
-add_custom_command(TARGET Ruff POST_BUILD COMMAND find ${PROJECT_SOURCE_DIR} -name "*.cpp" -o -name "*.hpp" > ${PROJECT_SOURCE_DIR}/cscope.files)
 message(WARNING "${PROJECT_SOURCE_DIR}")
-add_custom_command(TARGET Ruff POST_BUILD COMMAND cscope -Rbkq ${PROJECT_SOURCE_DIR}/cscope.files)
-add_custom_command(TARGET Ruff POST_BUILD COMMAND bash ${PROJECT_SOURCE_DIR}/Ruff_env.cscope)
 target_link_libraries(Ruff xtensor)
 target_link_libraries(Ruff ${OpenCV_LIBRARIES})
