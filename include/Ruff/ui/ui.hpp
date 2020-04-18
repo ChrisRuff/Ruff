@@ -53,11 +53,16 @@ namespace ruff
 			// Hardware interface
 			// Left Button - Right Button
 			std::array<bool, 2> mouse_buttons{false, false};
-			int mouse_x, mouse_y;
+
+			// Access the keyboard keys with keyboard_buttons with
+			// keys[SDLK_~] -> to detect when r is pressed I would do
+			// if(keys[SDLK_r])
+			std::array<bool, 322> keys{};
+			int mouse_x{}, mouse_y{};
 
 		private:
 			// All pixels in the image
-			std::vector<unsigned char> pixels;
+			std::vector<unsigned char> pixels{};
 
 
 			// SDL Variables used for rendering
@@ -92,7 +97,8 @@ namespace ruff
 			 * @Param line_width How wide the line will be drawn
 			 */
 			/* ----------------------------------------------------------------------------*/
-			void drawLine(sint x1, sint y1, sint x2, sint y2, Pixel color=WHITE, int line_width=1);
+			void drawLine(const sint x1, const sint y1, const sint x2, const sint y2, 
+					const Pixel& color=WHITE, const int line_width=1);
 
 			/* --------------------------------------------------------------------------*/
 			/**
@@ -104,7 +110,7 @@ namespace ruff
 			 * @Param color Color of the line
 			 */
 			/* ----------------------------------------------------------------------------*/
-			void drawLine(Point2D<sint> p1, Point2D<sint> p2, Pixel color);
+			void drawLine(const Point2D<sint>& p1, const Point2D<sint>& p2, const Pixel& color);
 
 			/* --------------------------------------------------------------------------*/
 			/**
@@ -115,7 +121,7 @@ namespace ruff
 			 * @Param color The color that will replace the pixel
 			 */
 			/* ----------------------------------------------------------------------------*/
-			void draw(sint x, sint y, Pixel color);
+			void draw(const sint x, const sint y, const Pixel& color);
 
 			/* --------------------------------------------------------------------------*/
 			/**
@@ -125,7 +131,7 @@ namespace ruff
 			 * @Param color The color that will replace the pixel
 			 */
 			/* ----------------------------------------------------------------------------*/
-			void draw(Point2D<sint> p, Pixel color);
+			void draw(const Point2D<sint>& p, const Pixel& color);
 
 			/* --------------------------------------------------------------------------*/
 			/**
@@ -139,7 +145,8 @@ namespace ruff
 			 * draw the circumference(default to no-fill)
 			 */
 			/* ----------------------------------------------------------------------------*/
-			void drawCircle(sint centerX, sint centerY, sint radius, Pixel color, bool fill = false);
+			void drawCircle(const sint centerX, const sint centerY, 
+					const sint radius, const Pixel& color, const bool fill = false);
 
 			/* --------------------------------------------------------------------------*/
 			/**
@@ -152,7 +159,8 @@ namespace ruff
 			 * draw the circumference(default to no-fill)
 			 */
 			/* ----------------------------------------------------------------------------*/
-			void drawCircle(Point2D<sint> center, sint radius, Pixel color, bool fill = false);
+			void drawCircle(const Point2D<sint>& center, const sint radius, 
+					const Pixel& color, const bool fill = false);
 
 			/* --------------------------------------------------------------------------*/
 			/**

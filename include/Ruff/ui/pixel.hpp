@@ -63,13 +63,14 @@ namespace ruff
 			uchar operator[](size_t index) 
 			{
 				index = index % 4;
-				switch(index)
-				{
-					case 0: return r; break;
-					case 1: return g; break;
-					case 2: return b; break;
-					case 3: return a; break;
-				}
+				if(index == 0)
+					return r;
+				else if(index == 1)
+					 return g;
+				else if(index == 2)
+					 return b;
+				else
+					 return a;
 			}
 		};
 

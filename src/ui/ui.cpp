@@ -7,7 +7,7 @@ namespace ruff
 		using sint = short int;
 		Engine::Engine(const sint width, const sint height, std::string title) : width(width), height(height), title(title)
 		{    
-
+			keys.fill(false);
 		}
 		void Engine::launch()
 		{
@@ -32,7 +32,6 @@ namespace ruff
 				SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
 						SDL_GL_CONTEXT_PROFILE_CORE);
 				SDL_SetWindowTitle(window.get(), title.c_str());
-
 				gl_context = SDL_GL_CreateContext(window.get());
 
 				SDL_Event event;
@@ -70,6 +69,16 @@ namespace ruff
 							case SDL_MOUSEMOTION:
 								SDL_GetMouseState(&mouse_x, &mouse_y);
 								break;
+							case SDL_KEYDOWN:
+								if(event.key.keysym.sym == SDLK_ESCAPE)
+								{
+									running = false;
+								}
+								keys[event.key.keysym.sym] = true;
+								break;
+							case SDL_KEYUP:
+								keys[event.key.keysym.sym] = false;
+								break;
 						}
 					}
 					onUpdate();
@@ -100,7 +109,7 @@ namespace ruff
 				pixels[i+3] = color[3];
 			}
 		}
-		void Engine::draw(sint x, sint y, Pixel color)
+		void Engine::draw(const sint x, const sint y, const Pixel& color)
 		{
 			if(x < 0 || y < 0 || x > width || y > height)
 				return;
@@ -110,9 +119,10 @@ namespace ruff
 			pixels[offset + 2] = color.b;
 			pixels[offset + 3] = color.a;
 		}
-		void Engine::draw(Point2D<sint> p, Pixel color) { draw(p.x, p.y, color); }
+		void Engine::draw(const Point2D<sint>& p, const Pixel& color) { draw(p.x, p.y, color); }
 
-		void Engine::drawLine(sint x1, sint y1, sint x2, sint y2, Pixel color, int line_width)
+		void Engine::drawLine(const sint x1, const sint y1, const sint x2, const sint y2, 
+				const Pixel& color, const int line_width)
 		{
 
 			// Deal with same x value seperately because the slope would be infinity
@@ -164,11 +174,13 @@ namespace ruff
 				}
 			}
 		}
-		void Engine::drawLine(Point2D<sint> p1, Point2D<sint> p2, Pixel color) 
+		void Engine::drawLine(const Point2D<sint>& p1, const Point2D<sint>& p2, 
+				const Pixel& color) 
 		{ 
 			drawLine(p1.x, p1.y, p2.x, p2.y, color);
 		}
-		void Engine::drawCircle(sint centerX, sint centerY, sint radius, Pixel color, bool fill)
+		void Engine::drawCircle(const sint centerX, const sint centerY, 
+				const sint radius, const Pixel& color, const bool fill)
 		{
 			// Equation of a circle
 			auto y = [centerX, radius](sint x)
@@ -192,7 +204,8 @@ namespace ruff
 			}
 
 		}
-		void Engine::drawCircle(Point2D<sint> center, sint radius, Pixel color, bool fill) 
+		void Engine::drawCircle(const Point2D<sint>& center, const sint radius, 
+				const Pixel& color, const bool fill) 
 		{ drawCircle(center.x, center.y, radius, color, fill); } 
 
 	};
