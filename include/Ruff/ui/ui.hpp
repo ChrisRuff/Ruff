@@ -5,6 +5,9 @@
 #include <memory>
 #include <functional>
 
+#include <thread>
+#include <chrono>
+
 #include <iostream>
 
 // Packages
@@ -37,6 +40,14 @@ namespace ruff
 			void operator()(SDL_RWops*    ptr) { if (ptr) SDL_RWclose(ptr); }
 		};
 
+		struct MouseState
+		{
+			std::array<bool, 2> mouse_pressed{false, false};
+			std::array<bool, 2> mouse_held{false, false};
+			std::array<bool, 2> mouse_released{false, false};
+			int mouse_x{}, mouse_y{};
+		};
+
 		using sint = short int;
 		/* --------------------------------------------------------------------------*/
 		/**
@@ -49,18 +60,18 @@ namespace ruff
 			sint width{};
 			sint height{};
 			std::string title{};
+			sint screenWidth{};
+			sint screenHeight{};
+			sint pixelRatio{};
 
 			// Hardware interface
-			// Left Button - Right Button
-			std::array<bool, 2> mouse_buttons{false, false};
+			MouseState mouse;
 
 			// Access the keyboard keys with keyboard_buttons with
 			// keys[SDLK_~] -> to detect when r is pressed I would do
 			// if(keys[SDLK_r])
 			std::array<bool, 322> keys{};
-			int mouse_x{}, mouse_y{};
 
-		private:
 			// All pixels in the image
 			std::vector<unsigned char> pixels{};
 
@@ -82,7 +93,7 @@ namespace ruff
 			 * @Param title Title of created window
 			 */
 			/* ----------------------------------------------------------------------------*/
-			Engine(const sint width, const sint height, std::string title = "Window");
+			Engine(const sint width, const sint height, std::string title = "Window", int pixelRatio = 1);
 			virtual ~Engine() = default;
 
 			/* --------------------------------------------------------------------------*/
@@ -133,6 +144,7 @@ namespace ruff
 			/* ----------------------------------------------------------------------------*/
 			void draw(const Point2D<sint>& p, const Pixel& color);
 
+
 			/* --------------------------------------------------------------------------*/
 			/**
 			 * @Synopsis  Draws a circle centered on the given X and Y coordinates
@@ -177,7 +189,7 @@ namespace ruff
 			 * Begins the game engine
 			 */
 			/* ----------------------------------------------------------------------------*/
-			virtual void launch();
+			void launch();
 
 			/* --------------------------------------------------------------------------*/
 			/**
@@ -194,7 +206,7 @@ namespace ruff
 			 * screen. This method is ran every frame.
 			 */
 			/* ----------------------------------------------------------------------------*/
-			virtual void onUpdate() = 0;
+			virtual void onUpdate(double deltaTime) = 0;
 
 			/* --------------------------------------------------------------------------*/
 			/**

@@ -153,7 +153,9 @@ namespace ruff
 			}
 			catch(const std::exception& el)
 			{
+#ifndef NDEBUG
 				std::cout << el.what() << std::endl;
+#endif
 				return std::nullopt;
 			}
 		}

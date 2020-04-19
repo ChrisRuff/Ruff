@@ -17,19 +17,19 @@ public:
 	{
 		count = 0;
 	}
-	virtual void onUpdate() override
+	virtual void onUpdate(double deltaTime) override
 	{
 		clearScreen();
 		drawLine(0,0,count,count, Pixel(255,255,255,1));
 		drawCircle(count, count, 50, Pixel(255,255,255,1), true);
-		drawCircle(mouse_x, mouse_y, 10, Pixel(255,255,255,1), true);
+		drawCircle(mouse.mouse_x, mouse.mouse_y, 10, Pixel(255,255,255,1), true);
 		for(const auto& pixel : newPixels)
 		{
-			drawCircle(pixel, 10, Pixel(255,255,255,1), true);
+			drawCircle(pixel, 10, Pixel(255,255,255,1), false);
 		}
-		if(mouse_buttons[0])
+		if(mouse.mouse_held[0])
 		{
-			newPixels.emplace_back(mouse_x, mouse_y);
+			newPixels.emplace_back(mouse.mouse_x, mouse.mouse_y);
 		}
 		++count;
 	}

@@ -26,6 +26,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE "Debug")
 
 option(BUILD_TESTERS "Build testers" ON)
+option(BUILD_TESTERS "Build examples" ON)
 
 if( CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME )
 
@@ -54,7 +55,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 	add_compile_options (-fdiagnostics-color=always)
 	set(OPTS -Wall -Wextra -Wctor-dtor-privacy -Wno-init-list-lifetime
 						-Wnoexcept -Wstrict-null-sentinel -Wold-style-cast 
-						-Weffc++ -Woverloaded-virtual -Wsign-promo)
+						-Woverloaded-virtual -Wsign-promo)
 endif()
 
 colourized( "Compile Options: ${OPTS}" ${YLW} )
@@ -69,6 +70,10 @@ add_subdirectory(src)
 
 if(BUILD_TESTERS)
 	add_subdirectory(test)
+endif()
+
+if(BUILD_EXAMPLES)
+	add_subdirectory(examples)
 endif()
 
 configure_file( 

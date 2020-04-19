@@ -5,7 +5,9 @@ namespace ruff
 	namespace ui
 	{
 		using sint = short int;
-		Engine::Engine(const sint width, const sint height, std::string title) : width(width), height(height), title(title)
+		Engine::Engine(const sint width, const sint height, std::string title, int pixelRatio) : 
+			width(width), height(height), title(title), screenWidth(width/pixelRatio), screenHeight(height/pixelRatio),
+			pixelRatio(pixelRatio)
 		{    
 			keys.fill(false);
 		}
@@ -22,8 +24,8 @@ namespace ruff
 						width, height, SDL_WINDOW_OPENGL));
 				renderer = std::unique_ptr<SDL_Renderer, SDLDestroyer>(SDL_CreateRenderer(window.get(), -1, SDL_RENDERER_ACCELERATED));
 				texture = std::unique_ptr<SDL_Texture, SDLDestroyer>(SDL_CreateTexture(renderer.get(), SDL_PIXELFORMAT_ARGB8888,
-						SDL_TEXTUREACCESS_STREAMING, width, height));
-				pixels.reserve(height * width * 4);
+						SDL_TEXTUREACCESS_STREAMING, screenWidth, screenHeight));
+				pixels.reserve(screenWidth * screenHeight * 4);
 				std::fill(pixels.begin(), pixels.end(), 0);
 				onCreate();
 
@@ -37,8 +39,20 @@ namespace ruff
 				SDL_Event event;
 				bool running = true;
 
+				double now = SDL_GetPerformanceCounter();
+				double last = 0.0f;
+				double deltaTime = 0;
 				while(running)
 				{
+					last = now;
+					if(mouse.mouse_released[0])
+					{
+						mouse.mouse_released[0] = false;
+					}
+					if(mouse.mouse_released[1])
+					{
+						mouse.mouse_released[1] = false;
+					}
 					while(SDL_PollEvent(&event))
 					{
 						switch(event.type)
@@ -49,25 +63,37 @@ namespace ruff
 							case SDL_MOUSEBUTTONUP:
 								if(event.button.button == SDL_BUTTON(SDL_BUTTON_LEFT))
 								{
-									mouse_buttons[0] = false;
+									mouse.mouse_held[0] = false;
+									mouse.mouse_released[0] = true;
 								}
-								else if(event.button.button == SDL_BUTTON(SDL_BUTTON_RIGHT))
+								else if(event.button.button == SDL_BUTTON_RIGHT)
 								{
-									mouse_buttons[1] = false;
+									mouse.mouse_held[1] = false;
+									mouse.mouse_released[1] = true;
 								}
 								break;
 							case SDL_MOUSEBUTTONDOWN: 
-								if(event.button.button == SDL_BUTTON(SDL_BUTTON_LEFT))
+								if(event.button.button == 3)//SDL_BUTTON(SDL_BUTTON_RIGHT))
 								{
-									mouse_buttons[0] = true;
+									if(mouse.mouse_pressed[1])
+										mouse.mouse_pressed[1] = false;
+									else
+										mouse.mouse_pressed[1] = true;
+									mouse.mouse_held[1] = true;
 								}
-								else if(event.button.button == SDL_BUTTON(SDL_BUTTON_RIGHT))
+								else if(event.button.button == SDL_BUTTON(SDL_BUTTON_LEFT))
 								{
-									mouse_buttons[1] = true;
+									if(mouse.mouse_pressed[0])
+										mouse.mouse_pressed[0] = false;
+									else
+										mouse.mouse_pressed[0] = true;
+									mouse.mouse_held[0] = true;
 								}
 								break;
 							case SDL_MOUSEMOTION:
-								SDL_GetMouseState(&mouse_x, &mouse_y);
+								SDL_GetMouseState(&mouse.mouse_x, &mouse.mouse_y);
+								mouse.mouse_x /= pixelRatio;
+								mouse.mouse_y /= pixelRatio;
 								break;
 							case SDL_KEYDOWN:
 								if(event.key.keysym.sym == SDLK_ESCAPE)
@@ -81,8 +107,10 @@ namespace ruff
 								break;
 						}
 					}
-					onUpdate();
-					SDL_UpdateTexture(texture.get(), NULL, &pixels[0], width * 4);
+					now = SDL_GetPerformanceCounter();
+					deltaTime = static_cast<double>(now - last) * 100 / static_cast<double>(SDL_GetPerformanceFrequency());
+					onUpdate(deltaTime);
+					SDL_UpdateTexture(texture.get(), NULL, &pixels[0], screenWidth * 4);
 					SDL_RenderCopy( renderer.get(), texture.get(), NULL, NULL );
 					SDL_RenderPresent( renderer.get() );
 					if(close())
@@ -98,7 +126,7 @@ namespace ruff
 		void Engine::clearScreen(Pixel color)
 		{
 			// Calculate all possible pixels
-			size_t size = width*height*4; 
+			size_t size = (screenWidth*screenHeight)*4; 
 
 			// Replace the pixel at each location with the given color
 			for(size_t i = 0; i < size; i+=3)
@@ -111,9 +139,9 @@ namespace ruff
 		}
 		void Engine::draw(const sint x, const sint y, const Pixel& color)
 		{
-			if(x < 0 || y < 0 || x > width || y > height)
+			if(x < 0 || y < 0 || x >= screenWidth || y >= screenHeight)
 				return;
-			const unsigned int offset = (width * 4 * y) + x * 4;
+			const unsigned int offset = (screenWidth * 4 * y) + x * 4;
 			pixels[offset]     = color.r;
 			pixels[offset + 1] = color.g;
 			pixels[offset + 2] = color.b;
@@ -124,52 +152,99 @@ namespace ruff
 		void Engine::drawLine(const sint x1, const sint y1, const sint x2, const sint y2, 
 				const Pixel& color, const int line_width)
 		{
+			sint dx = x2-x1;
+			sint dy = y2-y1;
 
-			// Deal with same x value seperately because the slope would be infinity
-			if(x2 == x1)
+			//Vertical
+			if(dx == 0)
 			{
-				sint max, min;
-				if(y2 > y1)
-				{
-					max = y2;
-					min = y1;
-				}
+				if(y2 < y1) drawLine(x2, y2, y1, y1, color, line_width);
 				else
 				{
-					max = y1;
-					min = y2;
-				}
-
-				for(sint i = min; i < max; ++i)
-				{
-					draw(x1, i, color);
-				}
-				return;
-			}
-			if(x1 > x2)
-			{
-				drawLine(x2, y2, x1, y1, color);
-				return;
-			}
-
-			// Solve the equation of the line
-			int slope = (y2 - y1) / (x2 - x1);
-			auto y = \
-				[slope, x1, y1](sint x) {return (slope * (x - x1) + y1); };
-
-			for(sint i = x1; i < x2; ++i)
-			{
-				if(line_width == 1)
-				{
-					draw(i, y(i), color);
-				}
-				else
-				{
-					size_t count = line_width;
-					while(count > 0)
+					for(sint y = y1; y <= y2; ++y)
 					{
-						draw(i, y(i)+ceil(count/2),color);
-						draw(i, y(i)-ceil(count--/2),color);
+						draw(x1, y, color);
+					}
+				}
+				return;
+			}
+			// Horizontal
+			else if(dy == 0)
+			{
+				if(x2 < x1) drawLine(x2, y2, x1, y1, color, line_width);
+				else
+				{
+					for(sint x = x1; x <= x2; ++x)
+					{
+						draw(x, y1, color);
+					}
+				}
+				return;
+			}
+			// at an angle not divisible by 90
+			else
+			{
+				sint dx1 = std::abs(dx);
+				sint dy1 = std::abs(dy);
+				sint px = 2 * dy1 - dx1;
+				sint py = 2 * dx1 - dy1;
+				sint x, y, xe, ye;
+				if(dy1 <= dx1)
+				{
+					if(dx >= 0)
+					{
+						x = x1; y = y1; xe = x2;
+					}
+					else
+					{
+						x = x2; y = y2; xe = x1;
+					}
+
+					draw(x, y, color);
+					for(sint i = 0; x < xe; ++i)
+					{
+						++x;
+						if(px < 0)
+						{
+							px = px + 2 * dy1;
+						}
+						else
+						{
+							if((dx < 0 && dy < 0) || (dx>0 && dy>0)) ++y;
+							else --y;
+
+							px += 2 * (dy1 - dx1);
+						}
+						draw(x, y, color);
+					}
+				}
+				else
+				{
+					if(dy >= 0)
+					{
+						x = x1; y = y1; ye = y2;
+					}
+					else
+					{
+						x = x2; y = y2; ye = y1;
+					}
+
+					draw(x, y, color);
+
+					for(sint i = 0; y < ye; ++i)
+					{
+						++y;
+						if(py <= 0)
+						{
+							py+= 2 * dx1;
+						}
+						else
+						{
+							if((dx < 0 && dy < 0) || (dx > 0 && dy > 0)) ++x;
+							else --x;
+							py += 2 * (dx1 - dy1);
+						}
+						draw(x, y, color);
 					}
 				}
 			}
@@ -199,7 +274,7 @@ namespace ruff
 			{
 				for(sint x = centerX - radius; x <= centerX + radius; ++x)
 				{
-					drawLine(x, y(x) + centerY, x, -y(x) + centerY, color);
+					drawLine(x, -y(x) + centerY, x, y(x) + centerY, color);
 				}
 			}
 

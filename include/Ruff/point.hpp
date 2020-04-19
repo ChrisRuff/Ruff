@@ -16,7 +16,7 @@ namespace ruff
 
 
 	public:
-		Point2D(const T x, const T y) : x(x), y(y)
+		Point2D(const T x, const T y) noexcept : x(x), y(y)
 		{
 			
 		}
