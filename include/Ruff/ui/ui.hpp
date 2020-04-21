@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <functional>
+#include <string_view>
 
 #include <thread>
 #include <chrono>
@@ -42,10 +43,10 @@ namespace ruff
 
 		struct MouseState
 		{
-			std::array<bool, 2> mouse_pressed{false, false};
-			std::array<bool, 2> mouse_held{false, false};
+			std::array<bool, 2> mouse_pressed {false, false};
+			std::array<bool, 2> mouse_held    {false, false};
 			std::array<bool, 2> mouse_released{false, false};
-			int mouse_x{}, mouse_y{};
+			int mouse_x{0}, mouse_y{0};
 		};
 
 		using sint = short int;
@@ -77,9 +78,10 @@ namespace ruff
 
 
 			// SDL Variables used for rendering
-			std::unique_ptr<SDL_Window,   SDLDestroyer> window{nullptr};
+			std::unique_ptr<SDL_Window,   SDLDestroyer> window  {nullptr};
 			std::unique_ptr<SDL_Renderer, SDLDestroyer> renderer{nullptr};
-			std::unique_ptr<SDL_Texture,  SDLDestroyer> texture{nullptr};
+			std::unique_ptr<SDL_Texture,  SDLDestroyer> texture {nullptr};
+			std::vector<std::unique_ptr<SDL_Texture, SDLDestroyer>> sprites{};
 
 			SDL_GLContext gl_context{};
 
@@ -95,6 +97,19 @@ namespace ruff
 			/* ----------------------------------------------------------------------------*/
 			Engine(const sint width, const sint height, std::string title = "Window", int pixelRatio = 1);
 			virtual ~Engine() = default;
+
+			/* --------------------------------------------------------------------------*/
+			/**
+			 * @Synopsis Loads a sprite into the engine to be referenced
+			 *
+			 * @Param filepath Location of the sprite 
+			 *
+			 * @Returns index of the sprite in the sprites vector
+			 */
+			/* ----------------------------------------------------------------------------*/
+			int loadSprite(const std::string& filepath);
+
+			void displaySprite(const sint x, const sint y, const int idx, const float scale);
 
 			/* --------------------------------------------------------------------------*/
 			/**

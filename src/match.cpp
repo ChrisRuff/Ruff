@@ -8,7 +8,6 @@ namespace ruff
 		Matcher::Matcher(DetectorType detectorType, MatcherType matcherType, 
 				bool knnMatch) : dType(detectorType), mType(matcherType), knnMatch(knnMatch)
 		{
-
 			// Set detector
 			if(detectorType == DetectorType::AKAZE)
 			{
@@ -20,13 +19,14 @@ namespace ruff
 			}
 			else if(detectorType == DetectorType::DAISY)
 			{
-				assert(("Daisy is only supported with FLANN matcher", matcherType == MatcherType::FLANN));
+				assert(matcherType == MatcherType::FLANN); // DAISY does not support BFMatcher
 				this->detector = cv::xfeatures2d::DAISY::create();
 			}
 			else if(detectorType == DetectorType::ORB)
 			{
 				this->detector = cv::ORB::create();
 			}
+
 			// Set Matcher
 			if(matcherType == MatcherType::BF)
 			{

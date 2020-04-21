@@ -11,7 +11,7 @@ if( NOT WIN32 )
 		message( "${COL}${MESSAGE}${RST}" )
 	endfunction()
 endif()
-cmake_minimum_required(VERSION 3.16.5)
+cmake_minimum_required(VERSION 3.17)
 
 project( Ruff VERSION 0.0.1 
 						DESCRIPTION "Ruff"
@@ -45,6 +45,7 @@ if( CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME )
 
 	find_package( Doxygen )
 	if( Doxygen_FOUND )
+		colourized( "Configuring Docs" ${BLU} )
 		add_subdirectory( docs )
 	else()
 		message( STATUS "Doxygen not found, not building docs" )
@@ -54,8 +55,8 @@ endif()
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 	add_compile_options (-fdiagnostics-color=always)
 	set(OPTS -Wall -Wextra -Wctor-dtor-privacy -Wno-init-list-lifetime
-						-Wnoexcept -Wstrict-null-sentinel -Wold-style-cast 
-						-Woverloaded-virtual -Wsign-promo)
+					-Wnoexcept -Wstrict-null-sentinel -Wold-style-cast 
+					-Woverloaded-virtual -Wsign-promo)
 endif()
 
 colourized( "Compile Options: ${OPTS}" ${YLW} )
@@ -65,14 +66,17 @@ if(BUILD_TESTERS)
 endif()
 
 # Add target Ruff
+colourized( "Configuring Ruff Library" ${BLU} )
 add_subdirectory(src)
 
 
 if(BUILD_TESTERS)
+	colourized( "Configuring Testers Library" ${BLU} )
 	add_subdirectory(test)
 endif()
 
 if(BUILD_EXAMPLES)
+	colourized( "Configuring examples" ${BLU} )
 	add_subdirectory(examples)
 endif()
 

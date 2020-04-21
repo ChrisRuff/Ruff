@@ -23,7 +23,7 @@ namespace ruff
 						SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
 						width, height, SDL_WINDOW_OPENGL));
 				renderer = std::unique_ptr<SDL_Renderer, SDLDestroyer>(SDL_CreateRenderer(window.get(), -1, SDL_RENDERER_ACCELERATED));
-				texture = std::unique_ptr<SDL_Texture, SDLDestroyer>(SDL_CreateTexture(renderer.get(), SDL_PIXELFORMAT_ARGB8888,
+				texture = std::unique_ptr<SDL_Texture, SDLDestroyer>(SDL_CreateTexture(renderer.get(), SDL_PIXELFORMAT_ABGR8888,
 						SDL_TEXTUREACCESS_STREAMING, screenWidth, screenHeight));
 				pixels.reserve(screenWidth * screenHeight * 4);
 				std::fill(pixels.begin(), pixels.end(), 0);
@@ -109,27 +109,56 @@ namespace ruff
 					}
 					now = SDL_GetPerformanceCounter();
 					deltaTime = static_cast<double>(now - last) * 100 / static_cast<double>(SDL_GetPerformanceFrequency());
-					onUpdate(deltaTime);
+
+					SDL_RenderClear(renderer.get());
 					SDL_UpdateTexture(texture.get(), NULL, &pixels[0], screenWidth * 4);
+
 					SDL_RenderCopy( renderer.get(), texture.get(), NULL, NULL );
+					onUpdate(deltaTime);
+					//SDL_RenderCopy( renderer.get(), sprites[0].get(), NULL, NULL );
+
 					SDL_RenderPresent( renderer.get() );
 					if(close())
 					{
 						running = false;
 					}
 				}
-				SDL_DestroyRenderer(renderer.get());
-				SDL_DestroyWindow(window.get());
 				SDL_Quit();
 			}
 		}
+
+		int Engine::loadSprite(const std::string& filepath)
+		{
+			SDL_Surface* surface = SDL_LoadBMP(filepath.c_str());
+			SDL_Texture* sprite = SDL_CreateTextureFromSurface(renderer.get(), surface);
+			int success = SDL_RenderCopy(renderer.get(), sprite, NULL, NULL);
+			if(success == -1)
+				return -1;
+			SDL_FreeSurface(surface);
+			sprites.push_back(std::unique_ptr<SDL_Texture, SDLDestroyer>(sprite));
+
+			return sprites.size() - 1;
+		}
+
+		void Engine::displaySprite(const sint x, const sint y, const int idx, const float scale)
+		{
+			int w, h;
+			SDL_QueryTexture(sprites[idx].get(), NULL, NULL, &w, &h);
+			SDL_Rect dst;
+			dst.x = x;
+			dst.y = y;
+			dst.w = w * scale;
+			dst.h = h * scale;
+			SDL_RenderCopy(renderer.get(), sprites[idx].get(), NULL, &dst);
+		}
+
 		void Engine::clearScreen(Pixel color)
 		{
 			// Calculate all possible pixels
 			size_t size = (screenWidth*screenHeight)*4; 
 
 			// Replace the pixel at each location with the given color
-			for(size_t i = 0; i < size; i+=3)
+			for(size_t i = 0; i < size; i+=4)
 			{
 				pixels[i] = color[0];
 				pixels[i+1] = color[1];
@@ -277,7 +306,6 @@ namespace ruff
 					drawLine(x, -y(x) + centerY, x, y(x) + centerY, color);
 				}
 			}
-
 		}
 		void Engine::drawCircle(const Point2D<sint>& center, const sint radius, 
 				const Pixel& color, const bool fill) 
