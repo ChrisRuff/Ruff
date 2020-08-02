@@ -10,7 +10,6 @@ file( GLOB_RECURSE HEADERS LIST_DIRECTORIES false CONFIGURE_DEPENDS
 list( LENGTH SRCS HAS_SOURCES )
 if( ${HAS_SOURCES} GREATER 0 )
 	add_executable( circles ${HEADERS} ${SRCS})
-
 	set_target_properties( circles
 		PROPERTIES
 		CXX_STANDARD 20
@@ -20,6 +19,7 @@ if( ${HAS_SOURCES} GREATER 0 )
 		RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
 	)
 	target_link_libraries(circles Ruff)
+
 else()
 	message(WARNING "No sources found")
 endif()

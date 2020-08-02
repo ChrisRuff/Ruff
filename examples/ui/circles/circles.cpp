@@ -41,6 +41,10 @@ public:
 	Circles(const sint width, const sint height, std::string title = "Circle Engine", int pixelRatio = 1) 
 		: Engine(height, width, title, pixelRatio) {}
 
+	Circles(const Circles& other) = delete;
+
+	Circles& operator=(const Circles& other) = delete;
+
 	virtual void onCreate() override 
 	{
 		//addBall(width * .25f, height * 0.5f, fDefaultRad);

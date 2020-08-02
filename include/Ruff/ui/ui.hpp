@@ -66,7 +66,7 @@ namespace ruff
 			sint pixelRatio{};
 
 			// Hardware interface
-			MouseState mouse;
+			MouseState mouse{};
 
 			// Access the keyboard keys with keyboard_buttons with
 			// keys[SDLK_~] -> to detect when r is pressed I would do
@@ -96,7 +96,19 @@ namespace ruff
 			 */
 			/* ----------------------------------------------------------------------------*/
 			Engine(const sint width, const sint height, std::string title = "Window", int pixelRatio = 1);
+
 			virtual ~Engine() = default;
+
+			/* --------------------------------------------------------------------------*/
+			/**
+			 * @Synopsis Copy constructor doesn't exist because of unique data members
+			 *
+			 * @Param other 
+			 */
+			/* ----------------------------------------------------------------------------*/
+			Engine(const Engine& other) = delete;
+
+			Engine& operator=(const Engine& other) = delete;
 
 			/* --------------------------------------------------------------------------*/
 			/**

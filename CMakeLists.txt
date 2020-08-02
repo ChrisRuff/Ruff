@@ -56,7 +56,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 	add_compile_options (-fdiagnostics-color=always)
 	set(OPTS -Wall -Wextra -Wctor-dtor-privacy -Wno-init-list-lifetime
 					-Wnoexcept -Wstrict-null-sentinel -Wold-style-cast 
-					-Woverloaded-virtual -Wsign-promo)
+					-Weffc++ -Woverloaded-virtual -Wsign-promo)
 endif()
 
 colourized( "Compile Options: ${OPTS}" ${YLW} )

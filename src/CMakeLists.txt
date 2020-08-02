@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 find_package(xtensor REQUIRED)
-find_package(OpenCV REQUIRED)
-find_package(X11 REQUIRED)
+find_package(OpenCV REQUIRED PATH_SUFFIXES "*.a")
 set(OpenGL_GL_PREFERENCE GLVND)
 find_package(OpenGL REQUIRED)
 find_package(SDL REQUIRED)
