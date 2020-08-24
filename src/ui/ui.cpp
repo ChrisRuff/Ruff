@@ -100,9 +100,17 @@ namespace ruff
 								{
 									running = false;
 								}
+								else if (event.key.keysym.sym >= static_cast<int>(keys.size()))
+								{
+									break;
+								}
 								keys[event.key.keysym.sym] = true;
 								break;
 							case SDL_KEYUP:
+								if(event.key.keysym.sym >= static_cast<int>(keys.size()))
+								{
+									break;
+								}
 								keys[event.key.keysym.sym] = false;
 								break;
 						}

@@ -203,6 +203,30 @@ namespace ruff
 
 			/* --------------------------------------------------------------------------*/
 			/**
+			 * @Synopsis  Returns the width with the pixel ratio in mind
+			 *
+			 * @Returns   
+			 */
+			/* ----------------------------------------------------------------------------*/
+			sint getWidth() 
+			{
+				return width / pixelRatio;
+			}
+
+			/* --------------------------------------------------------------------------*/
+			/**
+			 * @Synopsis  Returns the width with the pixel ratio in mind
+			 *
+			 * @Returns   
+			 */
+			/* ----------------------------------------------------------------------------*/
+			sint getHeight() 
+			{
+				return height / pixelRatio;
+			}
+
+			/* --------------------------------------------------------------------------*/
+			/**
 			 * @Synopsis  Replaces every pixel on the screen with the given color
 			 *
 			 * @Param color Color that will fill every pixel(default to opaque black)
@@ -246,6 +270,7 @@ namespace ruff
 			 */
 			/* ----------------------------------------------------------------------------*/
 			virtual bool close() { return false; }
+
 		};
 	};
 };
