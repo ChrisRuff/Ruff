@@ -1,4 +1,6 @@
+#pragma once
 #include <uchar.h>
+
 namespace ruff
 {
 	namespace ui

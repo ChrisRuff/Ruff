@@ -8,14 +8,11 @@
 #include <cassert>  //assert()
 #include <limits>   //std::numeric_limits<double>::max()
 
-#ifndef NDEBUG
-#include <iostream>
-#endif
-
 // Packages
 
 // Source files
 #include "point.hpp" // Point2D
+#include "logger.hpp"
 namespace ruff
 {
 	namespace search
@@ -66,7 +63,7 @@ namespace ruff
 		class AStar 
 		{ 
 		private:
-			const std::vector<std::vector<bool>> map;
+			const std::vector<std::vector<bool>> map{};
 
 		public:
 			/* --------------------------------------------------------------------------*/
@@ -76,6 +73,8 @@ namespace ruff
 			 */
 			/* ----------------------------------------------------------------------------*/
 			AStar(const std::vector<std::vector<bool>>& map);
+
+			AStar() = default;
 
 			/* --------------------------------------------------------------------------*/
 			/**

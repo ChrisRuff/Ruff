@@ -5,6 +5,7 @@ find_package(OpenCV REQUIRED PATH_SUFFIXES "*.a")
 set(OpenGL_GL_PREFERENCE GLVND)
 find_package(OpenGL REQUIRED)
 find_package(SDL REQUIRED)
+find_package(SDL2TTF REQUIRED)
 
 # glob collection of src files not 100% reliable
 file( GLOB_RECURSE SRCS LIST_DIRECTORIES false CONFIGURE_DEPENDS *.cpp )
@@ -42,7 +43,7 @@ if( ${HAS_SOURCES} GREATER 0 )
 	target_link_libraries(Ruff ${OpenCV_LIBRARIES})
 	target_link_libraries(Ruff ${X11_LIBRARIES})
 	target_link_libraries(Ruff ${OPENGL_LIBRARY})
-	target_link_libraries(Ruff SDL2)
+	target_link_libraries(Ruff SDL2 ${SDL2TTF_LIBRARY})
 
 	#target_link_libraries(Ruff 3rdParty)
 else()

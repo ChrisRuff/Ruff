@@ -15,7 +15,11 @@ namespace ruff
 		{
 			if (SDL_Init(SDL_INIT_VIDEO) != 0)
 			{
-					printf("Error: %s\n", SDL_GetError());
+				printf("Error: %s\n", SDL_GetError());
+			}
+			else if (TTF_Init() < 0) 
+			{
+				printf("Error: %s\n", TTF_GetError());
 			}
 			else
 			{
@@ -52,6 +56,14 @@ namespace ruff
 					if(mouse.mouse_released[1])
 					{
 						mouse.mouse_released[1] = false;
+					}
+					if(mouse.mouse_pressed[0])
+					{
+						mouse.mouse_pressed[0] = false;
+					}
+					if(mouse.mouse_pressed[1])
+					{
+						mouse.mouse_pressed[1] = false;
 					}
 					while(SDL_PollEvent(&event))
 					{
@@ -115,6 +127,20 @@ namespace ruff
 								break;
 						}
 					}
+					if(mouse.mouse_pressed[0])
+					{
+						for(auto& button_ptr : buttons)
+						{
+							Button* button = button_ptr.get();
+							if(mouse.mouse_x - button->getX() < button->getWidth() &&
+									mouse.mouse_x - button->getX() > 0 && 
+									mouse.mouse_y - button->getY() < button->getHeight() && 
+									mouse.mouse_y - button->getY() > 0)
+							{
+								button->press();
+							}
+						}
+					}
 					now = SDL_GetPerformanceCounter();
 					deltaTime = static_cast<double>(now - last) * 100 / static_cast<double>(SDL_GetPerformanceFrequency());
 
@@ -122,7 +148,12 @@ namespace ruff
 					SDL_UpdateTexture(texture.get(), NULL, &pixels[0], screenWidth * 4);
 
 					SDL_RenderCopy( renderer.get(), texture.get(), NULL, NULL );
+
 					onUpdate(deltaTime);
+					for(auto& button : buttons)
+					{
+						drawButton(button.get());
+					}
 					//SDL_RenderCopy( renderer.get(), sprites[0].get(), NULL, NULL );
 
 					SDL_RenderPresent( renderer.get() );
@@ -131,6 +162,7 @@ namespace ruff
 						running = false;
 					}
 				}
+				TTF_Quit();
 				SDL_Quit();
 			}
 		}
@@ -287,10 +319,42 @@ namespace ruff
 			}
 		}
 		void Engine::drawLine(const Point2D<sint>& p1, const Point2D<sint>& p2, 
-				const Pixel& color) 
+				const Pixel& color, const int line_width) 
 		{ 
-			drawLine(p1.x, p1.y, p2.x, p2.y, color);
+			drawLine(p1.x, p1.y, p2.x, p2.y, color, line_width);
 		}
+
+		void Engine::drawSquare(const sint leftX, const sint leftY, 
+				const sint rightX, const sint rightY, 
+				const Pixel& color, const bool fill)
+		{
+			if(leftX > rightX)
+				drawSquare(rightX, rightY, leftX, leftY, color, fill);
+
+			if(fill)
+			{
+				for(sint i = leftX; i < rightX; ++i)
+				{
+					drawLine(i, leftY, i, rightY, color, 1);
+				}
+			}
+			else
+			{
+				drawLine(leftX, leftY, rightX, leftY);
+				drawLine(leftX, leftY, leftX, rightY);
+				drawLine(leftX, rightY, rightX, rightY);
+				drawLine(rightX, leftY, rightX, rightY);
+			}
+		}
+
+		void Engine::drawSquare(const Point2D<sint>& left, 
+				const Point2D<sint>& right, 
+				const Pixel& color, const bool fill)
+		{
+			drawSquare(left.x, left.y, right.x, right.y, color, fill);
+		}
+
+
 		void Engine::drawCircle(const sint centerX, const sint centerY, 
 				const sint radius, const Pixel& color, const bool fill)
 		{
@@ -317,7 +381,39 @@ namespace ruff
 		}
 		void Engine::drawCircle(const Point2D<sint>& center, const sint radius, 
 				const Pixel& color, const bool fill) 
-		{ drawCircle(center.x, center.y, radius, color, fill); } 
+		{ 
+			drawCircle(center.x, center.y, radius, color, fill); 
+		} 
+
+		void Engine::drawButton(Button* button)
+		{
+			sint x = button->getX();
+			sint y = button->getY();
+			drawSquare(x, y, x + button->getWidth(), y + button->getHeight(), 
+					button->getColor(), true);
+			SDL_Color white = {255,255,255,0};
+			auto surfaceMessage = std::unique_ptr<SDL_Surface, SDLDestroyer>
+				(TTF_RenderText_Solid(button->getFont(), button->getLabel().c_str(), white));
+
+			auto message = std::unique_ptr<SDL_Texture, SDLDestroyer>
+				(SDL_CreateTextureFromSurface(renderer.get(), surfaceMessage.get()));
+
+			SDL_Rect message_rect;
+			message_rect.x = button->getX() * button->getPixelRatio();
+			message_rect.y = button->getY() * button->getPixelRatio();
+			message_rect.w = button->getWidth() * button->getPixelRatio();
+			message_rect.h = button->getHeight() * button->getPixelRatio();
+
+			SDL_RenderCopy(renderer.get(), message.get(), NULL, &message_rect);
+			
+		}
+		int Engine::addButton(sint x, sint y, int width, int height, 
+				Pixel color, int pixelRatio, std::string fontPath,
+				std::string label, int fontSize)
+		{
+			buttons.push_back(std::make_unique<Button>(x, y, width, height, color, pixelRatio, fontPath, label, fontSize));
+			return buttons.size() - 1;
+		}
 
 	};
 };

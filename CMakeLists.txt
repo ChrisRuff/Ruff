@@ -13,7 +13,7 @@ if( NOT WIN32 )
 endif()
 cmake_minimum_required(VERSION 3.17)
 
-project( Ruff VERSION 0.0.1 
+project( ruff VERSION 0.0.1 
 						DESCRIPTION "Ruff"
 						LANGUAGES CXX )
 

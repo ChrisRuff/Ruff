@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <utility>
 #include <functional>
 #include <string_view>
 
@@ -14,33 +15,21 @@
 // Packages
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
+#include <SDL2/SDL_ttf.h>
 #include <GL/gl.h>
 
 // Source
+#include "ui/destructors.hpp"
+#include "ui/text.hpp"
 #include "ui/pixel.hpp"
+#include "ui/button.hpp"
 #include "point.hpp"
+#include "logger.hpp"
 
 namespace ruff
 {
 	namespace ui
 	{
-
-		/* --------------------------------------------------------------------------*/
-		/**
-		 * @Synopsis  Struct to destroy SDL object pointers, this is mainly useful for 
-		 * storing SDL object pointers as a unique_ptr.
-		 * Syntax: std::unique_ptr<SDL_XXXXXX, SDLDestroyer> ptr;
-		 */
-		/* ----------------------------------------------------------------------------*/
-		struct SDLDestroyer 
-		{
-			void operator()(SDL_Surface*  ptr) { if (ptr) SDL_FreeSurface(ptr); }
-			void operator()(SDL_Texture*  ptr) { if (ptr) SDL_DestroyTexture(ptr); }
-			void operator()(SDL_Renderer* ptr) { if (ptr) SDL_DestroyRenderer(ptr); }
-			void operator()(SDL_Window*   ptr) { if (ptr) SDL_DestroyWindow(ptr); }
-			void operator()(SDL_RWops*    ptr) { if (ptr) SDL_RWclose(ptr); }
-		};
-
 		struct MouseState
 		{
 			std::array<bool, 2> mouse_pressed {false, false};
@@ -48,6 +37,7 @@ namespace ruff
 			std::array<bool, 2> mouse_released{false, false};
 			int mouse_x{0}, mouse_y{0};
 		};
+
 
 		using sint = short int;
 		/* --------------------------------------------------------------------------*/
@@ -76,6 +66,7 @@ namespace ruff
 			// All pixels in the image
 			std::vector<unsigned char> pixels{};
 
+			std::vector<std::unique_ptr<Button>> buttons{};
 
 			// SDL Variables used for rendering
 			std::unique_ptr<SDL_Window,   SDLDestroyer> window  {nullptr};
@@ -135,8 +126,7 @@ namespace ruff
 			 * @Param line_width How wide the line will be drawn
 			 */
 			/* ----------------------------------------------------------------------------*/
-			void drawLine(const sint x1, const sint y1, const sint x2, const sint y2, 
-					const Pixel& color=WHITE, const int line_width=1);
+			void drawLine(const sint x1, const sint y1, const sint x2, const sint y2, const Pixel& color=WHITE, const int line_width=1);
 
 			/* --------------------------------------------------------------------------*/
 			/**
@@ -148,7 +138,7 @@ namespace ruff
 			 * @Param color Color of the line
 			 */
 			/* ----------------------------------------------------------------------------*/
-			void drawLine(const Point2D<sint>& p1, const Point2D<sint>& p2, const Pixel& color);
+			void drawLine(const Point2D<sint>& p1, const Point2D<sint>& p2, const Pixel& color, const int line_width);
 
 			/* --------------------------------------------------------------------------*/
 			/**
@@ -171,6 +161,13 @@ namespace ruff
 			/* ----------------------------------------------------------------------------*/
 			void draw(const Point2D<sint>& p, const Pixel& color);
 
+			void drawSquare(const sint leftX, const sint leftY, 
+					const sint rightX, const sint rightY, 
+					const Pixel& color, const bool fill = false);
+
+			void drawSquare(const Point2D<sint>& left, 
+					const Point2D<sint>& right, 
+					const Pixel& color, const bool fill = false);
 
 			/* --------------------------------------------------------------------------*/
 			/**
@@ -200,6 +197,12 @@ namespace ruff
 			/* ----------------------------------------------------------------------------*/
 			void drawCircle(const Point2D<sint>& center, const sint radius, 
 					const Pixel& color, const bool fill = false);
+
+			void drawButton(Button* button);
+
+			int addButton(sint x, sint y, int width, int height, 
+					Pixel color, int pixelRatio, std::string fontPath = "",
+					std::string label = "", int fontSize = 12);
 
 			/* --------------------------------------------------------------------------*/
 			/**

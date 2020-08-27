@@ -4,10 +4,13 @@
 
 ### UI Engine
 Simple engine for creating 2D environments. 
+
 #### UI Examples
 [Circles](examples/ui/circles): Creates an environment to interact with circle collisions
 
 [Gravity](examples/ui/gravity): Simulates gravity around points
+
+[AStar](examples/ui/astar): Visualizes the AStar path finding algorithm
 
 ### Matching using opencv 
 | Detectors | Matchers  |
