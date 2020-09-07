@@ -87,6 +87,11 @@ namespace ruff
 				if(desc2.type()!=CV_32F) desc2.convertTo(desc2, CV_32F);
 			}
 
+			if(desc1.empty() || desc2.empty())
+			{
+				logWarning("Couldn't find any matches");
+				return kptMatch{};
+			}
 			std::vector<cv::DMatch> good_matches;
 			if(knnMatch)
 			{

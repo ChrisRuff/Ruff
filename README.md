@@ -12,6 +12,8 @@ Simple engine for creating 2D environments.
 
 [AStar](examples/ui/astar): Visualizes the AStar path finding algorithm
 
+[Matching](examples/ui/matching): Shows live matching results using opencv matchers and visualizes them with the ui engine
+
 ### Matching using opencv 
 | Detectors | Matchers  |
 | --------  | --------  |

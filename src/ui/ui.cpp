@@ -414,6 +414,39 @@ namespace ruff
 			buttons.push_back(std::make_unique<Button>(x, y, width, height, color, pixelRatio, fontPath, label, fontSize));
 			return buttons.size() - 1;
 		}
+		cv::Mat Engine::getCVMat(sint x1, sint y1, sint x2, sint y2)
+		{
+			if(x1 < 0 || y1 < 0 || x1 >= screenWidth || y1 >= screenHeight)
+				return cv::Mat();
+			if(x2 < 0 || y2 < 0 || x2 >= screenWidth || y2 >= screenHeight)
+				return cv::Mat();
+			if(x1 > x2)
+				return getCVMat(x2, y1, x1, y2);
+			if(y1 > y2)
+				return getCVMat(x1, y2, y1, x2);
 
+			cv::Mat image(screenHeight, screenWidth, CV_8UC4, pixels.data());
+			cv::Rect cropper(x1, y1, x2-x1, y2-y1);
+			return image(cropper);
+			/*
+			std::vector<uchar> region((y2-y1) * (x2-x1) * 4);
+			for(int i = 0; i < (x2-x1) * 4; i += 4)
+			{
+				for(int j = 0; j < (y2-y1) * 4; j += 4)
+				{
+					const unsigned int offset = (screenWidth * 4 * j) + i * 4;
+					region[i] = pixels[offset];
+					region[i+1] = pixels[offset+1];
+					region[i+2] = pixels[offset+2];
+					region[i+3] = pixels[offset+3];
+				}
+			}
+			return cv::Mat(y2-y1, x2-x1, CV_8UC1, region.data());
+			*/
+		}
+		Pixel getRandColor()
+		{
+			return Pixel(std::rand()%256, std::rand()%256, std::rand()%256);
+		}
 	};
 };

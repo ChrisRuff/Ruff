@@ -17,6 +17,7 @@
 #include <SDL2/SDL_opengl.h>
 #include <SDL2/SDL_ttf.h>
 #include <GL/gl.h>
+#include <opencv2/core.hpp>
 
 // Source
 #include "ui/destructors.hpp"
@@ -228,6 +229,9 @@ namespace ruff
 				return height / pixelRatio;
 			}
 
+			cv::Mat getCVMat(sint x1, sint y1, sint x2, sint y2);
+
+
 			/* --------------------------------------------------------------------------*/
 			/**
 			 * @Synopsis  Replaces every pixel on the screen with the given color
@@ -275,5 +279,7 @@ namespace ruff
 			virtual bool close() { return false; }
 
 		};
+
+		Pixel getRandColor();
 	};
 };
