@@ -28,7 +28,7 @@ namespace ruff
 			DAISY
 		};
 		static const DetectorType DetectorTypes[] = {
-			DetectorType::ORB, DetectorType::AKAZE, DetectorType::BRISK, DetectorType::DAISY};
+			DetectorType::ORB, DetectorType::AKAZE, DetectorType::BRISK /*, DetectorType::DAISY*/ };
 
 		/* --------------------------------------------------------------------------*/
 		/**

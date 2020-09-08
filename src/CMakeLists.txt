@@ -1,8 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
 
-find_package(xtensor REQUIRED)
-find_package(OpenCV REQUIRED)
-
 # glob collection of src files not 100% reliable
 file( GLOB_RECURSE SRCS LIST_DIRECTORIES false CONFIGURE_DEPENDS *.cpp )
 
@@ -30,10 +27,14 @@ if( ${HAS_SOURCES} GREATER 0 )
   target_include_directories( Ruff PUBLIC 
 		${PROJECT_BINARY_DIR} 
 		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}
-		${PROJECT_SOURCE_DIR}/src 
-		${OpenCV_INCLUDE_DIRS})
+		${PROJECT_SOURCE_DIR}/src
+		${CONAN_INCLUDE_DIRS})
+
+		target_link_libraries(Ruff PRIVATE
+			CONAN_PKG::opencv
+			CONAN_PKG::zlib
+			CONAN_PKG::xtensor
+			CONAN_PKG::doctest
+			CONAN_PKG::bzip2)
 endif()
 
-message(WARNING "${PROJECT_SOURCE_DIR}")
-target_link_libraries(Ruff xtensor)
-target_link_libraries(Ruff ${OpenCV_LIBRARIES})
