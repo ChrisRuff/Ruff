@@ -11,10 +11,9 @@ if( NOT WIN32 )
 		message( "${COL}${MESSAGE}${RST}" )
 	endfunction()
 endif()
-cmake_minimum_required(VERSION 3.16.5)
-set(CMAKE_BUILD_TYPE "Debug")
+cmake_minimum_required(VERSION 3.17)
 
-project( Ruff VERSION 0.0.1 
+project( ruff VERSION 0.0.1 
 						DESCRIPTION "Ruff"
 						LANGUAGES CXX )
 
@@ -26,12 +25,8 @@ colourized("PROJECT_BINARY_DIR: ${PROJECT_BINARY_DIR}" ${MAG} )
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE "Debug")
 
-# Use C++2a
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
 option(BUILD_TESTERS "Build testers" ON)
+option(BUILD_TESTERS "Build examples" ON)
 
 include (cmake/Cache.cmake)
 
@@ -52,6 +47,7 @@ if( CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME )
 
 	find_package( Doxygen )
 	if( Doxygen_FOUND )
+		colourized( "Configuring Docs" ${BLU} )
 		add_subdirectory( docs )
 	else()
 		message( STATUS "Doxygen not found, not building docs" )
@@ -61,8 +57,8 @@ endif()
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 	add_compile_options (-fdiagnostics-color=always)
 	set(OPTS -Wall -Wextra -Wctor-dtor-privacy -Wno-init-list-lifetime
-						-Wnoexcept -Wstrict-null-sentinel -Wold-style-cast 
-						-Weffc++ -Woverloaded-virtual -Wsign-promo)
+					-Wnoexcept -Wstrict-null-sentinel -Wold-style-cast 
+					-Weffc++ -Woverloaded-virtual -Wsign-promo)
 endif()
 
 colourized( "Compile Options: ${OPTS}" ${YLW} )
@@ -75,11 +71,18 @@ include(cmake/Conan.cmake)
 run_conan()
 
 # Add target Ruff
+colourized( "Configuring Ruff Library" ${BLU} )
 add_subdirectory(src)
 
 
 if(BUILD_TESTERS)
+	colourized( "Configuring Testers Library" ${BLU} )
 	add_subdirectory(test)
+endif()
+
+if(BUILD_EXAMPLES)
+	colourized( "Configuring examples" ${BLU} )
+	add_subdirectory(examples)
 endif()
 
 configure_file( 

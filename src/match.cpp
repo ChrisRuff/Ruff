@@ -8,7 +8,6 @@ namespace ruff
 		Matcher::Matcher(DetectorType detectorType, MatcherType matcherType, 
 				bool knnMatch) : dType(detectorType), mType(matcherType), knnMatch(knnMatch)
 		{
-
 			// Set detector
 			if(detectorType == DetectorType::AKAZE)
 			{
@@ -27,6 +26,7 @@ namespace ruff
 			{
 				this->detector = cv::ORB::create();
 			}
+
 			// Set Matcher
 			if(matcherType == MatcherType::BF)
 			{
@@ -87,6 +87,11 @@ namespace ruff
 				if(desc2.type()!=CV_32F) desc2.convertTo(desc2, CV_32F);
 			}
 
+			if(desc1.empty() || desc2.empty())
+			{
+				logWarning("Couldn't find any matches");
+				return kptMatch{};
+			}
 			std::vector<cv::DMatch> good_matches;
 			if(knnMatch)
 			{

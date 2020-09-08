@@ -10,21 +10,21 @@ file( GLOB_RECURSE HEADERS LIST_DIRECTORIES false CONFIGURE_DEPENDS
 # only run if source files were found
 list( LENGTH SRCS HAS_SOURCES )
 if( ${HAS_SOURCES} GREATER 0 )
-  add_library( Ruff STATIC ${HEADERS} ${SRCS} )
+	add_library( Ruff STATIC ${HEADERS} ${SRCS})
 
-  set_target_properties( Ruff
-    PROPERTIES
-    CXX_STANDARD 20
-    CXX_STANDARD_REQUIRED True
-    ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib"
-    LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib"
-    RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
-  )
+	set_target_properties( Ruff
+		PROPERTIES
+		CXX_STANDARD 20
+		CXX_STANDARD_REQUIRED True
+		ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib"
+		LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib"
+		RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
+	)
 
-  # PUBLIC will propogate opts to all linked targets
-  target_compile_options( Ruff PUBLIC ${OPTS} )
+	# PUBLIC will propogate opts to all linked targets
+	target_compile_options( Ruff PUBLIC ${OPTS} )
 
-  target_include_directories( Ruff PUBLIC 
+	target_include_directories( Ruff PUBLIC 
 		${PROJECT_BINARY_DIR} 
 		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}
 		${PROJECT_SOURCE_DIR}/src
