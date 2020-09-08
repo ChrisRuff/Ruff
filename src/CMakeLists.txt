@@ -27,11 +27,14 @@ if( ${HAS_SOURCES} GREATER 0 )
   target_include_directories( Ruff PUBLIC 
 		${PROJECT_BINARY_DIR} 
 		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}
-		${PROJECT_SOURCE_DIR}/src)
-		#${OpenCV_INCLUDE_DIRS})
+		${PROJECT_SOURCE_DIR}/src
+		${CONAN_INCLUDE_DIRS})
 
-	target_link_libraries(Ruff ${CONAN_LIBS})
-	#target_link_libraries(Ruff xtensor)
-	#target_link_libraries(Ruff ${OpenCV_LIBRARIES})
+		target_link_libraries(Ruff PRIVATE
+			CONAN_PKG::opencv
+			CONAN_PKG::zlib
+			CONAN_PKG::xtensor
+			CONAN_PKG::doctest
+			CONAN_PKG::bzip2)
 endif()
 

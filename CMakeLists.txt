@@ -33,6 +33,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(BUILD_TESTERS "Build testers" ON)
 
+include (cmake/Cache.cmake)
+
 if( CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME )
 
 	# append path to search for cmake modules
@@ -69,8 +71,9 @@ if(BUILD_TESTERS)
 	add_definitions(-DBUILD_TESTERS)
 endif()
 
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
+include(cmake/Conan.cmake)
+run_conan()
+
 # Add target Ruff
 add_subdirectory(src)
 

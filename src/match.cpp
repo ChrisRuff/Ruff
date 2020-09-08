@@ -1,5 +1,5 @@
 #include "match.hpp"
-#include <opencv2/xfeatures2d.hpp>
+//#include <opencv2/xfeatures2d.hpp>
 
 namespace ruff
 {
@@ -18,11 +18,11 @@ namespace ruff
 			{
 				this->detector = cv::BRISK::create();
 			}
-			else if(detectorType == DetectorType::DAISY)
-			{
-				assert(("Daisy is only supported with FLANN matcher", matcherType == MatcherType::FLANN));
-				this->detector = cv::xfeatures2d::DAISY::create();
-			}
+			//else if(detectorType == DetectorType::DAISY)
+			//{
+			//	assert(("Daisy is only supported with FLANN matcher", matcherType == MatcherType::FLANN));
+			//	this->detector = cv::xfeatures2d::DAISY::create();
+			//}
 			else if(detectorType == DetectorType::ORB)
 			{
 				this->detector = cv::ORB::create();
@@ -50,28 +50,28 @@ namespace ruff
 			std::vector<cv::KeyPoint> kpts1, kpts2;
 			cv::Mat desc1, desc2;
 
-			if(dType == DetectorType::DAISY)
-			{
-				int diameter = 25;
-				// Add every pixel to the list of keypoints for each image
-				for (double xx = diameter; xx < reference.size().width - diameter; ++xx) 
-				{
-					for (double yy = diameter; yy < reference.size().height - diameter; ++yy) 
-					{
-						kpts1.push_back(cv::KeyPoint(xx, yy, diameter));
-					}
-				}
-				for (double xx = diameter; xx < target.size().width - diameter; ++xx) 
-				{
-					for (double yy = diameter; yy < target.size().height - diameter; ++yy) 
-					{
-						kpts2.push_back(cv::KeyPoint(xx, yy, diameter));
-					}
-				}
-				detector->compute(reference, kpts1, desc1);
-				detector->compute(target, kpts2, desc2);
-			}
-			else
+			//if(dType == DetectorType::DAISY)
+			//{
+			//	int diameter = 25;
+			//	// Add every pixel to the list of keypoints for each image
+			//	for (double xx = diameter; xx < reference.size().width - diameter; ++xx) 
+			//	{
+			//		for (double yy = diameter; yy < reference.size().height - diameter; ++yy) 
+			//		{
+			//			kpts1.push_back(cv::KeyPoint(xx, yy, diameter));
+			//		}
+			//	}
+			//	for (double xx = diameter; xx < target.size().width - diameter; ++xx) 
+			//	{
+			//		for (double yy = diameter; yy < target.size().height - diameter; ++yy) 
+			//		{
+			//			kpts2.push_back(cv::KeyPoint(xx, yy, diameter));
+			//		}
+			//	}
+			//	detector->compute(reference, kpts1, desc1);
+			//	detector->compute(target, kpts2, desc2);
+			//}
+			//else
 			{
 				// Find features on both images
 				detector->detect(reference, kpts1);
