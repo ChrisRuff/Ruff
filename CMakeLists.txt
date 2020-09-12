@@ -23,7 +23,7 @@ colourized("PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR}" ${MAG} )
 colourized("PROJECT_BINARY_DIR: ${PROJECT_BINARY_DIR}" ${MAG} )
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_BUILD_TYPE "Debug")
+set(CMAKE_BUILD_TYPE "Release")
 
 option(BUILD_TESTERS "Build testers" ON)
 option(BUILD_TESTERS "Build examples" ON)
@@ -54,6 +54,14 @@ if( CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME )
 	endif()
 endif()
 
+
+if(BUILD_TESTERS)
+	add_definitions(-DBUILD_TESTERS)
+endif()
+
+include(cmake/Conan.cmake)
+run_conan()
+
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 	add_compile_options (-fdiagnostics-color=always)
 	set(OPTS -Wall -Wextra -Wctor-dtor-privacy -Wno-init-list-lifetime
@@ -62,13 +70,6 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 endif()
 
 colourized( "Compile Options: ${OPTS}" ${YLW} )
-
-if(BUILD_TESTERS)
-	add_definitions(-DBUILD_TESTERS)
-endif()
-
-include(cmake/Conan.cmake)
-run_conan()
 
 # Add target Ruff
 colourized( "Configuring Ruff Library" ${BLU} )

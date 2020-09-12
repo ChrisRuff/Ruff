@@ -64,8 +64,8 @@ public:
 			auto right = getCVMat(getWidth() / 2 + 5, 5, getWidth() - 5, getHeight() - 5);
 
 			// Convert to gray
-			cvtColor(left, left, CV_RGBA2GRAY);
-			cvtColor(right, right, CV_RGBA2GRAY);
+			cvtColor(left, left, cv::COLOR_RGB2GRAY);
+			cvtColor(right, right, cv::COLOR_RGB2GRAY);
 
 			// Match
 			auto result = matcher.match(left, right);

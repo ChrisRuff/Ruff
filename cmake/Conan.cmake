@@ -16,16 +16,21 @@ macro(run_conan)
   conan_cmake_run(
     REQUIRES
 		opencv/4.3.0@conan/stable
-		zlib/1.2.11@conan/stable
 		xtensor/0.20.10@omaralvarez/public-conan
+		sdl2/2.0.12@bincrafters/stable
+		sdl2_ttf/2.0.15@bincrafters/stable
 		doctest/2.3.7
-		bzip2/1.0.8
+
+		glib/2.64.0@bincrafters/stable # Overrides
+		freetype/2.10.1
     OPTIONS
 		opencv:contrib=True
-		opencv:nonfree=True
 		opencv:gflags=False
+		sdl2:pulse=False
+		sdl2:nas=False
     BASIC_SETUP
     CMAKE_TARGETS # individual targets to link to
     BUILD
     missing)
+	
 endmacro()

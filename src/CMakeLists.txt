@@ -21,20 +21,23 @@ if( ${HAS_SOURCES} GREATER 0 )
 		RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
 	)
 
-	# PUBLIC will propogate opts to all linked targets
-	target_compile_options( Ruff PUBLIC ${OPTS} )
+	# PRIVATE will not propogate opts to all linked targets
+	target_compile_options( Ruff PRIVATE ${OPTS} )
 
 	target_include_directories( Ruff PUBLIC 
 		${PROJECT_BINARY_DIR} 
 		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}
-		${PROJECT_SOURCE_DIR}/src
+		${PROJECT_SOURCE_DIR}/src)
+
+	# Make conan includes system dirs to prevent gcc warnings
+	target_include_directories( Ruff SYSTEM PUBLIC 
 		${CONAN_INCLUDE_DIRS})
 
-		target_link_libraries(Ruff PRIVATE
+	target_link_libraries(Ruff PRIVATE
 			CONAN_PKG::opencv
-			CONAN_PKG::zlib
 			CONAN_PKG::xtensor
 			CONAN_PKG::doctest
-			CONAN_PKG::bzip2)
+			CONAN_PKG::sdl2
+			CONAN_PKG::sdl2_ttf)
 endif()
 
