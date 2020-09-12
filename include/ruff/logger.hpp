@@ -42,6 +42,8 @@ namespace ruff
 		std::cout << yellow << std::endl;
 		std::cout << "\n## WARNING: " << message << " ##" << std::endl;
 		std::cout << defaultFG << std::endl;
+#else
+		(void)message;
 #endif
 	};
 }

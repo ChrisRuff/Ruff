@@ -83,9 +83,9 @@ namespace ruff
 			 * {good_matches, kpts1, kpts2}
 			 */
 			/* ----------------------------------------------------------------------------*/
-			kptMatch match(const cv::Mat& reference, const cv::Mat& target);
+			[[nodiscard]] kptMatch match(const cv::Mat& reference, const cv::Mat& target) const;
 
-			cv::Ptr<cv::Feature2D> getDetector() { return detector; };
+			[[nodiscard]] cv::Ptr<cv::Feature2D> getDetector() const { return detector; };
 		};
 
 	};

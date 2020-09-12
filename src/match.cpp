@@ -45,10 +45,12 @@ namespace ruff
 			}
 		}
 
-		kptMatch Matcher::match(const cv::Mat& reference, const cv::Mat& target)
+		[[nodiscard]] kptMatch Matcher::match(const cv::Mat& reference, const cv::Mat& target) const
 		{
-			std::vector<cv::KeyPoint> kpts1, kpts2;
-			cv::Mat desc1, desc2;
+			std::vector<cv::KeyPoint> kpts1;
+			std::vector<cv::KeyPoint> kpts2;
+			cv::Mat desc1; 
+			cv::Mat desc2;
 
 			//if(dType == DetectorType::DAISY)
 			//{

@@ -13,9 +13,13 @@ if( NOT WIN32 )
 endif()
 cmake_minimum_required(VERSION 3.17)
 
+
 project( ruff VERSION 0.0.1 
 						DESCRIPTION "Ruff"
 						LANGUAGES CXX )
+
+include(cmake/Conan.cmake)
+run_conan()
 
 colourized("CMAKE_PROJECT_NAME: ${CMAKE_PROJECT_NAME}" ${MAG} )
 colourized("PROJECT_NAME: ${PROJECT_BINARY_DIR}" ${MAG} )
@@ -59,8 +63,6 @@ if(BUILD_TESTERS)
 	add_definitions(-DBUILD_TESTERS)
 endif()
 
-include(cmake/Conan.cmake)
-run_conan()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 	add_compile_options (-fdiagnostics-color=always)
