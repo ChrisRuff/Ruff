@@ -8,6 +8,7 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
 
+#include "logger.hpp"
 
 namespace ruff
 {
@@ -27,7 +28,7 @@ namespace ruff
 			BRISK,
 			DAISY
 		};
-		static const DetectorType DetectorTypes[] = {
+		static constexpr DetectorType DetectorTypes[] = {
 			DetectorType::ORB, DetectorType::AKAZE, DetectorType::BRISK, DetectorType::DAISY};
 
 		/* --------------------------------------------------------------------------*/
@@ -40,7 +41,7 @@ namespace ruff
 			BF,
 			FLANN
 		};
-		static const MatcherType MatcherTypes[] = {MatcherType::BF , MatcherType::FLANN};
+		static constexpr MatcherType MatcherTypes[] = {MatcherType::BF , MatcherType::FLANN};
 
 		/* --------------------------------------------------------------------------*/
 		/**
@@ -69,6 +70,8 @@ namespace ruff
 			/* ----------------------------------------------------------------------------*/
 			Matcher(DetectorType detectorType, MatcherType matcherType, bool knnMatch = false);
 
+			Matcher() = default;
+
 			/* --------------------------------------------------------------------------*/
 			/**
 			 * @Synopsis Takes two images and find the matching features between the two images
@@ -80,7 +83,9 @@ namespace ruff
 			 * {good_matches, kpts1, kpts2}
 			 */
 			/* ----------------------------------------------------------------------------*/
-			kptMatch match(const cv::Mat& reference, const cv::Mat& target);
+			[[nodiscard]] kptMatch match(const cv::Mat& reference, const cv::Mat& target) const;
+
+			[[nodiscard]] cv::Ptr<cv::Feature2D> getDetector() const { return detector; };
 		};
 
 	};

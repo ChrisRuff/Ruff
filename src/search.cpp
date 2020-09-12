@@ -14,16 +14,17 @@ namespace ruff
 			std::vector<Node> empty;
 			if(!this->isValid(end))
 			{
-#ifndef NDEBUG
-				std::cout << "Destination is an obstacle" << std::endl;
-#endif
+				ruff::logWarning("Destination is an obstacle");
+				return std::nullopt;
+			}
+			if(!this->isValid(start))
+			{
+				ruff::logWarning("Start is an obstacle");
 				return std::nullopt;
 			}
 			if(isEnd(start.x, start.y, endNode))
 			{
-#ifndef NDEBUG
-				std::cout << "You are the destination" << std::endl;
-#endif
+				logWarning("You are the destination");
 				return std::nullopt;
 			}
 			std::vector<std::vector<bool>> closed_list(map.size());
@@ -109,10 +110,8 @@ namespace ruff
 					}
 				}
 			}
-#ifndef NDEBUG
-				std::cout << "Destination was not found" << std::endl;
-#endif
-				return std::nullopt;
+			logWarning("Destination was not found" );
+			return std::nullopt;
 		}
 		std::optional<std::vector<Point2D<int>>> AStar::getPath(const int& x1, const int& y1, 
 				                                             const int& x2, const int& y2)
@@ -153,7 +152,7 @@ namespace ruff
 			}
 			catch(const std::exception& el)
 			{
-				std::cout << el.what() << std::endl;
+				logWarning(el.what());
 				return std::nullopt;
 			}
 		}

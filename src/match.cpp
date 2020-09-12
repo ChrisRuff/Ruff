@@ -1,5 +1,5 @@
 #include "match.hpp"
-#include <opencv2/xfeatures2d.hpp>
+//#include <opencv2/xfeatures2d.hpp>
 
 namespace ruff
 {
@@ -8,7 +8,6 @@ namespace ruff
 		Matcher::Matcher(DetectorType detectorType, MatcherType matcherType, 
 				bool knnMatch) : dType(detectorType), mType(matcherType), knnMatch(knnMatch)
 		{
-
 			// Set detector
 			if(detectorType == DetectorType::AKAZE)
 			{
@@ -18,15 +17,16 @@ namespace ruff
 			{
 				this->detector = cv::BRISK::create();
 			}
-			else if(detectorType == DetectorType::DAISY)
-			{
-				assert(("Daisy is only supported with FLANN matcher", matcherType == MatcherType::FLANN));
-				this->detector = cv::xfeatures2d::DAISY::create();
-			}
+			//else if(detectorType == DetectorType::DAISY)
+			//{
+			//	assert(("Daisy is only supported with FLANN matcher", matcherType == MatcherType::FLANN));
+			//	this->detector = cv::xfeatures2d::DAISY::create();
+			//}
 			else if(detectorType == DetectorType::ORB)
 			{
 				this->detector = cv::ORB::create();
 			}
+
 			// Set Matcher
 			if(matcherType == MatcherType::BF)
 			{
@@ -45,33 +45,35 @@ namespace ruff
 			}
 		}
 
-		kptMatch Matcher::match(const cv::Mat& reference, const cv::Mat& target)
+		[[nodiscard]] kptMatch Matcher::match(const cv::Mat& reference, const cv::Mat& target) const
 		{
-			std::vector<cv::KeyPoint> kpts1, kpts2;
-			cv::Mat desc1, desc2;
+			std::vector<cv::KeyPoint> kpts1;
+			std::vector<cv::KeyPoint> kpts2;
+			cv::Mat desc1; 
+			cv::Mat desc2;
 
-			if(dType == DetectorType::DAISY)
-			{
-				int diameter = 25;
-				// Add every pixel to the list of keypoints for each image
-				for (double xx = diameter; xx < reference.size().width - diameter; ++xx) 
-				{
-					for (double yy = diameter; yy < reference.size().height - diameter; ++yy) 
-					{
-						kpts1.push_back(cv::KeyPoint(xx, yy, diameter));
-					}
-				}
-				for (double xx = diameter; xx < target.size().width - diameter; ++xx) 
-				{
-					for (double yy = diameter; yy < target.size().height - diameter; ++yy) 
-					{
-						kpts2.push_back(cv::KeyPoint(xx, yy, diameter));
-					}
-				}
-				detector->compute(reference, kpts1, desc1);
-				detector->compute(target, kpts2, desc2);
-			}
-			else
+			//if(dType == DetectorType::DAISY)
+			//{
+			//	int diameter = 25;
+			//	// Add every pixel to the list of keypoints for each image
+			//	for (double xx = diameter; xx < reference.size().width - diameter; ++xx) 
+			//	{
+			//		for (double yy = diameter; yy < reference.size().height - diameter; ++yy) 
+			//		{
+			//			kpts1.push_back(cv::KeyPoint(xx, yy, diameter));
+			//		}
+			//	}
+			//	for (double xx = diameter; xx < target.size().width - diameter; ++xx) 
+			//	{
+			//		for (double yy = diameter; yy < target.size().height - diameter; ++yy) 
+			//		{
+			//			kpts2.push_back(cv::KeyPoint(xx, yy, diameter));
+			//		}
+			//	}
+			//	detector->compute(reference, kpts1, desc1);
+			//	detector->compute(target, kpts2, desc2);
+			//}
+			//else
 			{
 				// Find features on both images
 				detector->detect(reference, kpts1);
@@ -87,6 +89,11 @@ namespace ruff
 				if(desc2.type()!=CV_32F) desc2.convertTo(desc2, CV_32F);
 			}
 
+			if(desc1.empty() || desc2.empty())
+			{
+				logWarning("Couldn't find any matches");
+				return kptMatch{};
+			}
 			std::vector<cv::DMatch> good_matches;
 			if(knnMatch)
 			{
