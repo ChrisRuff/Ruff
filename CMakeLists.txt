@@ -14,9 +14,7 @@ if( NOT WIN32 )
 endif()
 
 
-project( ruff VERSION 0.0.1 
-						DESCRIPTION "Ruff"
-						LANGUAGES CXX )
+project( ruff CXX )
 
 include(cmake/Conan.cmake)
 run_conan()
