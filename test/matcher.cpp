@@ -1,4 +1,4 @@
-#include "doctest.h"
+#include "doctest/doctest.h"
 
 #include "match.hpp"
 #include <iostream>
@@ -20,16 +20,16 @@ TEST_CASE("Matching")
 	{
 		for(MatcherType mType : MatcherTypes)
 		{
-			for(const bool knn : {false, true})
+			for(const bool knn : { false, true })
 			{
 				if(dType == DetectorType::DAISY && mType == MatcherType::BF)
 					continue;
 				Matcher matcher(dType, mType, knn);
 				if(display)
 				{
-					cv::Mat outImg;
+					cv::Mat  outImg;
 					kptMatch matchResult;
-					matchResult = matcher.match(im1,im2);
+					matchResult = matcher.match(im1, im2);
 					cv::Mat out;
 					cv::drawMatches(im1, std::get<1>(matchResult), im2, std::get<2>(matchResult), std::get<0>(matchResult), out);
 					cv::imshow("TEST", out);
@@ -40,5 +40,3 @@ TEST_CASE("Matching")
 		}
 	}
 };
-
-

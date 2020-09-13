@@ -11,31 +11,31 @@ using sint = short int;
 
 class AStar : public ruff::ui::Engine
 {
-private:
-	int startButton{};
-	int blockWidthX{};
-	int blockWidthY{};
-	int gap{1};
-	bool changed{true};
+ private:
+	int                            startButton{};
+	int                            blockWidthX{};
+	int                            blockWidthY{};
+	int                            gap{ 1 };
+	bool                           changed{ true };
 	std::vector<std::vector<bool>> map{};
 	std::vector<std::vector<bool>> path{};
 
-public:
-	AStar(const sint width, const sint height, std::string title = "AStar Engine", int pixelRatio = 1) 
-		: Engine(height, width, title, pixelRatio) {}
+ public:
+	AStar(const sint width, const sint height, std::string title = "AStar Engine", int pixelRatio = 1)
+	  : Engine(height, width, title, pixelRatio) {}
 
 	AStar(const AStar& other) = delete;
 
 	AStar& operator=(const AStar& other) = delete;
 
-	virtual void onCreate() override 
+	virtual void onCreate() override
 	{
 		// Initialize the found path, and the map as a 20x20 vector of booleans
-		map = std::vector<std::vector<bool>>(20);
+		map  = std::vector<std::vector<bool>>(20);
 		path = std::vector<std::vector<bool>>(20);
 		for(size_t i = 0; i < map.size(); ++i)
 		{
-			map[i] = std::vector<bool>(20);
+			map[i]  = std::vector<bool>(20);
 			path[i] = std::vector<bool>(20);
 			std::fill(map[i].begin(), map[i].end(), true);
 			std::fill(path[i].begin(), path[i].end(), false);
@@ -46,10 +46,9 @@ public:
 		blockWidthY = getHeight() / map[0].size();
 
 		// Add start button
-		startButton = addButton(0, 0, blockWidthX, blockWidthY, ruff::ui::GREEN, pixelRatio,
-				"../examples/ui/astar/DejaVuSans.ttf", "Start", 28);
+		startButton = addButton(0, 0, blockWidthX, blockWidthY, ruff::ui::GREEN, pixelRatio, "../examples/ui/astar/DejaVuSans.ttf", "Start", 28);
 	}
-	virtual void onUpdate(double deltaTime) override 
+	virtual void onUpdate(double deltaTime) override
 	{
 		(void)deltaTime;
 
@@ -59,10 +58,10 @@ public:
 			   cursor is in and then make it an obstacle */
 			size_t x = mouse.mouse_x / blockWidthX;
 			size_t y = mouse.mouse_y / blockWidthY;
-			if(!(x == y && (x == 0 || x == map.size()-1))) // Don't modify start/end block
+			if(!(x == y && (x == 0 || x == map.size() - 1)))// Don't modify start/end block
 			{
 				map[x][y] = !map[x][y];
-				changed = true;
+				changed   = true;
 			}
 		}
 
@@ -71,11 +70,11 @@ public:
 		if(buttons[startButton].get()->isPressed() && changed)
 		{
 			// Set start and end points to be true
-			map[0][0] = true;
-			map[map.size()-1][map[0].size()-1] = true;
-			auto searcher = ruff::search::AStar(map);
-			auto solution = searcher.getPath(0,0, map.size()-1, map[0].size()-1);
-			changed = false;
+			map[0][0]                              = true;
+			map[map.size() - 1][map[0].size() - 1] = true;
+			auto searcher                          = ruff::search::AStar(map);
+			auto solution                          = searcher.getPath(0, 0, map.size() - 1, map[0].size() - 1);
+			changed                                = false;
 			if(solution)
 			{
 				// Clear previous found path
@@ -107,16 +106,12 @@ public:
 				if(!map[i][j])
 				{
 					// Draw obstacles
-					drawSquare(i*blockWidthX + gap, j*blockWidthY + gap, i*blockWidthX+
-							getWidth() / map.size() - gap, j*blockWidthY+ getHeight() /
-							map[0].size() - gap, ruff::ui::RED, true);
+					drawSquare(i * blockWidthX + gap, j * blockWidthY + gap, i * blockWidthX + getWidth() / map.size() - gap, j * blockWidthY + getHeight() / map[0].size() - gap, ruff::ui::RED, true);
 				}
 				else if(path[i][j] && buttons[startButton]->isPressed())
 				{
 					// Draw path
-					drawSquare(i*blockWidthX + gap, j*blockWidthY + gap, i*blockWidthX+
-							getWidth() / map.size() - gap, j*blockWidthY+ getHeight() /
-							map[0].size() - gap, ruff::ui::YELLOW, true);
+					drawSquare(i * blockWidthX + gap, j * blockWidthY + gap, i * blockWidthX + getWidth() / map.size() - gap, j * blockWidthY + getHeight() / map[0].size() - gap, ruff::ui::YELLOW, true);
 				}
 			}
 		}

@@ -20,32 +20,35 @@ struct Ball
 
 class Circles : public ruff::ui::Engine
 {
-private:
+ private:
 	std::vector<Ball> balls{};
-	Ball* selected{nullptr};
+	Ball*             selected{ nullptr };
 
 	void addBall(float x, float y, float r = 5.0f)
 	{
 		Ball b;
-		b.px = x; b.py = y;
-		b.vx = 0; b.vy = 0;
-		b.ax = 0; b.ay = 0;
+		b.px     = x;
+		b.py     = y;
+		b.vx     = 0;
+		b.vy     = 0;
+		b.ax     = 0;
+		b.ay     = 0;
 		b.radius = r;
-		b.mass = r * 10.0f;
+		b.mass   = r * 10.0f;
 
 		b.id = balls.size();
 		balls.emplace_back(b);
 	}
 
-public:
-	Circles(const sint width, const sint height, std::string title = "Circle Engine", int pixelRatio = 1) 
-		: Engine(height, width, title, pixelRatio) {}
+ public:
+	Circles(const sint width, const sint height, std::string title = "Circle Engine", int pixelRatio = 1)
+	  : Engine(height, width, title, pixelRatio) {}
 
 	Circles(const Circles& other) = delete;
 
 	Circles& operator=(const Circles& other) = delete;
 
-	virtual void onCreate() override 
+	virtual void onCreate() override
 	{
 		//addBall(width * .25f, height * 0.5f, fDefaultRad);
 		//addBall(width * .75f, height * 0.5f, fDefaultRad);
@@ -53,18 +56,14 @@ public:
 		{
 			addBall(rand() % screenWidth, rand() % screenHeight, rand() % 16 + 2);
 		}
-
 	}
-	virtual void onUpdate(double deltaTime) override 
+	virtual void onUpdate(double deltaTime) override
 	{
-		auto doCirclesOverlap = [](float x1, float y1, float r1, 
-				float x2, float y2, float r2)
-		{
-			return std::abs((x1-x2) * (x1-x2) + (y1-y2)*(y1-y2)) < (r1+r2)*(r1+r2);
+		auto doCirclesOverlap = [](float x1, float y1, float r1, float x2, float y2, float r2) {
+			return std::abs((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) < (r1 + r2) * (r1 + r2);
 		};
-		auto isPointInCircle = [](float x1, float y1, float r1, float px, float py)
-		{
-			return std::abs((x1 - px) * (x1 - px) + (y1 - py) * (y1 - py)) < (r1*r1);
+		auto isPointInCircle = [](float x1, float y1, float r1, float px, float py) {
+			return std::abs((x1 - px) * (x1 - px) + (y1 - py) * (y1 - py)) < (r1 * r1);
 		};
 
 		if(mouse.mouse_pressed[0] || mouse.mouse_pressed[1])
@@ -120,9 +119,9 @@ public:
 			if(ball.px > screenWidth) ball.px -= screenWidth;
 			if(ball.py > screenHeight) ball.py -= screenHeight;
 
-			if(std::abs(ball.vx*ball.vx + ball.vy*ball.vy) < 0.01f)
+			if(std::abs(ball.vx * ball.vx + ball.vy * ball.vy) < 0.01f)
 			{
-				ball.vx = 0; 
+				ball.vx = 0;
 				ball.vy = 0;
 			}
 		}
@@ -133,13 +132,11 @@ public:
 			{
 				if(ball.id != target.id)
 				{
-					if(doCirclesOverlap(ball.px, ball.py, ball.radius,
-								target.px, target.py, target.radius))
+					if(doCirclesOverlap(ball.px, ball.py, ball.radius, target.px, target.py, target.radius))
 					{
-						collidingBalls.push_back({&ball, &target});
+						collidingBalls.push_back({ &ball, &target });
 
-						float distance = std::sqrt((ball.px-target.px) * (ball.px-target.px) + 
-								(ball.py-target.py)*(ball.py-target.py));
+						float distance = std::sqrt((ball.px - target.px) * (ball.px - target.px) + (ball.py - target.py) * (ball.py - target.py));
 
 						float overlap = 0.5f * (distance - ball.radius - target.radius);
 
@@ -160,7 +157,7 @@ public:
 
 			float distance = std::sqrt((b1->px - b2->px) * (b1->px - b2->px) + (b1->py - b2->py) * (b1->py - b2->py));
 
-			// Normal 
+			// Normal
 			float nx = (b2->px - b1->px) / distance;
 			float ny = (b2->py - b1->py) / distance;
 
@@ -192,7 +189,7 @@ public:
 			drawCircle(b.px, b.py, b.radius, ruff::ui::WHITE);
 		}
 
-		for(auto c: collidingBalls)
+		for(auto c : collidingBalls)
 		{
 			drawLine(c.first->px, c.first->py, c.second->px, c.second->py, ruff::ui::RED);
 		}
@@ -201,8 +198,6 @@ public:
 			drawLine(selected->px, selected->py, mouse.mouse_x, mouse.mouse_y);
 		}
 	}
-
-
 };
 
 int main()

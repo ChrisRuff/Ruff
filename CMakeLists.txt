@@ -49,13 +49,9 @@ if( CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME )
 	# enables testing and provides BUILD_TESTING option
 	include( CTest )
 
-	find_package( Doxygen )
-	if( Doxygen_FOUND )
-		colourized( "Configuring Docs" ${BLU} )
-		add_subdirectory( docs )
-	else()
-		message( STATUS "Doxygen not found, not building docs" )
-	endif()
+	include( cmake/CppCheck.cmake )
+	include( cmake/ClangFormat.cmake )
+
 endif()
 
 
@@ -72,6 +68,14 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 endif()
 
 colourized( "Compile Options: ${OPTS}" ${YLW} )
+
+find_package( Doxygen )
+if( Doxygen_FOUND )
+	colourized( "Configuring Docs" ${BLU} )
+	add_subdirectory( docs )
+else()
+	message( STATUS "Doxygen not found, not building docs" )
+endif()
 
 # Add target Ruff
 colourized( "Configuring Ruff Library" ${BLU} )
