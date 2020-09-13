@@ -12,6 +12,12 @@ macro(run_conan)
     bincrafters
     URL
     https://api.bintray.com/conan/bincrafters/public-conan)
+	conan_add_remote(
+		NAME
+		omaralvarez 
+		URL
+		https://api.bintray.com/conan/omaralvarez/public-conan
+		)
 
 	# Need to install libselinux
   conan_cmake_run(
