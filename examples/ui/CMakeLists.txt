@@ -1,4 +1,3 @@
-cmake_minimum_required(VERSION 3.16.5)
 add_subdirectory(circles)
 target_include_directories(circles SYSTEM PRIVATE ${CONAN_INCLUDE_DIRS_OPENCV})
 target_compile_options( circles PRIVATE ${OPTS} )

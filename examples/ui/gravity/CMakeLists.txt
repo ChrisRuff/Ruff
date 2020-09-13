@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.10)
-
 file( GLOB_RECURSE SRCS LIST_DIRECTORIES false CONFIGURE_DEPENDS *.cpp )
 
 # headers won't affect library but will let IDEs find them

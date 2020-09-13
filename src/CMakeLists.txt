@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.10)
-
 # glob collection of src files not 100% reliable
 file( GLOB_RECURSE SRCS LIST_DIRECTORIES false CONFIGURE_DEPENDS *.cpp )
 
