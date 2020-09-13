@@ -14,7 +14,13 @@ jobs:
           command: 'apt-get update && apt-get install -y gcc g++'
       - run:
           name: Install CMAKE
-          command: 'apt-get update && sudo apt-get install -y cmake libselinux-dev'
+          command: 'apt-get update && sudo apt-get install -y cmake'
+      - run:
+          name: Install Ninja
+          command: 'apt-get update && sudo apt-get install ninja-build'
+      - run:
+          name: Install necessary system packages
+          command: 'apt-get update && sudo apt-get install -y libselinux-dev'
       - run:
           name: Creating Build Files
           command: 'cmake -H. -Bbuild -GNinja'
