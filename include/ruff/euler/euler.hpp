@@ -9,10 +9,10 @@
 
 namespace ruff
 {
-	namespace euler
-	{
-		/* --------------------------------------------------------------------------*/
-		/**
+namespace euler
+{
+	/* --------------------------------------------------------------------------*/
+	/**
 		 * @Synopsis  Finds the sum of all numbers that are multiples of the inputted 
 		 * initializer list values within the upper and lower bounds
 		 *
@@ -22,14 +22,12 @@ namespace ruff
 		 *
 		 * @Returns   
 		 */
-		/* ----------------------------------------------------------------------------*/
-		unsigned int sumOfMultiples(const std::initializer_list<unsigned int>& multiples,
-				const unsigned int lowerBound = 0,
-				const unsigned int upperBound = 1000);
+	/* ----------------------------------------------------------------------------*/
+	unsigned int sumOfMultiples(const std::initializer_list<unsigned int>& multiples, const unsigned int lowerBound = 0, const unsigned int upperBound = 1000);
 
 
-		/* --------------------------------------------------------------------------*/
-		/**
+	/* --------------------------------------------------------------------------*/
+	/**
 		 * @Synopsis  Generates the fibonacci sequence up to but the max value
 		 *
 		 * @Param max Max value the fibonacci sequence will count to
@@ -38,52 +36,47 @@ namespace ruff
 		 *
 		 * @Returns Fibonacci sequence 
 		 */
-		/* ----------------------------------------------------------------------------*/
-		std::vector<unsigned int> generateFibonacci(const unsigned int max,
-				const unsigned int first = 1,
-				const unsigned int second = 2);
+	/* ----------------------------------------------------------------------------*/
+	std::vector<unsigned int> generateFibonacci(const unsigned int max, const unsigned int first = 1, const unsigned int second = 2);
 
 
-		/* --------------------------------------------------------------------------*/
-		/**
+	/* --------------------------------------------------------------------------*/
+	/**
 		 * @Synopsis  Counts all even numbers in the vector
 		 *
 		 * @Param numbers vector of numbers
 		 *
 		 * @Returns Sum of all even numbers
 		 */
-		/* ----------------------------------------------------------------------------*/
-		unsigned int countEven(std::vector<unsigned int> numbers);
+	/* ----------------------------------------------------------------------------*/
+	unsigned int countEven(std::vector<unsigned int> numbers);
 
 
-
-		/* --------------------------------------------------------------------------*/
-		/**
+	/* --------------------------------------------------------------------------*/
+	/**
 		 * @Synopsis  Finds the prime factors for a given number
 		 *
 		 * @Param num 
 		 *
 		 * @Returns   list of all prime factors that multiplied together result in num
 		 */
-		/* ----------------------------------------------------------------------------*/
-		std::vector<int> findPrimeFactors(long num);
+	/* ----------------------------------------------------------------------------*/
+	std::vector<int> findPrimeFactors(long num);
 
-		/* --------------------------------------------------------------------------*/
-		/**
+	/* --------------------------------------------------------------------------*/
+	/**
 		 * @Synopsis Generates all prime numbers up to limit
 		 *
 		 * @Param limit max number that will be checked by the sieve
 		 *
 		 * @Returns list of prime numbers
 		 */
-		/* ----------------------------------------------------------------------------*/
-		std::vector<unsigned long> SieveOfAtkin(unsigned long limit);
+	/* ----------------------------------------------------------------------------*/
+	std::vector<unsigned long> SieveOfAtkin(unsigned long limit);
 
 
-
-
-		/* --------------------------------------------------------------------------*/
-		/**
+	/* --------------------------------------------------------------------------*/
+	/**
 		 * @Synopsis Sums all values from min to max with a step, and then squares the output
 		 *
 		 * @Param min start value
@@ -94,22 +87,22 @@ namespace ruff
 		 *
 		 * @Returns 
 		 */
-		/* ----------------------------------------------------------------------------*/
-		unsigned int squareOfSum(int min, int max, int step = 1);
+	/* ----------------------------------------------------------------------------*/
+	unsigned int squareOfSum(int min, int max, int step = 1);
 
-		/* --------------------------------------------------------------------------*/
-		/**
+	/* --------------------------------------------------------------------------*/
+	/**
 		 * @Synopsis Takes a vector of integers and sums then returning the square of the sum
 		 *
 		 * @Param numbers vector of numbers to be summed then squared
 		 *
 		 * @Returns 
 		 */
-		/* ----------------------------------------------------------------------------*/
-		unsigned int squareOfSum(const std::vector<int>& numbers);
+	/* ----------------------------------------------------------------------------*/
+	unsigned int squareOfSum(const std::vector<int>& numbers);
 
-		/* --------------------------------------------------------------------------*/
-		/**
+	/* --------------------------------------------------------------------------*/
+	/**
 		 * @Synopsis Sums each value squared from min to max with a step
 		 *
 		 * @Param min start value
@@ -120,18 +113,18 @@ namespace ruff
 		 *
 		 * @Returns 
 		 */
-		/* ----------------------------------------------------------------------------*/
-		unsigned int sumOfSquares(int min, int max, int step = 1);
+	/* ----------------------------------------------------------------------------*/
+	unsigned int sumOfSquares(int min, int max, int step = 1);
 
-		/* --------------------------------------------------------------------------*/
-		/**
+	/* --------------------------------------------------------------------------*/
+	/**
 		 * @Synopsis Takes a vector of integers and squares each value, then sums all the values
 		 *
 		 * @Param numbers vector of numbers to be squared then summed
 		 *
 		 * @Returns 
 		 */
-		/* ----------------------------------------------------------------------------*/
-		unsigned int sumOfSquares(const std::vector<int>& numbers);
-	}
-}
+	/* ----------------------------------------------------------------------------*/
+	unsigned int sumOfSquares(const std::vector<int>& numbers);
+}// namespace euler
+}// namespace ruff

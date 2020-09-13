@@ -30,13 +30,12 @@ if( ${HAS_SOURCES} GREATER 0 )
 		${PROJECT_SOURCE_DIR}/src)
 
 	# Make conan includes system dirs to prevent gcc warnings
-	target_include_directories( Ruff SYSTEM PUBLIC 
+	target_include_directories( Ruff SYSTEM PRIVATE 
 		${CONAN_INCLUDE_DIRS})
 
 	target_link_libraries(Ruff PRIVATE
 			CONAN_PKG::opencv
 			CONAN_PKG::xtensor
-			CONAN_PKG::doctest
 			CONAN_PKG::sdl2
 			CONAN_PKG::sdl2_ttf)
 endif()
