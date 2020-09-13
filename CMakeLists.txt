@@ -15,6 +15,9 @@ endif()
 
 
 project( ruff CXX )
+#project( ruff VERSION 0.0.1
+#								DESCRIPTION "Ruff"
+#								LANGAUGES CXX)
 
 include(cmake/Conan.cmake)
 run_conan()
