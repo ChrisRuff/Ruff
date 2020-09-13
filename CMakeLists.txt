@@ -13,7 +13,6 @@ if( NOT WIN32 )
 endif()
 cmake_minimum_required(VERSION 3.17)
 
-
 project( ruff VERSION 0.0.1 
 						DESCRIPTION "Ruff"
 						LANGUAGES CXX )
@@ -45,15 +44,11 @@ if( CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME )
 	# turn off compiler specific extensions
 	set( CMAKE_CXX_EXTENSIONS OFF )
 
-	# must be done in main CMakeLists
-	# enables testing and provides BUILD_TESTING option
-	include( CTest )
-
-	include( cmake/CppCheck.cmake )
-	include( cmake/ClangFormat.cmake )
-
 endif()
 
+include( cmake/CppCheck.cmake )
+include( cmake/ClangFormat.cmake )
+#set(CMAKE_CXX_CLANG_TIDY "clang-tidy")
 
 if(BUILD_TESTERS)
 	add_definitions(-DBUILD_TESTERS)

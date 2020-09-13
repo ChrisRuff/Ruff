@@ -21,7 +21,12 @@ if( ${HAS_SOURCES} GREATER 0 )
 
 	target_link_libraries(${TARGET_TEST} CONAN_PKG::doctest)
 	target_link_libraries(${TARGET_TEST} Ruff)
-	add_test( NAME ${TARGET_TEST} COMMAND ${TARGET_TEST} )
+
+	# I didn't like ctest implementation so I did it this way 
+	add_custom_target(
+					test
+					COMMAND ${CMAKE_BINARY_DIR}/bin/${TARGET_TEST} 
+					DEPENDS Ruff ${TARGET_TEST})
 
 	target_include_directories( ${TARGET_TEST} PUBLIC ${PROJECT_BINARY_DIR}
 		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}
