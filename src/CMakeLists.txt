@@ -12,7 +12,7 @@ if( ${HAS_SOURCES} GREATER 0 )
 
 	set_target_properties( Ruff
 		PROPERTIES
-		CXX_STANDARD 20
+		CXX_STANDARD 17
 		CXX_STANDARD_REQUIRED True
 		ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib"
 		LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib"
@@ -29,7 +29,10 @@ if( ${HAS_SOURCES} GREATER 0 )
 
 	# Make conan includes system dirs to prevent gcc warnings
 	target_include_directories( Ruff SYSTEM PRIVATE 
-		${CONAN_INCLUDE_DIRS})
+		${CONAN_INCLUDE_DIRS_SDL2}
+		${CONAN_INCLUDE_DIRS_SDL2_TTF}
+		${CONAN_INCLUDE_DIRS_XTENSOR}
+		${CONAN_INCLUDE_DIRS_OPENCV})
 
 	target_link_libraries(Ruff PRIVATE
 			CONAN_PKG::opencv
