@@ -24,7 +24,7 @@ if( ${HAS_SOURCES} GREATER 0 )
 
 	# I didn't like ctest implementation so I did it this way 
 	add_custom_target(
-					test
+					Tester
 					COMMAND ${CMAKE_BINARY_DIR}/bin/${TARGET_TEST} 
 					DEPENDS Ruff ${TARGET_TEST})
 
@@ -34,7 +34,10 @@ if( ${HAS_SOURCES} GREATER 0 )
 
 	target_include_directories(${TARGET_TEST} SYSTEM PRIVATE
 		${CONAN_INCLUDE_DIRS_DOCTEST}
-		${CONAN_INCLUDE_DIRS_OPENCV})
+		${CONAN_INCLUDE_DIRS_OPENCV}
+		${CONAN_INCLUDE_DIRS_SDL2}
+		${CONAN_INCLUDE_DIRS_SDL2_TTF}
+		${CONAN_INCLUDE_DIRS_XTENSOR})
 		
 endif()
 

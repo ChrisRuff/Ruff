@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 3.6)
 if( NOT WIN32 )
 	set( BLU "[1;34m" CACHE STRING "AnsiBlue" )
 	set( RED "[1;31m" CACHE STRING "AnsiRed" )
@@ -11,11 +12,12 @@ if( NOT WIN32 )
 		message( "${COL}${MESSAGE}${RST}" )
 	endfunction()
 endif()
-cmake_minimum_required(VERSION 3.17)
 
-project( ruff VERSION 0.0.1 
-						DESCRIPTION "Ruff"
-						LANGUAGES CXX )
+project( ruff CXX )
+#project( ruff VERSION 0.0.1
+#								DESCRIPTION "Ruff"
+#								LANGAUGES CXX)
+
 
 include(cmake/Conan.cmake)
 run_conan()
@@ -29,7 +31,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE "Release")
 
 option(BUILD_TESTERS "Build testers" ON)
-option(BUILD_TESTERS "Build examples" ON)
+option(BUILD_EXAMPLES "Build examples" ON)
 
 include (cmake/Cache.cmake)
 

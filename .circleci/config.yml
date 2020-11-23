@@ -1,0 +1,37 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: cimg/base:stable
+        user: root
+    steps:
+      - checkout
+      - run:
+          name: Installing SUDO
+          command: 'apt-get update && apt-get install -y sudo'
+      - run:
+          name: Installing GCC
+          command: 'sudo add-apt-repository ppa:ubuntu-toolchain-r/test && apt-get update && apt-get install gcc-10 g++-10 && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 60 --slave /usr/bin/g++ g++ /usr/bin/g++-10'
+      - run:
+          name: Install CMAKE
+          command: 'apt-get update && sudo apt-get install -y cmake'
+      - run:
+          name: Install Ninja
+          command: 'apt-get update && sudo apt-get install ninja-build'
+      - run:
+          name: Install necessary system packages
+          command: 'apt-get update && sudo apt-get install -y libselinux-dev libgl1-mesa-dev pkg-config xorg-dev libxcb-render-util0-dev libxcb-xkb-dev libxcb-icccm4-dev libxcb-image0-dev libxcb-keysyms1-dev libxcb-xinerama0-dev xkb-data libx11-xcb-dev libxcb-randr0-dev libxcb-shape0-dev libxcb-sync-dev libxcb-xfixes0-dev'
+      - run:
+          name: Install Conan
+          command: 'apt-get update && sudo apt-get install -y python3-pip && pip3 install conan'
+      - run:
+          name: Creating Build Files
+          command: 'cmake -H. -Bbuild -GNinja'
+      - run:
+          name: Creating Binary Files
+          command: 'cmake --build build'
+      - run:
+          name: Ruff Testing
+          command: './build/bin/ruff_test'
+

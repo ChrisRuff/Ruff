@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.10)
-
 # glob collection of src files not 100% reliable
 file( GLOB_RECURSE SRCS LIST_DIRECTORIES false CONFIGURE_DEPENDS *.cpp )
 
@@ -31,7 +29,10 @@ if( ${HAS_SOURCES} GREATER 0 )
 
 	# Make conan includes system dirs to prevent gcc warnings
 	target_include_directories( Ruff SYSTEM PRIVATE 
-		${CONAN_INCLUDE_DIRS})
+		${CONAN_INCLUDE_DIRS_SDL2}
+		${CONAN_INCLUDE_DIRS_SDL2_TTF}
+		${CONAN_INCLUDE_DIRS_XTENSOR}
+		${CONAN_INCLUDE_DIRS_OPENCV})
 
 	target_link_libraries(Ruff PRIVATE
 			CONAN_PKG::opencv
