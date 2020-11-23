@@ -31,7 +31,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE "Release")
 
 option(BUILD_TESTERS "Build testers" ON)
-option(BUILD_TESTERS "Build examples" ON)
+option(BUILD_EXAMPLES "Build examples" ON)
 
 include (cmake/Cache.cmake)
 
