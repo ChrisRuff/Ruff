@@ -12,7 +12,7 @@ jobs:
           command: 'apt-get update && apt-get install -y sudo'
       - run:
           name: Installing GCC
-          command: 'apt-get update && apt-get install -y gcc g++'
+          command: 'sudo add-apt-repository ppa:ubuntu-toolchain-r/test && apt-get update && apt-get install gcc-10'
       - run:
           name: Install CMAKE
           command: 'apt-get update && sudo apt-get install -y cmake'
