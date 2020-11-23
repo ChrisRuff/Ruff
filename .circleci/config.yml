@@ -33,5 +33,5 @@ jobs:
           command: 'cmake --build build'
       - run:
           name: Ruff Testing
-          command: './bin/ruff_test'
+          command: './build/bin/ruff_test'
 
