@@ -14,7 +14,7 @@ if( ${HAS_SOURCES} GREATER 0 )
 
   set_target_properties( ${TARGET_TEST}
     PROPERTIES
-    CXX_STANDARD 17
+    CXX_STANDARD 20
     CXX_STANDARD_REQUIRED True
     RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
   )
@@ -24,7 +24,7 @@ if( ${HAS_SOURCES} GREATER 0 )
 
 	# I didn't like ctest implementation so I did it this way 
 	add_custom_target(
-					test
+					Tester
 					COMMAND ${CMAKE_BINARY_DIR}/bin/${TARGET_TEST} 
 					DEPENDS Ruff ${TARGET_TEST})
 
