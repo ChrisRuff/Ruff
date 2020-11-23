@@ -24,7 +24,7 @@ jobs:
           command: 'apt-get update && sudo apt-get install -y libselinux-dev libgl1-mesa-dev pkg-config xorg-dev libxcb-render-util0-dev libxcb-xkb-dev libxcb-icccm4-dev libxcb-image0-dev libxcb-keysyms1-dev libxcb-xinerama0-dev xkb-data'
       - run:
           name: Install Conan
-          command: 'apt-get update && sudo apt-get install -y python-pip && pip install conan'
+          command: 'apt-get update && sudo apt-get install -y python3-pip && pip3 install conan'
       - run:
           name: Creating Build Files
           command: 'cmake -H. -Bbuild -GNinja'
