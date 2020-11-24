@@ -32,4 +32,8 @@ target_include_directories(matching SYSTEM PRIVATE
 
 add_subdirectory(sprites)
 target_compile_options( sprites PRIVATE ${OPTS} )
-target_include_directories(sprites SYSTEM PRIVATE ${CONAN_INCLUDE_DIRS_OPENCV})
+target_include_directories(sprites SYSTEM PRIVATE
+	${CONAN_INCLUDE_DIRS_OPENCV}
+	${CONAN_INCLUDE_DIRS_SDL2}
+	${CONAN_INCLUDE_DIRS_SDL2_TTF}
+	${CONAN_INCLUDE_DIRS_XTENSOR})
