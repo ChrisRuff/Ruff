@@ -112,7 +112,10 @@ namespace ui
 		/* ----------------------------------------------------------------------------*/
 		int loadSprite(const std::string& filepath);
 
-		void displaySprite(const sint x, const sint y, const int idx, const float scale);
+		std::unordered_map<std::string, int> getSpriteInfo(int index);
+
+		void displaySprite(const sint x, const sint y, const int idx, const int scale, 
+				const double angle = 0, const int rX = -1, const int rY = -1 );
 
 		/* --------------------------------------------------------------------------*/
 		/**
