@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 3.6)
 if( NOT WIN32 )
 	set( BLU "[1;34m" CACHE STRING "AnsiBlue" )
 	set( RED "[1;31m" CACHE STRING "AnsiRed" )
@@ -11,12 +12,12 @@ if( NOT WIN32 )
 		message( "${COL}${MESSAGE}${RST}" )
 	endfunction()
 endif()
-cmake_minimum_required(VERSION 3.17)
 
+project( ruff CXX )
+#project( ruff VERSION 0.0.1
+#								DESCRIPTION "Ruff"
+#								LANGAUGES CXX)
 
-project( ruff VERSION 0.0.1 
-						DESCRIPTION "Ruff"
-						LANGUAGES CXX )
 
 include(cmake/Conan.cmake)
 run_conan()
@@ -30,7 +31,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE "Release")
 
 option(BUILD_TESTERS "Build testers" ON)
-option(BUILD_TESTERS "Build examples" ON)
+option(BUILD_EXAMPLES "Build examples" ON)
 
 include (cmake/Cache.cmake)
 
@@ -45,15 +46,11 @@ if( CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME )
 	# turn off compiler specific extensions
 	set( CMAKE_CXX_EXTENSIONS OFF )
 
-	# must be done in main CMakeLists
-	# enables testing and provides BUILD_TESTING option
-	include( CTest )
-
-	include( cmake/CppCheck.cmake )
-	include( cmake/ClangFormat.cmake )
-
 endif()
 
+include( cmake/CppCheck.cmake )
+include( cmake/ClangFormat.cmake )
+#set(CMAKE_CXX_CLANG_TIDY "clang-tidy")
 
 if(BUILD_TESTERS)
 	add_definitions(-DBUILD_TESTERS)

@@ -12,6 +12,12 @@ macro(run_conan)
     bincrafters
     URL
     https://api.bintray.com/conan/bincrafters/public-conan)
+	conan_add_remote(
+		NAME
+		omaralvarez 
+		URL
+		https://api.bintray.com/conan/omaralvarez/public-conan
+		)
 
 	# Need to install libselinux
   conan_cmake_run(
@@ -28,10 +34,9 @@ macro(run_conan)
 		doctest/2.3.7
 
     OPTIONS
-		opencv:contrib=True
-		opencv:nonfree=False
-		opencv:gflags=False
-		opencv:gtk=3
+		#opencv:contrib=True
+		#opencv:gflags=False
+		#opencv:gtk=3
 		sdl2:pulse=False
 		sdl2:nas=False
     BASIC_SETUP

@@ -7,8 +7,8 @@ file( GLOB_RECURSE HEADERS LIST_DIRECTORIES false CONFIGURE_DEPENDS
 # only run if source files were found
 list( LENGTH SRCS HAS_SOURCES )
 if( ${HAS_SOURCES} GREATER 0 )
-	add_executable( matching ${HEADERS} ${SRCS})
-	set_target_properties( matching
+	add_executable( sprites ${HEADERS} ${SRCS})
+	set_target_properties( sprites
 		PROPERTIES
 		CXX_STANDARD 20
 		CXX_STANDARD_REQUIRED True
@@ -16,7 +16,7 @@ if( ${HAS_SOURCES} GREATER 0 )
 		LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib"
 		RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
 	)
-	target_link_libraries(matching Ruff)
+	target_link_libraries(sprites Ruff)
 
 else()
 	message(WARNING "No sources found")

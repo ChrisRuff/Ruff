@@ -181,16 +181,38 @@ namespace ui
 		return static_cast<int>(sprites.size()) - 1;
 	}
 
-	void Engine::displaySprite(const sint x, const sint y, const int idx, const float scale)
+	std::unordered_map<std::string, int> Engine::getSpriteInfo(int index)
 	{
-		int w, h;
+		std::unordered_map<std::string, int> info{};
+
+		int w{0};
+		int h{0};
+		SDL_QueryTexture(sprites[index].get(), nullptr, nullptr, &w, &h);
+		info["width"] = w;
+		info["height"] = h;
+		return info;
+	}
+	void Engine::displaySprite(const sint x, const sint y, const int idx, 
+			const int scale, const double angle, const int rX, const int rY)
+	{
+		SDL_Point rPoint = { rX, rY };
+		int w{0};
+		int h{0};
+		if(idx >= static_cast<int>(sprites.size()) || idx == -1)
+		{
+			logWarning("Cannot display sprite at index: " + std::to_string(idx));
+			return;
+		}
 		SDL_QueryTexture(sprites[idx].get(), nullptr, nullptr, &w, &h);
+
+		// Draw texture from the center, not top left
 		SDL_Rect dst;
-		dst.x = x;
-		dst.y = y;
+		dst.x = x - (w/2);
+		dst.y = y - (h/2);
 		dst.w = w * scale;
 		dst.h = h * scale;
-		SDL_RenderCopy(renderer.get(), sprites[idx].get(), nullptr, &dst);
+		SDL_RenderCopyEx(renderer.get(), sprites[idx].get(), nullptr, 
+				&dst, angle, rX == -1 ? nullptr : &rPoint, SDL_FLIP_NONE);
 	}
 
 	void Engine::clearScreen(Pixel color)
