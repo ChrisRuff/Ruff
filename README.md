@@ -14,6 +14,8 @@ Simple engine for creating 2D environments.
 
 [Matching](examples/ui/matching): Shows live matching results using opencv matchers and visualizes them with the ui engine
 
+[Sprites](examples/ui/sprites): Shows some tree sprites being animated and spreading
+
 ### Matching using opencv 
 | Detectors | Matchers  |
 | --------  | --------  |
