@@ -54,15 +54,15 @@ namespace match
 	/* ----------------------------------------------------------------------------*/
 	class Matcher
 	{
-	 private:
-		DetectorType                           dType{};
-		MatcherType                            mType{};
-		cv::Ptr<cv::Feature2D>                 detector{};
+	private:
+		DetectorType dType{};
+		MatcherType mType{};
+		cv::Ptr<cv::Feature2D> detector{};
 		std::unique_ptr<cv::DescriptorMatcher> matcher{ nullptr };
-		bool                                   knnMatch{ false };
+		bool knnMatch{ false };
 
 
-	 public:
+	public:
 		/* --------------------------------------------------------------------------*/
 		/**
 			 * @Synopsis Create a OpenCV detector for feature matching

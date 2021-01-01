@@ -10,23 +10,23 @@ namespace color
 {
 	enum Code
 	{
-		FG_RED          = 31,
-		FG_GREEN        = 32,
-		FG_BLUE         = 34,
-		FG_DEFAULT      = 39,
-		BG_RED          = 41,
-		BG_GREEN        = 42,
-		BG_BLUE         = 44,
-		BG_DEFAULT      = 49,
+		FG_RED = 31,
+		FG_GREEN = 32,
+		FG_BLUE = 34,
+		FG_DEFAULT = 39,
+		BG_RED = 41,
+		BG_GREEN = 42,
+		BG_BLUE = 44,
+		BG_DEFAULT = 49,
 		FG_LIGHT_YELLOW = 93
 	};
 	class Modifier
 	{
-	 private:
+	private:
 		Code code;
 
-	 public:
-		explicit Modifier(Code pCode) noexcept: code(pCode) {}
+	public:
+		explicit Modifier(Code pCode) noexcept : code(pCode) {}
 		friend std::ostream& operator<<(std::ostream& os, const Modifier& mod)
 		{
 			return os << "\033[" << static_cast<int>(mod.code) << "m";

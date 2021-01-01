@@ -48,8 +48,8 @@ namespace match
 	{
 		std::vector<cv::KeyPoint> kpts1;
 		std::vector<cv::KeyPoint> kpts2;
-		cv::Mat                   desc1;
-		cv::Mat                   desc2;
+		cv::Mat desc1;
+		cv::Mat desc2;
 
 		//if(dType == DetectorType::DAISY)
 		//{
@@ -122,8 +122,8 @@ namespace match
 			for(size_t i = 0; i < size; ++i)
 			{
 				double dist = matches[i].distance;
-				min_dist    = MIN(min_dist, dist);
-				max_dist    = MAX(max_dist, dist);
+				min_dist = MIN(min_dist, dist);
+				max_dist = MAX(max_dist, dist);
 			}
 			for(size_t i = 0; i < size; ++i)
 			{

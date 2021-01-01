@@ -14,7 +14,7 @@ struct Body
 	float ax{ 0 }, ay{ 0 };
 	float radius{ 5 };
 	float mass{ 50 };
-	bool  moveable{ true };
+	bool moveable{ true };
 
 	int id{};
 
@@ -27,29 +27,31 @@ struct Body
 
 class Gravity : public ruff::ui::Engine
 {
- private:
+private:
 	std::vector<Body> planets{};
-	bool              singleAnchor{ false };
-	float             G = 6.673E-3;
+	bool singleAnchor{ false };
+	float G = 6.673E-3;
 
-	void addBody(float x, float y, float r = 10.0f)
+	void addBody(const float x, const float y, const float r = 10.0f)
 	{
 		Body b;
-		b.px     = x;
-		b.py     = y;
-		b.vx     = 0;
-		b.vy     = 0;
-		b.ax     = 0;
-		b.ay     = 0;
+		b.px = x;
+		b.py = y;
+		b.vx = 0;
+		b.vy = 0;
+		b.ax = 0;
+		b.ay = 0;
 		b.radius = r;
-		b.mass   = r * 10.0f;
+		b.mass = r * 10.0f;
 
 		b.id = planets.size();
 		planets.emplace_back(b);
 	}
 
- public:
-	Gravity(const sint width, const sint height, std::string title = "Gravity Engine", int pixelRatio = 1)
+public:
+	Gravity(const sint width, const sint height, 
+			const std::string& title = "Gravity Engine", 
+			int pixelRatio = 1)
 	  : Engine(height, width, title, pixelRatio) {}
 
 	Gravity(const Gravity& other) = delete;
@@ -66,11 +68,11 @@ class Gravity : public ruff::ui::Engine
 		// Start with two anchors
 		addBody(getWidth() * 0.35f, getHeight() * 0.5f, 2);
 		planets[0].moveable = false;
-		planets[0].mass     = 700;
+		planets[0].mass = 700;
 
 		addBody(getWidth() * 0.65f, getHeight() * 0.5f, 2);
 		planets[1].moveable = false;
-		planets[1].mass     = 700;
+		planets[1].mass = 700;
 	}
 	virtual void onUpdate(double deltaTime) override
 	{
@@ -79,7 +81,7 @@ class Gravity : public ruff::ui::Engine
 		{
 			addBody(mouse.mouse_x, mouse.mouse_y, rand() % 10 + 10);
 			planets[planets.size() - 1].vx = 2;
-			mouse.mouse_pressed[0]         = false;
+			mouse.mouse_pressed[0] = false;
 		}
 
 		// Right click to change the number of anchors
@@ -90,19 +92,19 @@ class Gravity : public ruff::ui::Engine
 			{
 				addBody(getWidth() * 0.5f, getHeight() * 0.5f, 2);
 				planets[0].moveable = false;
-				planets[0].mass     = 700;
-				singleAnchor        = true;
+				planets[0].mass = 700;
+				singleAnchor = true;
 			}
 			else
 			{
 				addBody(getWidth() * 0.35f, getHeight() * 0.5f, 2);
 				planets[0].moveable = false;
-				planets[0].mass     = 700;
+				planets[0].mass = 700;
 
 				addBody(getWidth() * 0.65f, getHeight() * 0.5f, 2);
 				planets[1].moveable = false;
-				planets[1].mass     = 700;
-				singleAnchor        = false;
+				planets[1].mass = 700;
+				singleAnchor = false;
 			}
 			mouse.mouse_pressed[1] = false;
 		}
@@ -123,8 +125,8 @@ class Gravity : public ruff::ui::Engine
 			{
 				if(ball.id != target.id)
 				{
-					double dx   = ball.px - target.px;
-					double dy   = ball.py - target.py;
+					double dx = ball.px - target.px;
+					double dy = ball.py - target.py;
 					double dist = distance(ball, target);
 
 					// Skip when the distance is very small so there isn't silly launching

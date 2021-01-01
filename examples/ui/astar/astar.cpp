@@ -11,17 +11,17 @@ using sint = short int;
 
 class AStar : public ruff::ui::Engine
 {
- private:
-	int                            startButton{};
-	int                            blockWidthX{};
-	int                            blockWidthY{};
-	int                            gap{ 1 };
-	bool                           changed{ true };
+private:
+	int startButton{};
+	int blockWidthX{};
+	int blockWidthY{};
+	int gap{ 1 };
+	bool changed{ true };
 	std::vector<std::vector<bool>> map{};
 	std::vector<std::vector<bool>> path{};
 
- public:
-	AStar(const sint width, const sint height, std::string title = "AStar Engine", int pixelRatio = 1)
+public:
+	AStar(const sint width, const sint height, const std::string& title = "AStar Engine", int pixelRatio = 1)
 	  : Engine(height, width, title, pixelRatio) {}
 
 	AStar(const AStar& other) = delete;
@@ -31,11 +31,11 @@ class AStar : public ruff::ui::Engine
 	virtual void onCreate() override
 	{
 		// Initialize the found path, and the map as a 20x20 vector of booleans
-		map  = std::vector<std::vector<bool>>(20);
+		map = std::vector<std::vector<bool>>(20);
 		path = std::vector<std::vector<bool>>(20);
 		for(size_t i = 0; i < map.size(); ++i)
 		{
-			map[i]  = std::vector<bool>(20);
+			map[i] = std::vector<bool>(20);
 			path[i] = std::vector<bool>(20);
 			std::fill(map[i].begin(), map[i].end(), true);
 			std::fill(path[i].begin(), path[i].end(), false);
@@ -61,7 +61,7 @@ class AStar : public ruff::ui::Engine
 			if(!(x == y && (x == 0 || x == map.size() - 1)))// Don't modify start/end block
 			{
 				map[x][y] = !map[x][y];
-				changed   = true;
+				changed = true;
 			}
 		}
 
@@ -70,11 +70,11 @@ class AStar : public ruff::ui::Engine
 		if(buttons[startButton].get()->isPressed() && changed)
 		{
 			// Set start and end points to be true
-			map[0][0]                              = true;
+			map[0][0] = true;
 			map[map.size() - 1][map[0].size() - 1] = true;
-			auto searcher                          = ruff::search::AStar(map);
-			auto solution                          = searcher.getPath(0, 0, map.size() - 1, map[0].size() - 1);
-			changed                                = false;
+			auto searcher = ruff::search::AStar(map);
+			auto solution = searcher.getPath(0, 0, map.size() - 1, map[0].size() - 1);
+			changed = false;
 			if(solution)
 			{
 				// Clear previous found path

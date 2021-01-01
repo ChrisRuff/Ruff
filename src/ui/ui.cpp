@@ -21,9 +21,9 @@ namespace ui
 		}
 		else [[likely]]
 		{
-			window   = std::unique_ptr<SDL_Window, SDLDestroyer>(SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL));
+			window = std::unique_ptr<SDL_Window, SDLDestroyer>(SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL));
 			renderer = std::unique_ptr<SDL_Renderer, SDLDestroyer>(SDL_CreateRenderer(window.get(), -1, SDL_RENDERER_ACCELERATED));
-			texture  = std::unique_ptr<SDL_Texture, SDLDestroyer>(SDL_CreateTexture(renderer.get(), SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, screenWidth, screenHeight));
+			texture = std::unique_ptr<SDL_Texture, SDLDestroyer>(SDL_CreateTexture(renderer.get(), SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, screenWidth, screenHeight));
 			pixels.reserve(screenWidth * screenHeight * 4);
 			std::fill(pixels.begin(), pixels.end(), 0);
 			onCreate();
@@ -35,10 +35,10 @@ namespace ui
 			gl_context = SDL_GL_CreateContext(window.get());
 
 			SDL_Event event;
-			bool      running = true;
+			bool running = true;
 
-			double now       = SDL_GetPerformanceCounter();
-			double last      = 0.0f;
+			double now = SDL_GetPerformanceCounter();
+			double last = 0.0f;
 			double deltaTime = 0;
 			while(running)
 			{
@@ -69,12 +69,12 @@ namespace ui
 					case SDL_MOUSEBUTTONUP:
 						if(event.button.button == SDL_BUTTON(SDL_BUTTON_LEFT))
 						{
-							mouse.mouse_held[0]     = false;
+							mouse.mouse_held[0] = false;
 							mouse.mouse_released[0] = true;
 						}
 						else if(event.button.button == SDL_BUTTON_RIGHT)
 						{
-							mouse.mouse_held[1]     = false;
+							mouse.mouse_held[1] = false;
 							mouse.mouse_released[1] = true;
 						}
 						break;
@@ -140,7 +140,7 @@ namespace ui
 						}
 					}
 				}
-				now       = SDL_GetPerformanceCounter();
+				now = SDL_GetPerformanceCounter();
 				deltaTime = static_cast<double>(now - last) * 100 / static_cast<double>(SDL_GetPerformanceFrequency());
 
 				SDL_RenderClear(renderer.get());
@@ -169,8 +169,8 @@ namespace ui
 	int Engine::loadSprite(const std::string& filepath)
 	{
 		SDL_Surface* surface = SDL_LoadBMP(filepath.c_str());
-		SDL_Texture* sprite  = SDL_CreateTextureFromSurface(renderer.get(), surface);
-		int          success = SDL_RenderCopy(renderer.get(), sprite, nullptr, nullptr);
+		SDL_Texture* sprite = SDL_CreateTextureFromSurface(renderer.get(), surface);
+		int success = SDL_RenderCopy(renderer.get(), sprite, nullptr, nullptr);
 		if(success == -1)
 		{
 			return -1;
@@ -185,19 +185,18 @@ namespace ui
 	{
 		std::unordered_map<std::string, int> info{};
 
-		int w{0};
-		int h{0};
+		int w{ 0 };
+		int h{ 0 };
 		SDL_QueryTexture(sprites[index].get(), nullptr, nullptr, &w, &h);
 		info["width"] = w;
 		info["height"] = h;
 		return info;
 	}
-	void Engine::displaySprite(const sint x, const sint y, const int idx, 
-			const int scale, const double angle, const int rX, const int rY)
+	void Engine::displaySprite(const sint x, const sint y, const int idx, const int scale, const double angle, const int rX, const int rY)
 	{
 		SDL_Point rPoint = { rX, rY };
-		int w{0};
-		int h{0};
+		int w{ 0 };
+		int h{ 0 };
 		if(idx >= static_cast<int>(sprites.size()) || idx == -1)
 		{
 			logWarning("Cannot display sprite at index: " + std::to_string(idx));
@@ -207,12 +206,11 @@ namespace ui
 
 		// Draw texture from the center, not top left
 		SDL_Rect dst;
-		dst.x = x - (w/2);
-		dst.y = y - (h/2);
+		dst.x = x - (w / 2);
+		dst.y = y - (h / 2);
 		dst.w = w * scale;
 		dst.h = h * scale;
-		SDL_RenderCopyEx(renderer.get(), sprites[idx].get(), nullptr, 
-				&dst, angle, rX == -1 ? nullptr : &rPoint, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(renderer.get(), sprites[idx].get(), nullptr, &dst, angle, rX == -1 ? nullptr : &rPoint, SDL_FLIP_NONE);
 	}
 
 	void Engine::clearScreen(Pixel color)
@@ -223,7 +221,7 @@ namespace ui
 		// Replace the pixel at each location with the given color
 		for(size_t i = 0; i < size; i += 4)
 		{
-			pixels[i]     = color[0];
+			pixels[i] = color[0];
 			pixels[i + 1] = color[1];
 			pixels[i + 2] = color[2];
 			pixels[i + 3] = color[3];
@@ -236,10 +234,10 @@ namespace ui
 			return;
 		}
 		const unsigned int offset = (screenWidth * 4 * y) + x * 4;
-		pixels[offset]            = color.r;
-		pixels[offset + 1]        = color.g;
-		pixels[offset + 2]        = color.b;
-		pixels[offset + 3]        = color.a;
+		pixels[offset] = color.r;
+		pixels[offset + 1] = color.g;
+		pixels[offset + 2] = color.b;
+		pixels[offset + 3] = color.a;
 	}
 	void Engine::draw(const Point2D<sint>& p, const Pixel& color) { draw(p.x, p.y, color); }
 
@@ -283,21 +281,21 @@ namespace ui
 		{
 			sint dx1 = std::abs(dx);
 			sint dy1 = std::abs(dy);
-			sint px  = 2 * dy1 - dx1;
-			sint py  = 2 * dx1 - dy1;
+			sint px = 2 * dy1 - dx1;
+			sint py = 2 * dx1 - dy1;
 			sint x, y, xe, ye;
 			if(dy1 <= dx1)
 			{
 				if(dx >= 0)
 				{
-					x  = x1;
-					y  = y1;
+					x = x1;
+					y = y1;
 					xe = x2;
 				}
 				else
 				{
-					x  = x2;
-					y  = y2;
+					x = x2;
+					y = y2;
 					xe = x1;
 				}
 
@@ -325,14 +323,14 @@ namespace ui
 			{
 				if(dy >= 0)
 				{
-					x  = x1;
-					y  = y1;
+					x = x1;
+					y = y1;
 					ye = y2;
 				}
 				else
 				{
-					x  = x2;
-					y  = y2;
+					x = x2;
+					y = y2;
 					ye = y1;
 				}
 
@@ -422,8 +420,8 @@ namespace ui
 		sint x = button->getX();
 		sint y = button->getY();
 		drawSquare(x, y, x + button->getWidth(), y + button->getHeight(), button->getColor(), true);
-		SDL_Color white          = { 255, 255, 255, 0 };
-		auto      surfaceMessage = std::unique_ptr<SDL_Surface, SDLDestroyer>(TTF_RenderText_Solid(button->getFont(), button->getLabel().c_str(), white));
+		SDL_Color white = { 255, 255, 255, 0 };
+		auto surfaceMessage = std::unique_ptr<SDL_Surface, SDLDestroyer>(TTF_RenderText_Solid(button->getFont(), button->getLabel().c_str(), white));
 
 		auto message = std::unique_ptr<SDL_Texture, SDLDestroyer>(SDL_CreateTextureFromSurface(renderer.get(), surfaceMessage.get()));
 
@@ -451,7 +449,7 @@ namespace ui
 		if(y1 > y2)
 			return getCVMat(x1, y2, y1, x2);
 
-		cv::Mat  image(screenHeight, screenWidth, CV_8UC4, pixels.data());
+		cv::Mat image(screenHeight, screenWidth, CV_8UC4, pixels.data());
 		cv::Rect cropper(x1, y1, x2 - x1, y2 - y1);
 		return image(cropper);
 		/*

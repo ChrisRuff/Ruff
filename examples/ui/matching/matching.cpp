@@ -9,16 +9,18 @@ using sint = short int;
 
 class Matching : public ruff::ui::Engine
 {
- private:
+private:
 	std::vector<ruff::Point2D<sint>> drawing{};
-	ruff::match::Matcher             matcher{};
+	ruff::match::Matcher matcher{ruff::match::DetectorType::ORB, ruff::match::MatcherType::BF};
 
 
- public:
-	Matching(const sint width, const sint height, std::string title = "Matching Engine", int pixelRatio = 1)
+public:
+	Matching(const sint width, 
+			const sint height, 
+			const std::string& title = "Matching Engine", 
+			const int pixelRatio = 1)
 	  : Engine(height, width, title, pixelRatio)
 	{
-		matcher = ruff::match::Matcher(ruff::match::DetectorType::ORB, ruff::match::MatcherType::BF);
 		static_cast<cv::ORB*>(matcher.getDetector().get())->setPatchSize(250);
 	}
 
@@ -60,7 +62,7 @@ class Matching : public ruff::ui::Engine
 		if(drawing.size() > 0)
 		{
 			// Convert regions to cv::Mats
-			auto left  = getCVMat(5, 5, getWidth() / 2 - 5, getHeight() - 5);
+			auto left = getCVMat(5, 5, getWidth() / 2 - 5, getHeight() - 5);
 			auto right = getCVMat(getWidth() / 2 + 5, 5, getWidth() - 5, getHeight() - 5);
 
 			// Convert to gray
