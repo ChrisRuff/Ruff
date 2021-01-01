@@ -3,3 +3,5 @@ build/*
 lib/*
 bin/*
 
+
+.cache/clangd/index/

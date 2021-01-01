@@ -1,0 +1,15 @@
+extraction:
+  cpp:
+    prepare:
+      packages: 
+        - python-pip
+        - pkg-config
+    after_prepare:
+      - pip3 install --local cmake conan
+      - ls ~/.local/bin
+      - export PATH=$PATH:~/.local/bin
+      - conan --version
+      - cmake --version
+      - conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+      - cmake -H. -Bbuild
+      - cmake --build build
