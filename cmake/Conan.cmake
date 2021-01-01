@@ -44,7 +44,7 @@ macro(run_conan)
 		SETTINGS
     BUILD
     missing
-		BUILD_TYPE "Release"
+		BUILD_TYPE ${CMAKE_BUILD_TYPE}
 		)
 	
 endmacro()
