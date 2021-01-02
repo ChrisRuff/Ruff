@@ -18,7 +18,8 @@ project( ruff CXX )
 #								DESCRIPTION "Ruff"
 #								LANGAUGES CXX)
 
-
+include(cmake/Conan.cmake)
+run_conan()
 
 colourized("CMAKE_PROJECT_NAME: ${CMAKE_PROJECT_NAME}" ${MAG} )
 colourized("PROJECT_NAME: ${PROJECT_BINARY_DIR}" ${MAG} )
@@ -32,8 +33,6 @@ option(BUILD_TESTERS "Build testers" ON)
 option(BUILD_EXAMPLES "Build examples" ON)
 
 include (cmake/Cache.cmake)
-include(cmake/Conan.cmake)
-run_conan()
 
 if( CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME )
 
