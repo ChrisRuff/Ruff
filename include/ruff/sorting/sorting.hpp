@@ -19,7 +19,7 @@ namespace sort
 
 	// ----------------- SELECTION SORT ------------------
 	// Use selection sort algorithm to sort a list in-place
-	// O(n^2)
+	// Complexity: O(n^2)
 	template<typename T> requires std::totally_ordered<T> 
 	void selectionSort(std::vector<T>& list)
 	{
@@ -46,12 +46,18 @@ namespace sort
 	}
 
 	// ----------------- INSERTION SORT -------------------
+	// Fastest O(n^2) algorithm, iterates through the array and 
+	// moves each element back until all elements to the left are sorted
+	// Complexity: O(n^2)
 	template<typename T> requires std::totally_ordered<T> 
 	void insertionSort(std::vector<T>& list)
 	{
 		const size_t size = list.size();
+
 		for(size_t i = 0; i < size; ++i)
 		{
+			// Scan to left and move this element until the previous
+			// element is less than it
 			const T key = list[i];
 			int j = static_cast<int>(i) - 1;
 
@@ -65,8 +71,9 @@ namespace sort
 	}
 
 	// ------------------- BUBBLE SORT --------------------
-	// Use bubble sort algorithm to sort a list in-place
-	// O(n^2)
+	// Scans through list, taking the largest element and moves it
+	// to the right until the max element is at the right.
+	// Complexity: O(n^2)
 	template<typename T> requires std::totally_ordered<T> 
 	void bubbleSort(std::vector<T>& list)
 	{
@@ -87,15 +94,19 @@ namespace sort
 	}
 
 	// -------------------- QUICK SORT --------------------
-	//
+	// Picks a value, and moves all the elements greater than that 
+	// value to the right of it, and all the elements less than it to the left
 	template<typename T> requires std::totally_ordered<T> 
 	int partition(std::vector<T>& list, const int low, const int high)
 	{
-		int pivot = list[high];
+		// pick value to split the data
+		const int pivot = list[high];
 
 		int i = low - 1;
 		for(int j = low; j < high; ++j)
 		{
+			// If the value is greater than the pivot then swap it
+			// and the value at i
 			if(pivot > list[j])
 			{
 				++i;
@@ -103,9 +114,12 @@ namespace sort
 			}
 		}
 		swap<T>(list, i + 1, high);
+
+		// Return new middle value
 		return i + 1;
 	}
 
+	// Recursively split the list into halves until they are one in size
 	template<typename T> requires std::totally_ordered<T> 
 	void quickSortStep(std::vector<T>& list, const int low, const int high)
 	{
@@ -116,19 +130,32 @@ namespace sort
 			quickSortStep(list, pivot + 1, high);
 		}
 	}
+
+	// Quick sort algorithm
+	// O(nlogn) best case
 	template<typename T> requires std::totally_ordered<T> 
 	void quickSort(std::vector<T>& list)
 	{
+		// Initiate recursion
 		quickSortStep(list, 0, list.size() - 1);
 	}
 
 	// -------------------- RADIX SORT --------------------
+	
+	// BASE WE WILL USE
+	constexpr int radix = 10;
+
+	// Find Max value in list 
 	template<typename T>
 	T getMax(std::vector<T>& list, int (*const getID)(T))
 	{
+		size_t size = list.size();
+
+		// Variables to track max value
 		int max = getID(list[0]);
 		T maxEl = list[0];
-		size_t size = list.size();
+
+		// Go through list and find max value
 		for(size_t i = 1; i < size; ++i)
 		{
 			int id = getID(list[i]);
@@ -141,63 +168,35 @@ namespace sort
 		return maxEl;
 	}
 
-	constexpr int radix = 10;
-
-	template<typename T>
-	void radixSort(std::vector<T>& list, int (*const getID)(T))
-	{
-		int max = getID(getMax(list, getID));
-		const size_t size = list.size();
-
-		for(int exp = 1; max / exp > 0; exp *= radix)
-		{
-			std::vector<T> output(size);
-			std::array<int, radix> count = { 0 };
-
-			for(size_t i = 0; i < size; ++i)
-			{
-				count[(getID(list[i]) / exp) % radix]++;
-			}
-
-			for(size_t i = 1; i < radix; ++i)
-			{
-				count.at(i) += count.at(i - 1);
-			}
-			for(int i = size - 1; i >= 0; --i)
-			{
-				output[count[(getID(list[i]) / exp) % radix] - 1] = list[i];
-				count[(getID(list[i]) / exp) % radix]--;
-			}
-			for(size_t i = 0; i < size; ++i)
-			{
-				list[i] = output[i];
-			}
-		}
-	}
-
 	// -------------------- MERGE SORT --------------------
+	// Divide a region in two and sort it comparatively
 	template<typename T> requires std::totally_ordered<T> 
 	void merge(std::vector<T>& list, const int l, const int m, const int r)
 	{
+		// Start indices for left and right
 		const size_t n1 = m - l + 1;
 		const size_t n2 = r - m;
 
+		// Fill left side array
 		std::vector<T> L(n1);
 		for(size_t i = 0; i < n1; ++i)
 		{
 			L[i] = list[l + i];
 		}
 
+		// Fill right side array
 		std::vector<T> R(n1);
 		for(size_t i = 0; i < n2; ++i)
 		{
 			R[i] = list[m + 1 + i];
 		}
 
+		// index vars
 		size_t i = 0;
 		size_t j = 0;
 		size_t k = l;
 
+		// Fill the list with the appropriate values
 		while(i < n1 && j < n2)
 		{
 			if(L[i] < R[j])
@@ -211,6 +210,7 @@ namespace sort
 			++k;
 		}
 
+		// Fill the remaining values
 		while(i < n1)
 		{
 			list[k++] = L[i++];
@@ -222,6 +222,7 @@ namespace sort
 		}
 	}
 
+	// Split list in two, recursively and merge the splits lists together
 	template<typename T> requires std::totally_ordered<T> 
 	void mergeSortStart(std::vector<T>& list, const int l, const int r)
 	{
@@ -235,10 +236,62 @@ namespace sort
 		merge(list, l, m, r);
 	}
 
+	// Initiate Merge Sort algorithm
+	// O(nlogn)
 	template<typename T> requires std::totally_ordered<T> 
 	void mergeSort(std::vector<T>& list)
 	{
 		mergeSortStart(list, 0, list.size() - 1);
 	}
+
+	// Radix sort, sorts each element by it's id, placing
+	// them into buckets based on their base, run the number of
+	// digits in the max number
+	//
+	// Complexity: O(digits * (n + base))
+	template<typename T>
+	void radixSort(std::vector<T>& list, int (*const getID)(T))
+	{
+		const size_t size = list.size();
+
+		// Find the max value
+		int max = getID(getMax(list, getID));
+
+		// Operate for each digit in the number
+		for(int exp = 1; max / exp > 0; exp *= radix)
+		{
+			// Create the bucket arrays
+			std::vector<T> output(size);
+			std::array<int, radix> count = { 0 };
+
+			// Find the digit of the number
+			for(size_t i = 0; i < size; ++i)
+			{
+				count[(getID(list[i]) / exp) % radix]++;
+			}
+
+			// Increase the index of count so that it reflects
+			// the values in the array
+			for(size_t i = 1; i < radix; ++i)
+			{
+				count.at(i) += count.at(i - 1);
+			}
+
+			// Place values into the output based on 
+			// the count in the count array
+			for(int i = size - 1; i >= 0; --i)
+			{
+				output[count[(getID(list[i]) / exp) % radix] - 1] = list[i];
+				count[(getID(list[i]) / exp) % radix]--;
+			}
+
+			// Place output array into the list for next iteration
+			for(size_t i = 0; i < size; ++i)
+			{
+				list[i] = output[i];
+			}
+		}
+	}
+
 };// namespace sort
 };// namespace ruff
