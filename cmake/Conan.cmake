@@ -31,7 +31,7 @@ macro(run_conan)
 		xtensor/0.20.10@omaralvarez/public-conan
 		sdl2/2.0.12@bincrafters/stable
 		sdl2_ttf/2.0.15@bincrafters/stable
-		doctest/2.3.7
+		doctest/2.4.4
 
     OPTIONS
 		#opencv:contrib=True
