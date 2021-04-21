@@ -18,7 +18,6 @@ project( ruff CXX )
 #								DESCRIPTION "Ruff"
 #								LANGAUGES CXX)
 
-
 include(cmake/Conan.cmake)
 run_conan()
 
@@ -61,7 +60,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 	add_compile_options (-fdiagnostics-color=always)
 	set(OPTS -Wall -Wextra -Wctor-dtor-privacy -Wno-init-list-lifetime
 					-Wnoexcept -Wstrict-null-sentinel -Wold-style-cast 
-					-Weffc++ -Woverloaded-virtual -Wsign-promo)
+					-Weffc++ -Woverloaded-virtual -Wsign-promo -march=native)
 endif()
 
 colourized( "Compile Options: ${OPTS}" ${YLW} )

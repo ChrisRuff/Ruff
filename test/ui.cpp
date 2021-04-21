@@ -8,12 +8,12 @@ using namespace ruff::ui;
 
 class TestEngine : public Engine
 {
- public:
-	TestEngine(const sint width, const sint height, std::string title = "Ruff Pixel Engine")
+public:
+	TestEngine(const sint width, const sint height, const std::string& title = "Ruff Pixel Engine")
 	  : Engine(height, width, title) {}
-	int                                   count{};
+	int count{};
 	std::vector<ruff::Point2D<short int>> newPixels{};
-	int                                   marioSprite{};
+	int marioSprite{};
 
 	virtual void onCreate() override
 	{

@@ -27,7 +27,7 @@ TEST_CASE("Matching")
 				Matcher matcher(dType, mType, knn);
 				if(display)
 				{
-					cv::Mat  outImg;
+					cv::Mat outImg;
 					kptMatch matchResult;
 					matchResult = matcher.match(im1, im2);
 					cv::Mat out;

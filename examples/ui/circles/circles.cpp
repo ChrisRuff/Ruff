@@ -20,28 +20,30 @@ struct Ball
 
 class Circles : public ruff::ui::Engine
 {
- private:
+private:
 	std::vector<Ball> balls{};
-	Ball*             selected{ nullptr };
+	Ball* selected{ nullptr };
 
-	void addBall(float x, float y, float r = 5.0f)
+	void addBall(const float x, const float y, const float r = 5.0f)
 	{
 		Ball b;
-		b.px     = x;
-		b.py     = y;
-		b.vx     = 0;
-		b.vy     = 0;
-		b.ax     = 0;
-		b.ay     = 0;
+		b.px = x;
+		b.py = y;
+		b.vx = 0;
+		b.vy = 0;
+		b.ax = 0;
+		b.ay = 0;
 		b.radius = r;
-		b.mass   = r * 10.0f;
+		b.mass = r * 10.0f;
 
 		b.id = balls.size();
 		balls.emplace_back(b);
 	}
 
- public:
-	Circles(const sint width, const sint height, std::string title = "Circle Engine", int pixelRatio = 1)
+public:
+	Circles(const sint width, const sint height, 
+			const std::string& title = "Circle Engine", 
+			const int pixelRatio = 1)
 	  : Engine(height, width, title, pixelRatio) {}
 
 	Circles(const Circles& other) = delete;

@@ -1,22 +1,22 @@
 #pragma once
 #include <ostream>
-#include <cmath> // pow
+#include <cmath>// pow
 
-#include <compare> // partial_ordering
-#include <concepts> // requires
-#include <type_traits> // is_arithmetic_v
+#include <compare>    // partial_ordering
+#include <concepts>   // requires
+#include <type_traits>// is_arithmetic_v
 
 namespace ruff
 {
-template<typename T> requires std::is_arithmetic_v<T>
-class Point2D
+template<typename T>
+requires std::is_arithmetic_v<T> class Point2D
 {
- public:
+public:
 	T x{};
 	T y{};
 
 
- public:
+public:
 	[[nodiscard]] Point2D(const T x, const T y) noexcept : x(x), y(y)
 	{
 	}
@@ -25,8 +25,8 @@ class Point2D
 	inline constexpr auto operator<=>(const Point2D<T>& other) const noexcept
 	{
 		// Compare based on distance from origin
-		double length1 = std::pow(x,2) + std::pow(y,2);
-		double length2 = std::pow(other.x,2) + std::pow(other.y,2);
+		double length1 = std::pow(x, 2) + std::pow(y, 2);
+		double length2 = std::pow(other.x, 2) + std::pow(other.y, 2);
 		return (length1 <=> length2);
 	}
 
