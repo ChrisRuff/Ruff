@@ -1,3 +1,5 @@
+#pragma once
+
 //STL packages
 #include <string>
 #include <vector>
@@ -183,7 +185,7 @@ namespace ui
 
 		/* --------------------------------------------------------------------------*/
 		/**
-			 * @Synopsis  Helper function that takes points
+			 * @Synopsis  Helper function that takes points objects
 			 *
 			 * @Param center Point that the circle center is
 			 * @Param radius Radius of the circle
@@ -192,7 +194,7 @@ namespace ui
 			 * draw the circumference(default to no-fill)
 			 */
 		/* ----------------------------------------------------------------------------*/
-		void drawCircle(const Point2D<sint>& center, const sint radius, const Pixel& color, const bool fill = false);
+		void drawCircle(const Point2D<sint>& center, const sint radius, const Pixel& color, bool fill = false);
 
 		void drawButton(Button* button);
 
@@ -205,7 +207,7 @@ namespace ui
 			 * @Returns   
 			 */
 		/* ----------------------------------------------------------------------------*/
-		sint getWidth()
+		[[nodiscard]] sint getWidth() const
 		{
 			return width / pixelRatio;
 		}
@@ -217,13 +219,17 @@ namespace ui
 			 * @Returns   
 			 */
 		/* ----------------------------------------------------------------------------*/
-		sint getHeight()
+		[[nodiscard]] sint getHeight() const
 		{
 			return height / pixelRatio;
 		}
 
 		cv::Mat getCVMat(sint x1, sint y1, sint x2, sint y2);
 
+
+		std::vector<Pixel> getRegion(sint x1, sint y1, sint x2, sint y2);
+		std::vector<Pixel> getRegion(Point2D<sint> p1, Point2D<sint> p2);
+		[[nodiscard]] bool onButton(const MouseState& mouse) const;
 
 		/* --------------------------------------------------------------------------*/
 		/**

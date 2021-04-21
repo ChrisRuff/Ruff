@@ -1,6 +1,7 @@
 #pragma once
 #include <uchar.h>
 #include <cstdlib>
+#include <compare>    // partial_ordering
 
 namespace ruff
 {
@@ -19,7 +20,7 @@ namespace ui
 		uchar r{ 0 }, g{ 0 }, b{ 0 }, a{ 1 };
 
 	public:
-		Pixel() = default;
+		[[nodiscard]] constexpr Pixel() = default;
 		/* --------------------------------------------------------------------------*/
 		/**
 			 * @Synopsis  Constructs a pixel of given RGB and alpha of 1
@@ -29,7 +30,7 @@ namespace ui
 			 * @Param b
 			 */
 		/* ----------------------------------------------------------------------------*/
-		Pixel(uchar r, uchar g, uchar b) : r(r), g(g), b(b)
+		[[nodiscard]] constexpr Pixel(uchar r, uchar g, uchar b) noexcept : r(r), g(g), b(b)
 		{
 		}
 		/* --------------------------------------------------------------------------*/
@@ -42,9 +43,11 @@ namespace ui
 			 * @Param a
 			 */
 		/* ----------------------------------------------------------------------------*/
-		Pixel(uchar r, uchar g, uchar b, uchar a) : r(r), g(g), b(b), a(a)
+		[[nodiscard]] constexpr Pixel(uchar r, uchar g, uchar b, uchar a) noexcept : r(r), g(g), b(b), a(a)
 		{
 		}
+
+		~Pixel() = default;
 
 		/* --------------------------------------------------------------------------*/
 		/**
@@ -74,10 +77,16 @@ namespace ui
 			else
 				return a;
 		}
+
+		inline bool operator==(const Pixel& other) const noexcept
+		{
+			return r == other.r && g == other.g && 
+				b == other.b && a == other.a;
+		}
 	};
 
 	// List of some colours
-	static const Pixel
+	static constexpr Pixel
 	  GREY(192, 192, 192),
 	  DARK_GREY(128, 128, 128), VERY_DARK_GREY(64, 64, 64),
 	  RED(255, 0, 0), DARK_RED(128, 0, 0), VERY_DARK_RED(64, 0, 0),

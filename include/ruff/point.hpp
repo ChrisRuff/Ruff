@@ -20,7 +20,8 @@ public:
 	[[nodiscard]] Point2D(const T x, const T y) noexcept : x(x), y(y)
 	{
 	}
-	Point2D() = default;
+
+	[[nodiscard]] Point2D() = default;
 
 	inline constexpr auto operator<=>(const Point2D<T>& other) const noexcept
 	{

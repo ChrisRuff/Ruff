@@ -468,9 +468,59 @@ namespace ui
 			return cv::Mat(y2-y1, x2-x1, CV_8UC1, region.data());
 			*/
 	}
+
+	std::vector<Pixel> Engine::getRegion(sint x1, sint y1, sint x2, sint y2)
+	{
+		if(x1 > x2)
+			return getRegion(x2, y1, x1, y2);
+		if(y1 > y2)
+			return getRegion(x1, y2, y1, x2);
+
+		std::vector<Pixel> region{};
+		pixels.reserve((x2-x1) * (y2-y1));
+		for(sint y = y1; y <= y2; ++y)
+		{
+			for(sint x = x1; x <= x2; ++x)
+			{
+				if(x >= screenWidth || y >= screenHeight || y < 0 || x < 0) 
+				{ 
+					region.push_back(ruff::ui::BLANK); 
+				}
+				else
+				{
+					const unsigned int offset = (screenWidth * 4 * y) + x * 4;
+					region.emplace_back(pixels[offset], 
+							pixels[offset+1], 
+							pixels[offset+2], 
+							pixels[offset+3]);
+				}
+			}
+		}
+		return region;
+	}
+
+	std::vector<Pixel> Engine::getRegion(Point2D<sint> p1, Point2D<sint> p2)
+	{
+		return getRegion(p1.x, p1.y, p2.x, p2.y);
+	}
+
+	[[nodiscard]] bool Engine::onButton(const MouseState& mouse) const
+	{
+		for(const auto& b : buttons)
+		{
+			if(std::abs(b->getX() - mouse.mouse_x) < b->getWidth() && 
+					std::abs(b->getY() - mouse.mouse_y) < b->getHeight())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	Pixel getRandColor()
 	{
 		return Pixel(std::rand() % 256, std::rand() % 256, std::rand() % 256);
 	}
+
 };// namespace ui
 };// namespace ruff

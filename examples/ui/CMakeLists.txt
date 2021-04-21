@@ -37,3 +37,11 @@ target_include_directories(sprites SYSTEM PRIVATE
 	${CONAN_INCLUDE_DIRS_SDL2}
 	${CONAN_INCLUDE_DIRS_SDL2_TTF}
 	${CONAN_INCLUDE_DIRS_XTENSOR})
+
+add_subdirectory(sand)
+target_compile_options( sand PRIVATE ${OPTS} )
+target_include_directories(sand SYSTEM PRIVATE
+	${CONAN_INCLUDE_DIRS_OPENCV}
+	${CONAN_INCLUDE_DIRS_SDL2}
+	${CONAN_INCLUDE_DIRS_SDL2_TTF}
+	${CONAN_INCLUDE_DIRS_XTENSOR})

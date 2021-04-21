@@ -31,6 +31,8 @@ namespace ui
 		std::unique_ptr<TTF_Font, SDLDestroyer> font{ nullptr };
 
 		bool pressed{};
+		bool changed{};
+
 		Pixel color{};
 
 	public:
@@ -75,6 +77,13 @@ namespace ui
 			{
 				color = Pixel(color.r - 100, color.g - 100, color.b - 100, color.a);
 			}
+			changed = true;
+		};
+		bool isChanged() 
+		{ 
+			bool c = changed;
+			changed = false;
+			return c; 
 		};
 	};
 };// namespace ui
