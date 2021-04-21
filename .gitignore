@@ -2,6 +2,4 @@ build/*
 .clangd/*
 lib/*
 bin/*
-
-
-.cache/clangd/index/
+.cache/*

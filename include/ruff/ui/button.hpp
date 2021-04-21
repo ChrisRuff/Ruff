@@ -20,23 +20,31 @@ namespace ui
 	/* ----------------------------------------------------------------------------*/
 	class Button
 	{
-	 private:
+	private:
 		sint x{};
 		sint y{};
-		int  width{};
-		int  height{};
-		int  pixelRatio{};
+		int width{};
+		int height{};
+		int pixelRatio{};
 
-		std::string                             label{ "" };
+		std::string label{ "" };
 		std::unique_ptr<TTF_Font, SDLDestroyer> font{ nullptr };
 
-		bool  pressed{};
+		bool pressed{};
 		Pixel color{};
 
-	 public:
+	public:
 		Button() = default;
 
-		Button(sint x, sint y, int width, int height, Pixel color, int pixelRatio, std::string fontPath = "", std::string label = "", int fontSize = 12)
+		Button(const sint x, 
+				const sint y, 
+				const int width, 
+				const int height, 
+				const Pixel color, 
+				const int pixelRatio, 
+				const std::string& fontPath = "", 
+				const std::string& label = "", 
+				const int fontSize = 12)
 		  : x(x), y(y), width(width),
 		    height(height), pixelRatio(pixelRatio), label(label),
 		    font(makeFont(fontPath, fontSize)), color(color)
@@ -44,14 +52,14 @@ namespace ui
 		}
 		Button(const Button&) = delete;
 
-		sint         getX() { return x; };
-		sint         getY() { return y; };
-		int          getWidth() { return width; };
-		int          getHeight() { return height; };
-		int          getPixelRatio() { return pixelRatio; };
-		Pixel&       getColor() { return color; };
+		sint getX() { return x; };
+		sint getY() { return y; };
+		int getWidth() { return width; };
+		int getHeight() { return height; };
+		int getPixelRatio() { return pixelRatio; };
+		Pixel& getColor() { return color; };
 		std::string& getLabel() { return label; };
-		TTF_Font*    getFont() { return font.get(); };
+		TTF_Font* getFont() { return font.get(); };
 
 		bool isPressed() { return pressed; };
 		void press()

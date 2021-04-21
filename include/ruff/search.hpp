@@ -62,10 +62,10 @@ namespace search
 	/* ----------------------------------------------------------------------------*/
 	class AStar
 	{
-	 private:
+	private:
 		const std::vector<std::vector<bool>> map{};
 
-	 public:
+	public:
 		/* --------------------------------------------------------------------------*/
 		/**
 			 * @Synopsis  Begins a instance of the AStar algorithm that will be completed
@@ -187,7 +187,7 @@ namespace search
 		{
 			if(nodesOp)
 			{
-				auto                      nodes = nodesOp.value();
+				auto nodes = nodesOp.value();
 				std::vector<Point2D<int>> points(nodes.size());
 				for(size_t i = 0; i < nodes.size(); ++i)
 				{

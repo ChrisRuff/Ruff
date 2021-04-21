@@ -35,7 +35,7 @@ namespace ui
 		std::array<bool, 2> mouse_pressed{ false, false };
 		std::array<bool, 2> mouse_held{ false, false };
 		std::array<bool, 2> mouse_released{ false, false };
-		int                 mouse_x{ 0 }, mouse_y{ 0 };
+		int mouse_x{ 0 }, mouse_y{ 0 };
 	};
 
 
@@ -47,13 +47,13 @@ namespace ui
 	/* ----------------------------------------------------------------------------*/
 	class Engine
 	{
-	 protected:
-		sint        width{};
-		sint        height{};
+	protected:
+		sint width{};
+		sint height{};
 		std::string title{};
-		sint        screenWidth{};
-		sint        screenHeight{};
-		sint        pixelRatio{};
+		sint screenWidth{};
+		sint screenHeight{};
+		sint pixelRatio{};
 
 		// Hardware interface
 		MouseState mouse{};
@@ -69,14 +69,14 @@ namespace ui
 		std::vector<std::unique_ptr<Button>> buttons{};
 
 		// SDL Variables used for rendering
-		std::unique_ptr<SDL_Window, SDLDestroyer>               window{ nullptr };
-		std::unique_ptr<SDL_Renderer, SDLDestroyer>             renderer{ nullptr };
-		std::unique_ptr<SDL_Texture, SDLDestroyer>              texture{ nullptr };
+		std::unique_ptr<SDL_Window, SDLDestroyer> window{ nullptr };
+		std::unique_ptr<SDL_Renderer, SDLDestroyer> renderer{ nullptr };
+		std::unique_ptr<SDL_Texture, SDLDestroyer> texture{ nullptr };
 		std::vector<std::unique_ptr<SDL_Texture, SDLDestroyer>> sprites{};
 
 		SDL_GLContext gl_context{};
 
-	 public:
+	public:
 		/* --------------------------------------------------------------------------*/
 		/**
 			 * @Synopsis  Creates an Engine with window height, width and title.
@@ -114,8 +114,7 @@ namespace ui
 
 		std::unordered_map<std::string, int> getSpriteInfo(int index);
 
-		void displaySprite(const sint x, const sint y, const int idx, const int scale, 
-				const double angle = 0, const int rX = -1, const int rY = -1 );
+		void displaySprite(const sint x, const sint y, const int idx, const int scale, const double angle = 0, const int rX = -1, const int rY = -1);
 
 		/* --------------------------------------------------------------------------*/
 		/**

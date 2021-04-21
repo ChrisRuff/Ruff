@@ -8,7 +8,7 @@ namespace euler
 	std::vector<unsigned int> generateFibonacci(const unsigned int max, const unsigned int first, const unsigned int second)
 	{
 		std::vector<unsigned int> output;
-		int                       index = 2;
+		int index = 2;
 
 
 		output.push_back(first);
