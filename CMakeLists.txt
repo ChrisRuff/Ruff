@@ -18,6 +18,8 @@ project( ruff CXX )
 #								DESCRIPTION "Ruff"
 #								LANGAUGES CXX)
 
+set(CMAKE_BUILD_TYPE "Release")
+
 include(cmake/Conan.cmake)
 run_conan()
 
@@ -27,7 +29,6 @@ colourized("PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR}" ${MAG} )
 colourized("PROJECT_BINARY_DIR: ${PROJECT_BINARY_DIR}" ${MAG} )
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_BUILD_TYPE "Release")
 
 option(BUILD_TESTERS "Build testers" ON)
 option(BUILD_EXAMPLES "Build examples" ON)
