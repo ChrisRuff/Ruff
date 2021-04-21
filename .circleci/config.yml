@@ -25,12 +25,15 @@ jobs:
       - run:
           name: Install Conan
           command: 'apt-get update && sudo apt-get install -y python3-pip && pip3 install conan'
-      - run:
-          name: Creating Build Files
-          command: 'cmake -H. -Bbuild -GNinja'
-      - run:
-          name: Creating Binary Files
-          command: 'cmake --build build'
+      - run: # replacement for a bug with conan
+          name: Build project
+          command: './conan-fix.sh'
+          #- run:
+          #    name: Creating Build Files
+          #    command: 'cmake -H. -Bbuild -GNinja'
+          #- run:
+          #    name: Creating Binary Files
+          #    command: 'cmake --build build'
       - run:
           name: Ruff Testing
           command: './build/bin/ruff_test'

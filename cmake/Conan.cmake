@@ -7,44 +7,25 @@ macro(run_conan)
 
   include(${CMAKE_BINARY_DIR}/conan.cmake)
 
-  conan_add_remote(
-    NAME
-    bincrafters
-    URL
-    https://api.bintray.com/conan/bincrafters/public-conan)
+
+	conan_add_remote(
+		NAME
+		bincrafters
+		URL
+		https://api.bintray.com/conan/bincrafters/public-conan)
+
 	conan_add_remote(
 		NAME
 		omaralvarez 
 		URL
-		https://api.bintray.com/conan/omaralvarez/public-conan
-		)
+		https://api.bintray.com/conan/omaralvarez/public-conan)
 
 	# Need to install libselinux
-  conan_cmake_run(
-    REQUIRES
-		# Overrides
-		freetype/2.10.1
-		glib/2.64.0@bincrafters/stable 
-		harfbuzz/2.6.4@bincrafters/stable
-
-		opencv/4.3.0@conan/stable
-		xtensor/0.20.10@omaralvarez/public-conan
-		sdl2/2.0.12@bincrafters/stable
-		sdl2_ttf/2.0.15@bincrafters/stable
-		doctest/2.3.7
-
-    OPTIONS
-		#opencv:contrib=True
-		#opencv:gflags=False
-		#opencv:gtk=3
-		sdl2:pulse=False
-		sdl2:nas=False
-    BASIC_SETUP
-    CMAKE_TARGETS # individual targets to link to
-		SETTINGS
-    BUILD
-    missing
-		BUILD_TYPE "Release"
+	conan_cmake_run(CONANFILE cmake/conanfile.txt
+		BASIC_SETUP
+		CMAKE_TARGETS # individual targets to link to
+		BUILD missing
+		BUILD_TYPE ${CMAKE_BUILD_TYPE}
 		)
-	
+
 endmacro()
