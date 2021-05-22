@@ -9,7 +9,6 @@ void Match();
 
 TEST_CASE("Matching")
 {
-
 	// Don't show the matches
 	bool display = false;
 
