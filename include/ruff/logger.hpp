@@ -1,4 +1,6 @@
 #pragma once
+#include <concepts> // is_convertible_to
+#include <type_traits>
 #include <iostream>
 #include <string>
 
@@ -38,24 +40,38 @@ static color::Modifier yellow(color::FG_LIGHT_YELLOW);
 static color::Modifier red(color::FG_RED);
 static color::Modifier defaultFG(color::FG_DEFAULT);
 
-inline void logWarning(const std::string& message)
+inline void printHeader(const std::string_view title)
 {
-#ifndef NDEBUG
-	std::cout << yellow << std::endl;
-	std::cout << "\n## WARNING: " << message << " ##" << std::endl;
-	std::cout << defaultFG << std::endl;
-#else
-	(void)message;
-#endif
+	std::cout << "~~~~~~~~~~~~ " << title << " ~~~~~~~~~~~~\n";
+}
+inline void printHeader()
+{
+	std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
+}
+
+template<typename T> requires std::convertible_to<T, const std::string>
+inline void logInfo(const T& message)
+{
+	printHeader("INFO");
+	std::cout << message << std::endl;
+	printHeader();
 };
-inline void logError(const std::string& message)
+
+template<typename T> requires std::convertible_to<T, const std::string>
+inline void logWarning(const T& message)
 {
-#ifndef NDEBUG
-	std::cout << red << std::endl;
-	std::cout << "\n## ERROR: " << message << " ##" << std::endl;
+	std::cout << yellow << std::endl;
+	printHeader("WARN");
+	std::cout << message;
 	std::cout << defaultFG << std::endl;
-#else
-	(void)message;
-#endif
+};
+
+template<typename T> requires std::convertible_to<T, const std::string>
+inline void logError(const T& message)
+{
+	std::cout << red << std::endl;
+	printHeader("ERRR");
+	std::cout << message;
+	std::cout << defaultFG << std::endl;
 };
 }// namespace ruff
