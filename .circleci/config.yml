@@ -23,7 +23,7 @@ jobs:
           command: 'apt-get update && sudo apt-get install ninja-build'
       - run:
           name: Install necessary system packages
-          command: 'apt-get update && sudo apt-get install -y libselinux-dev libgl1-mesa-dev pkg-config xorg-dev libxcb-render-util0-dev libxcb-xkb-dev libxcb-icccm4-dev libxcb-image0-dev libxcb-keysyms1-dev libxcb-xinerama0-dev xkb-data libx11-xcb-dev libxcb-randr0-dev libxcb-shape0-dev libxcb-sync-dev libxcb-xfixes0-dev build-essential'
+          command: 'apt-get update && sudo apt-get install -y libselinux-dev libgl1-mesa-dev pkg-config xorg-dev libxcb-render-util0-dev libxcb-xkb-dev libxcb-icccm4-dev libxcb-image0-dev libxcb-keysyms1-dev libxcb-xinerama0-dev xkb-data libx11-xcb-dev libxcb-randr0-dev libxcb-shape0-dev libxcb-sync-dev libxcb-xfixes0-dev build-essential libgtk2.0-dev'
       - run:
           name: Install Conan
           command: 'apt-get update && sudo apt-get install -y python3-pip && pip3 install conan'

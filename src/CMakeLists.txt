@@ -36,7 +36,6 @@ if( ${HAS_SOURCES} GREATER 0 )
 
 	target_link_libraries(Ruff PRIVATE
 			CONAN_PKG::opencv
-			CONAN_PKG::xtensor
 			CONAN_PKG::sdl2
 			CONAN_PKG::sdl2_ttf)
 
