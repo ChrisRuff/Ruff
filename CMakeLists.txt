@@ -17,10 +17,6 @@ project( ruff VERSION 0.0.1
 								LANGUAGES CXX
 								DESCRIPTION "Ruff")
 
-set(CMAKE_BUILD_TYPE "Debug")
-
-set(CMAKE_BUILD_TYPE "Release")
-
 include(cmake/Conan.cmake)
 run_conan()
 
@@ -75,6 +71,10 @@ else()
 	message( STATUS "Doxygen not found, not building docs" )
 endif()
 
+
+if(BUILD_EXAMPLES)
+	add_definitions(-DRESOURCE_DIR="${PROJECT_BINARY_DIR}/bin")
+endif()
 # Add target Ruff
 colourized( "Configuring Ruff Library" ${BLU} )
 add_subdirectory(src)
@@ -88,6 +88,13 @@ endif()
 if(BUILD_EXAMPLES)
 	colourized( "Configuring examples" ${BLU} )
 	add_subdirectory(examples)
+	file(GLOB_RECURSE RESOURCES 
+		LIST_DIRECTORIES false 
+		CONFIGURE_DEPENDS 
+		${PROJECT_SOURCE_DIR}/examples/*.bmp
+		${PROJECT_SOURCE_DIR}/examples/*.ttf)
+	file(COPY ${RESOURCES} DESTINATION ${PROJECT_BINARY_DIR}/bin)
+	add_definitions(-DRESOURCE_DIR="${PROJECT_BINARY_DIR}/bin")
 endif()
 
 configure_file( 

@@ -134,7 +134,10 @@ namespace ui
 					for(auto& button_ptr : buttons)
 					{
 						Button* button = button_ptr.get();
-						if(mouse.mouse_x - button->getX() < button->getWidth() && mouse.mouse_x - button->getX() > 0 && mouse.mouse_y - button->getY() < button->getHeight() && mouse.mouse_y - button->getY() > 0)
+						if(mouse.mouse_x - button->getX() < button->getWidth() && 
+								mouse.mouse_x - button->getX() > 0 && 
+								mouse.mouse_y - button->getY() < button->getHeight() && 
+								mouse.mouse_y - button->getY() > 0) [[likely]]
 						{
 							button->press();
 						}

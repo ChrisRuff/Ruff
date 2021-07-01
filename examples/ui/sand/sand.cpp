@@ -1,12 +1,13 @@
 #include "sand.h"
 
-
 void SandEngine::onCreate()
 {
+	// Resource dir is defined in root CMakeLists.txt
+	const auto font_path = std::filesystem::path(RESOURCE_DIR) / "DejaVuSans.ttf";
 	types.push_back(addButton(getWidth()-15, 5, 10, 5, ruff::ui::DARK_YELLOW, pixelRatio, 
-				"../examples/ui/astar/DejaVuSans.ttf", "Sand"));
+				font_path, "Sand"));
 	types.push_back(addButton(getWidth()-15, 15, 10, 5, ruff::ui::DARK_BLUE, pixelRatio, 
-				"../examples/ui/astar/DejaVuSans.ttf", "Water"));
+				font_path, "Water"));
 }
 
 void SandEngine::onUpdate(const double deltaTime)

@@ -1,6 +1,7 @@
 // STL Packages
 #include <cmath>
 #include <memory>
+#include <filesystem>
 
 // Source
 #include "ui/ui.hpp"
@@ -45,8 +46,11 @@ public:
 		blockWidthX = getWidth() / map.size();
 		blockWidthY = getHeight() / map[0].size();
 
+	// Resource dir is defined in root CMakeLists.txt
+	const auto font_path = std::filesystem::path(RESOURCE_DIR) / "DejaVuSans.ttf";
+
 		// Add start button
-		startButton = addButton(0, 0, blockWidthX, blockWidthY, ruff::ui::GREEN, pixelRatio, "../examples/ui/astar/DejaVuSans.ttf", "Start", 28);
+		startButton = addButton(0, 0, blockWidthX, blockWidthY, ruff::ui::GREEN, pixelRatio, font_path, "Start", 28);
 	}
 	virtual void onUpdate(double deltaTime) override
 	{

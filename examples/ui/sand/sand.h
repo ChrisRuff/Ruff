@@ -2,9 +2,12 @@
 #include <string_view> // string_view
 #include <memory.h> // shared_ptr
 #include <unistd.h> // usleep
+#include <filesystem> 
+#include <iostream>
 
 // Source
 #include "ui/ui.hpp"
+#include "logger.hpp"
 
 #define EMPTY ruff::ui::BLACK
 #define SAND ruff::ui::DARK_YELLOW

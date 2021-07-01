@@ -3,6 +3,7 @@
 #include <memory>
 #include <unordered_map>
 #include <random>
+#include <filesystem>
 
 // Source
 #include "ui/ui.hpp"
@@ -50,9 +51,12 @@ public:
 	{
 		random = std::uniform_real_distribution<double>(0.1, 1.5);
 
-		tree = loadSprite("../examples/ui/sprites/tree.bmp");
-		stump = loadSprite("../examples/ui/sprites/stump.bmp");
-		shadow = loadSprite("../examples/ui/sprites/shadow.bmp");
+		// Resource dir is defined in root CMakeLists.txt
+		const auto resources = std::filesystem::path(RESOURCE_DIR);
+
+		tree = loadSprite(resources / "tree.bmp");
+		stump = loadSprite(resources / "stump.bmp");
+		shadow = loadSprite(resources / "shadow.bmp");
 
 		spriteInfo.push_back(getSpriteInfo(tree));
 		spriteInfo.push_back(getSpriteInfo(stump));
