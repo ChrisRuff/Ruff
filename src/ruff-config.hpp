@@ -1,6 +1,6 @@
 #pragma once 
 
-#define RUFF_VERSION_MAJOR 
-#define RUFF_VERSION_MINOR 
-#define RUFF_VERSION_PATCH 
-#define RUFF_VERSION      ""
+#define RUFF_VERSION_MAJOR 0
+#define RUFF_VERSION_MINOR 0
+#define RUFF_VERSION_PATCH 1
+#define RUFF_VERSION      "0.0.1"
