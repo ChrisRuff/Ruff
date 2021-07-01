@@ -3,7 +3,7 @@
 #include <iostream>
 #include <cmath>
 
-#include "utility.hpp"
+#include "fileio.hpp"
 
 struct Integer
 {
@@ -22,7 +22,7 @@ TEST_CASE("Read-Write to file")
 	std::vector<Integer> vals{1,2,3,4,5,6,7,8,9,10};
 
 	// Requires convertable to string template
-	ruff::fio::write<Integer>(vals, "/tmp/ruff");
+	ruff::fio::write<std::vector<Integer>::iterator>(vals.begin(), vals.end(), "/tmp/ruff");
 
 	std::optional<std::vector<Integer>> vals_in = 
 		ruff::fio::read<Integer>("/tmp/ruff");
