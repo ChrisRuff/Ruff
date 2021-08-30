@@ -14,19 +14,7 @@ Simple engine for creating 2D environments.
 
 [AStar](examples/ui/astar): Visualizes the AStar path finding algorithm
 
-[Matching](examples/ui/matching): Shows live matching results using opencv matchers and visualizes them with the ui engine
-
 [Sprites](examples/ui/sprites): Shows some tree sprites being animated and spreading
-
-### Matching using opencv 
-| Detectors | Matchers  |
-| --------  | --------  |
-| ORB       | BFMatcher |
-| AKAZE     | Flann     |
-| BRISK     |           |
-| DAISY     |           | 
-
-Note: Daisy does not work with BFMatcher currently
 
 ### Sorting ###
 Algorithms implemented are:
