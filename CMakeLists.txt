@@ -1,25 +1,12 @@
 cmake_minimum_required(VERSION 3.16.3)
-if( NOT WIN32 )
-	set( BLU "[1;34m" CACHE STRING "AnsiBlue" )
-	set( RED "[1;31m" CACHE STRING "AnsiRed" )
-	set( MAG "[1;35m" CACHE STRING "AnsiMagenta" )
-	set( CYN "[1;36m" CACHE STRING "AnsiCyan" )
-	set( YLW "[1;33m" CACHE STRING "AnsiYellow" )
-	set( WHT "[37m" CACHE STRING "AnsiWhite" )
-	set( BLK "[30m" CACHE STRING "AnsiBlack" )
-	set( RST "[0m" CACHE STRING "AnsiReset" )
-	function( colourized MESSAGE COL )
-		message( "${COL}${MESSAGE}${RST}" )
-	endfunction()
-endif()
 
 project( ruff VERSION 0.0.1
 								LANGUAGES CXX
 								DESCRIPTION "Ruff")
 
-include(cmake/Conan.cmake)
-run_conan()
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
+include(cmake/helpers.cmake)
 colourized("CMAKE_PROJECT_NAME: ${CMAKE_PROJECT_NAME}" ${MAG} )
 colourized("PROJECT_NAME: ${PROJECT_BINARY_DIR}" ${MAG} )
 colourized("PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR}" ${MAG} )
@@ -29,21 +16,16 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(BUILD_TESTERS "Build testers" ON)
 option(BUILD_EXAMPLES "Build examples" ON)
+option(BUILD_DOXY_DOC "Build Doxygen documentation" ON)
 
-include (cmake/Cache.cmake)
+# append path to search for cmake modules
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
-if( CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME )
+# support IDE folders
+set_property( GLOBAL PROPERTY USE_FOLDERS ON )
 
-	# append path to search for cmake modules
-	set( CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH} )
-
-	# support IDE folders
-	set_property( GLOBAL PROPERTY USE_FOLDERS ON )
-
-	# turn off compiler specific extensions
-	set( CMAKE_CXX_EXTENSIONS OFF )
-
-endif()
+# turn off compiler specific extensions
+set( CMAKE_CXX_EXTENSIONS OFF )
 
 include( cmake/CppCheck.cmake )
 include( cmake/ClangFormat.cmake )
@@ -63,26 +45,30 @@ endif()
 
 colourized( "Compile Options: ${OPTS}" ${YLW} )
 
-find_package( Doxygen )
-if( Doxygen_FOUND )
-	colourized( "Configuring Docs" ${BLU} )
-	add_subdirectory( docs )
-else()
-	message( STATUS "Doxygen not found, not building docs" )
+if(BUILD_DOXY_DOC)
+	find_package( Doxygen )
+	if( Doxygen_FOUND )
+		colourized( "Configuring Docs" ${BLU} )
+		add_subdirectory( docs )
+	else()
+		message( STATUS "Doxygen not found, not building docs" )
+	endif()
 endif()
 
 
-if(BUILD_EXAMPLES)
-	add_definitions(-DRESOURCE_DIR="${PROJECT_BINARY_DIR}/bin")
-endif()
 # Add target Ruff
 colourized( "Configuring Ruff Library" ${BLU} )
 add_subdirectory(src)
 
 
-if(BUILD_TESTERS)
-	colourized( "Configuring Testers Library" ${BLU} )
-	add_subdirectory(test)
+if(BUILD_TESTING)
+	find_package(doctest)
+	if(doctest_FOUND)
+		colourized( "Configuring Testers Library" ${BLU} )
+		add_subdirectory(test)
+	else()
+		message( STATUS "Doctest not found, not building tests")
+	endif()
 endif()
 
 if(BUILD_EXAMPLES)
@@ -92,12 +78,17 @@ if(BUILD_EXAMPLES)
 		LIST_DIRECTORIES false 
 		CONFIGURE_DEPENDS 
 		${PROJECT_SOURCE_DIR}/examples/*.bmp
-		${PROJECT_SOURCE_DIR}/examples/*.ttf)
-	file(COPY ${RESOURCES} DESTINATION ${PROJECT_BINARY_DIR}/bin)
-	add_definitions(-DRESOURCE_DIR="${PROJECT_BINARY_DIR}/bin")
+		${PROJECT_SOURCE_DIR}/examples/*.ttf
+		${PROJECT_SOURCE_DIR}/examples/*.obj)
+	file(COPY ${RESOURCES} DESTINATION "${PROJECT_SOURCE_DIR}/bin")
 endif()
 
 configure_file( 
-	${PROJECT_SOURCE_DIR}/cmake/${CMAKE_PROJECT_NAME}-config.hpp.in
-	${PROJECT_SOURCE_DIR}/src/${CMAKE_PROJECT_NAME}-config.hpp
+	${PROJECT_SOURCE_DIR}/cmake/${CMAKE_PROJECT_NAME}-config.cmake.in
+	${PROJECT_SOURCE_DIR}/cmake/${CMAKE_PROJECT_NAME}-config.cmake
+	@ONLY
 )
+
+install(FILES
+	"${PROJECT_SOURCE_DIR}/cmake/${CMAKE_PROJECT_NAME}-config.cmake"
+		DESTINATION lib/cmake/${CMAKE_PROJECT_NAME})

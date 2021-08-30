@@ -1,8 +1,8 @@
 #pragma once
 #include <memory>
 
-#include "ui/destructors.hpp"
-#include "logger.hpp"
+#include "ruff/ui/destructors.hpp"
+#include "ruff/core/logger.hpp"
 
 namespace ruff
 {

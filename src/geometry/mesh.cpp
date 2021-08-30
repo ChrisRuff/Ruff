@@ -1,0 +1,7 @@
+
+namespace ruff
+{
+namespace geometry
+{
+};
+};

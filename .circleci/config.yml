@@ -27,18 +27,18 @@ jobs:
       - run:
           name: Install Conan
           command: 'apt-get update && sudo apt-get install -y python3-pip && pip3 install conan'
-      - run: # replacement for a bug with conan
-          name: Build project
-          command: './conan-fix.sh'
-          #- run:
-          #    name: Creating Build Files
-          #    command: 'cmake -H. -Bbuild -GNinja'
-          #- run:
-          #    name: Creating Binary Files
-          #    command: 'cmake --build build'
+      - run:
+          name: Install conan packages
+          command: 'mkdir build && cd build && conan install .. --build=missing'
+      - run:
+          name: Creating Build Files
+          command: 'cmake -H. -Bbuild -GNinja'
+      - run:
+          name: Creating Binary Files
+          command: 'cmake --build build'
       - run:
           name: Ruff Testing
-          command: './build/bin/ruff_test -r=junit > build/out.xml'
+          command: './bin/ruff_test -r=junit > build/out.xml'
       - codecov/upload:
           file: 'build/out.xml'
           token: 61b967e0-2c32-474d-862c-27282a72365a

@@ -1,11 +1,12 @@
-#include "ui/ui.hpp"
+#include "ruff/ui/ui.hpp"
 
 namespace ruff
 {
 namespace ui
 {
-	using sint = short int;
-	Engine::Engine(const sint width, const sint height, std::string title, int pixelRatio) : width(width), height(height), title(title), screenWidth(width / pixelRatio), screenHeight(height / pixelRatio), pixelRatio(pixelRatio)
+	Engine::Engine(const sint width, const sint height, std::string title, int pixelRatio) : 
+		width(width), height(height), title(title), screenWidth(width / pixelRatio), 
+		screenHeight(height / pixelRatio), pixelRatio(pixelRatio)
 	{
 		keys.fill(false);
 	}
@@ -244,8 +245,10 @@ namespace ui
 	}
 	void Engine::draw(const Point2D<sint>& p, const Pixel& color) { draw(p.x, p.y, color); }
 
-	void Engine::drawLine(const sint x1, const sint y1, const sint x2, const sint y2, const Pixel& color, const int line_width)
+	std::vector<Point2D<sint>> Engine::getLine(const sint x1, const sint y1, 
+			const sint x2, const sint y2, const int line_width)
 	{
+		std::vector<Point2D<sint>> points{};
 		sint dx = x2 - x1;
 		sint dy = y2 - y1;
 
@@ -254,13 +257,13 @@ namespace ui
 		{
 			if(y2 < y1)
 			{
-				drawLine(x2, y2, y1, y1, color, line_width);
+				return getLine(x2, y2, y1, y1, line_width);
 			}
 			else
 			{
 				for(sint y = y1; y <= y2; ++y)
 				{
-					draw(x1, y, color);
+					points.push_back({x1, y});
 				}
 			}
 		}
@@ -269,13 +272,13 @@ namespace ui
 		{
 			if(x2 < x1)
 			{
-				drawLine(x2, y2, x1, y1, color, line_width);
+				return getLine(x2, y2, x1, y1, line_width);
 			}
 			else
 			{
 				for(sint x = x1; x <= x2; ++x)
 				{
-					draw(x, y1, color);
+					points.push_back({x, y1});
 				}
 			}
 		}
@@ -302,7 +305,7 @@ namespace ui
 					xe = x1;
 				}
 
-				draw(x, y, color);
+				points.push_back({x, y});
 				for(sint i = 0; x < xe; ++i)
 				{
 					++x;
@@ -319,7 +322,7 @@ namespace ui
 
 						px += 2 * (dy1 - dx1);
 					}
-					draw(x, y, color);
+					points.push_back({x, y});
 				}
 			}
 			else
@@ -337,7 +340,7 @@ namespace ui
 					ye = y1;
 				}
 
-				draw(x, y, color);
+				points.push_back({x, y});
 
 				for(sint i = 0; y < ye; ++i)
 				{
@@ -354,9 +357,23 @@ namespace ui
 							--x;
 						py += 2 * (dx1 - dy1);
 					}
-					draw(x, y, color);
+					points.push_back({x, y});
 				}
 			}
+		}
+		return points;
+	}
+	std::vector<Point2D<sint>> Engine::getLine(const Point2D<sint> p1, 
+			const Point2D<sint> p2, const int line_width)
+	{
+		return Engine::getLine(p1.x, p1.y, p2.x, p2.y, line_width);
+	}
+	void Engine::drawLine(const sint x1, const sint y1, const sint x2, const sint y2, const Pixel& color, const int line_width)
+	{
+		const auto pts = Engine::getLine(x1, y1, x2, y2, line_width);
+		for(const auto& pt : pts)
+		{
+			draw(pt, color);
 		}
 	}
 	void Engine::drawLine(const Point2D<sint>& p1, const Point2D<sint>& p2, const Pixel& color, const int line_width)
@@ -441,37 +458,19 @@ namespace ui
 		buttons.push_back(std::make_unique<Button>(x, y, width, height, color, pixelRatio, fontPath, label, fontSize));
 		return buttons.size() - 1;
 	}
-	cv::Mat Engine::getCVMat(sint x1, sint y1, sint x2, sint y2)
+	Pixel Engine::getPixel(sint x, sint y) const
 	{
-		if(x1 < 0 || y1 < 0 || x1 >= screenWidth || y1 >= screenHeight)
-			return cv::Mat();
-		if(x2 < 0 || y2 < 0 || x2 >= screenWidth || y2 >= screenHeight)
-			return cv::Mat();
-		if(x1 > x2)
-			return getCVMat(x2, y1, x1, y2);
-		if(y1 > y2)
-			return getCVMat(x1, y2, y1, x2);
-
-		cv::Mat image(screenHeight, screenWidth, CV_8UC4, pixels.data());
-		cv::Rect cropper(x1, y1, x2 - x1, y2 - y1);
-		return image(cropper);
-		/*
-			std::vector<uchar> region((y2-y1) * (x2-x1) * 4);
-			for(int i = 0; i < (x2-x1) * 4; i += 4)
-			{
-				for(int j = 0; j < (y2-y1) * 4; j += 4)
-				{
-					const unsigned int offset = (screenWidth * 4 * j) + i * 4;
-					region[i] = pixels[offset];
-					region[i+1] = pixels[offset+1];
-					region[i+2] = pixels[offset+2];
-					region[i+3] = pixels[offset+3];
-				}
-			}
-			return cv::Mat(y2-y1, x2-x1, CV_8UC1, region.data());
-			*/
+		const unsigned int offset = (screenWidth * 4 * y) + x * 4;
+		return Pixel(
+				pixels[offset], 
+				pixels[offset+1], 
+				pixels[offset+2], 
+				pixels[offset+3]);
 	}
-
+	Pixel Engine::getPixel(Point2D<sint> p) const
+	{
+		return getPixel(p.x, p.y);
+	}
 	std::vector<Pixel> Engine::getRegion(sint x1, sint y1, sint x2, sint y2)
 	{
 		if(x1 > x2)

@@ -1,13 +1,13 @@
 #pragma once
-#include <uchar.h>
 #include <cstdlib>
 #include <compare>    // partial_ordering
+#include <string>
 
 namespace ruff
 {
 namespace ui
 {
-	using uchar = unsigned char;
+	using uint8_t = unsigned char;
 	/* --------------------------------------------------------------------------*/
 	/**
 		 * @Synopsis A pixel represents a color of RGB and alpha
@@ -17,10 +17,20 @@ namespace ui
 	class Pixel
 	{
 	public:
-		uchar r{ 0 }, g{ 0 }, b{ 0 }, a{ 1 };
+		uint8_t r{ 0 }, g{ 0 }, b{ 0 }, a{ 1 };
 
 	public:
 		[[nodiscard]] constexpr Pixel() = default;
+
+		/* --------------------------------------------------------------------------*/
+		/**
+		 * @Synopsis  Constructs a pixel of given grayscale color and alpha of 1
+		 *
+		 * @Param g Grayscale value
+		 */
+		/* ----------------------------------------------------------------------------*/
+		[[nodiscard]] constexpr Pixel(uint8_t g) noexcept : r(g), g(g), b(g) 
+		{}
 		/* --------------------------------------------------------------------------*/
 		/**
 			 * @Synopsis  Constructs a pixel of given RGB and alpha of 1
@@ -30,7 +40,7 @@ namespace ui
 			 * @Param b
 			 */
 		/* ----------------------------------------------------------------------------*/
-		[[nodiscard]] constexpr Pixel(uchar r, uchar g, uchar b) noexcept : r(r), g(g), b(b)
+		[[nodiscard]] constexpr Pixel(uint8_t r, uint8_t g, uint8_t b) noexcept : r(r), g(g), b(b)
 		{
 		}
 		/* --------------------------------------------------------------------------*/
@@ -43,7 +53,7 @@ namespace ui
 			 * @Param a
 			 */
 		/* ----------------------------------------------------------------------------*/
-		[[nodiscard]] constexpr Pixel(uchar r, uchar g, uchar b, uchar a) noexcept : r(r), g(g), b(b), a(a)
+		[[nodiscard]] constexpr Pixel(uint8_t r, uint8_t g, uint8_t b, uint8_t a) noexcept : r(r), g(g), b(b), a(a)
 		{
 		}
 
@@ -65,7 +75,7 @@ namespace ui
 			 * @Returns   
 			 */
 		/* ----------------------------------------------------------------------------*/
-		uchar operator[](size_t index)
+		uint8_t operator[](size_t index)
 		{
 			index = index % 4;
 			if(index == 0)
@@ -83,6 +93,14 @@ namespace ui
 			return r == other.r && g == other.g && 
 				b == other.b && a == other.a;
 		}
+
+		operator std::string()
+		{ 
+			return "[" + std::to_string(static_cast<unsigned int>(r)) + 
+				", " + std::to_string(static_cast<unsigned int>(g)) + 
+				", " + std::to_string(static_cast<unsigned int>(b)) + 
+				", " + std::to_string(static_cast<unsigned int>(a)) + "]";
+		};
 	};
 
 	// List of some colours

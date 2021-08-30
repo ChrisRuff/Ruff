@@ -6,7 +6,7 @@
 #include <filesystem>
 
 // Source
-#include "ui/ui.hpp"
+#include "ruff/ui/ui.hpp"
 
 using sint = short int;
 
@@ -52,7 +52,7 @@ public:
 		random = std::uniform_real_distribution<double>(0.1, 1.5);
 
 		// Resource dir is defined in root CMakeLists.txt
-		const auto resources = std::filesystem::path(RESOURCE_DIR);
+		const auto resources = std::filesystem::path(DATA_DIR);
 
 		tree = loadSprite(resources / "tree.bmp");
 		stump = loadSprite(resources / "stump.bmp");

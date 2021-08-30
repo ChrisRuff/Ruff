@@ -3,3 +3,5 @@ build/*
 lib/*
 bin/*
 .cache/*
+
+test_package/build

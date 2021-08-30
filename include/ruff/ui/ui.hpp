@@ -18,15 +18,14 @@
 #include <SDL2/SDL_opengl.h>
 #include <SDL2/SDL_ttf.h>
 #include <GL/gl.h>
-#include <opencv2/core.hpp>
 
 // Source
-#include "ui/destructors.hpp"
-#include "ui/text.hpp"
-#include "ui/pixel.hpp"
-#include "ui/button.hpp"
-#include "point.hpp"
-#include "logger.hpp"
+#include "ruff/ui/destructors.hpp"
+#include "ruff/ui/text.hpp"
+#include "ruff/ui/pixel.hpp"
+#include "ruff/ui/button.hpp"
+#include "ruff/geometry/point.hpp"
+#include "ruff/core/logger.hpp"
 
 namespace ruff
 {
@@ -41,7 +40,7 @@ namespace ui
 	};
 
 
-	using sint = short int;
+	using sint = uint16_t;
 	/* --------------------------------------------------------------------------*/
 	/**
 		 * @Synopsis UI engine to render pixels
@@ -117,6 +116,12 @@ namespace ui
 		std::unordered_map<std::string, int> getSpriteInfo(int index);
 
 		void displaySprite(const sint x, const sint y, const int idx, const int scale, const double angle = 0, const int rX = -1, const int rY = -1);
+
+		std::vector<Point2D<sint>> static getLine(const sint x1, const sint y1, 
+				const sint x2, const sint y2, const int line_width);
+
+		std::vector<Point2D<sint>> static getLine(const Point2D<sint> p1, 
+				const Point2D<sint> p2, const int line_width);
 
 		/* --------------------------------------------------------------------------*/
 		/**
@@ -224,11 +229,11 @@ namespace ui
 			return height / pixelRatio;
 		}
 
-		cv::Mat getCVMat(sint x1, sint y1, sint x2, sint y2);
-
-
+		Pixel getPixel(sint x, sint y) const;
+		Pixel getPixel(Point2D<sint> p) const;
 		std::vector<Pixel> getRegion(sint x1, sint y1, sint x2, sint y2);
 		std::vector<Pixel> getRegion(Point2D<sint> p1, Point2D<sint> p2);
+
 		[[nodiscard]] bool onButton(const MouseState& mouse) const;
 
 		/* --------------------------------------------------------------------------*/

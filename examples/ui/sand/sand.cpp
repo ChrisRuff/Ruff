@@ -1,13 +1,14 @@
-#include "sand.h"
+#include "sand.hpp"
 
 void SandEngine::onCreate()
 {
 	// Resource dir is defined in root CMakeLists.txt
-	const auto font_path = std::filesystem::path(RESOURCE_DIR) / "DejaVuSans.ttf";
-	types.push_back(addButton(getWidth()-15, 5, 10, 5, ruff::ui::DARK_YELLOW, pixelRatio, 
-				font_path, "Sand"));
-	types.push_back(addButton(getWidth()-15, 15, 10, 5, ruff::ui::DARK_BLUE, pixelRatio, 
-				font_path, "Water"));
+	const auto font_path = 
+		std::filesystem::path(DATA_DIR) / "DejaVuSans.ttf";
+	types.push_back(addButton(getWidth()-15, 5, 10, 5, 
+				ruff::ui::DARK_YELLOW, pixelRatio, font_path, "Sand"));
+	types.push_back(addButton(getWidth()-15, 15, 10, 5, 
+				ruff::ui::DARK_BLUE, pixelRatio, font_path, "Water"));
 }
 
 void SandEngine::onUpdate(const double deltaTime)
@@ -46,10 +47,21 @@ void SandEngine::onUpdate(const double deltaTime)
 
 	for(const auto& b : blocks)
 	{
-		b->update(deltaTime, this);
+		const ruff::Point2D displacement = b->getVelocity() * deltaTime;
+		ruff::Point2D pos(
+			static_cast<sint>(displacement.x + b->getPosition().x), 
+			static_cast<sint>(displacement.y + b->getPosition().y));
+
+		ruff::logWarning(pos.toString());
+		ruff::logWarning(getPixel(pos));
+		if(getPixel(pos) == ruff::ui::BLANK)
+		{
+			b->setPosition(pos);
+			b->setVelocity(b->getVelocity() + b->getAcceleration() * deltaTime);
+			b->update(deltaTime);
+		}
 		draw(b->getPosition(), b->getColor());
 	}
-	usleep(1000);
 }
 
 int main()

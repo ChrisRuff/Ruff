@@ -4,9 +4,9 @@
 #include <filesystem>
 
 // Source
-#include "ui/ui.hpp"
-#include "ui/button.hpp"
-#include "search.hpp"
+#include "ruff/ui/ui.hpp"
+#include "ruff/ui/button.hpp"
+#include "ruff/core/search.hpp"
 
 using sint = short int;
 
@@ -47,7 +47,7 @@ public:
 		blockWidthY = getHeight() / map[0].size();
 
 	// Resource dir is defined in root CMakeLists.txt
-	const auto font_path = std::filesystem::path(RESOURCE_DIR) / "DejaVuSans.ttf";
+	const auto font_path = std::filesystem::path(DATA_DIR) / "DejaVuSans.ttf";
 
 		// Add start button
 		startButton = addButton(0, 0, blockWidthX, blockWidthY, ruff::ui::GREEN, pixelRatio, font_path, "Start", 28);

@@ -3,16 +3,16 @@
 #include <string>
 #include <memory>
 
-#include "ui/destructors.hpp"
-#include "ui/text.hpp"
-#include "ui/pixel.hpp"
+#include "ruff/ui/destructors.hpp"
+#include "ruff/ui/text.hpp"
+#include "ruff/ui/pixel.hpp"
 
 namespace ruff
 {
 namespace ui
 {
 
-	using sint = short int;
+	using sint = uint16_t;
 	/* --------------------------------------------------------------------------*/
 	/**
 		 * @Synopsis Represents a button for storing inputs

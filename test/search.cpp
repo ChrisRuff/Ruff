@@ -1,7 +1,7 @@
 #include "doctest/doctest.h"
 #include <iostream>
 
-#include "search.hpp"
+#include "ruff/core/search.hpp"
 
 using namespace ruff::tester;
 
