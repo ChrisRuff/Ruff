@@ -9,10 +9,10 @@ using namespace ruff::ui;
 class TestEngine : public Engine
 {
 public:
-	TestEngine(const sint width, const sint height, const std::string& title = "Ruff Pixel Engine")
+	TestEngine(const uint16_t width, const uint16_t height, const std::string& title = "Ruff Pixel Engine")
 	  : Engine(height, width, title) {}
 	int count{};
-	std::vector<ruff::Point2D<short int>> newPixels{};
+	std::vector<ruff::Point2D<uint16_t>> newPixels{};
 	int marioSprite{};
 
 	virtual void onCreate() override

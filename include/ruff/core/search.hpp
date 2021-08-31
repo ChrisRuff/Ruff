@@ -216,12 +216,5 @@ namespace search
 		/* ----------------------------------------------------------------------------*/
 		std::optional<std::vector<Node>> makePath(const std::vector<std::vector<Node>>& mapping, const Node& end);
 	};
-};// namespace search
-#ifdef BUILD_TESTERS
-namespace tester
-{
-	//ASTAR
-	bool findEasyPath();
-};// namespace tester
-#endif
-};// namespace ruff
+}; // namespace search
+}; // namespace ruff

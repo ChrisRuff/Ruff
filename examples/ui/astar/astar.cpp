@@ -127,5 +127,5 @@ int main()
 	// Create game engine and then run it
 	AStar astarEngine(1000, 1200, "AStar", 2);
 	astarEngine.launch();
-	return 0;
+	return EXIT_SUCCESS;
 }

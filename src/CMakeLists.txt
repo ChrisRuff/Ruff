@@ -16,9 +16,6 @@ file( GLOB_RECURSE HEADERS_GEO LIST_DIRECTORIES false CONFIGURE_DEPENDS
 file( GLOB_RECURSE HEADERS_UI LIST_DIRECTORIES false CONFIGURE_DEPENDS
 	"${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/ui/*.hpp" )
 
-# Add deps
-include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
-
 make_component( "core" "${HEADERS_CORE}" "${SRCS_CORE}" )
 #target_link_libraries(core)
 

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 
-#include "sorting/sorting.hpp"
+#include "ruff/core/sorting.hpp"
 
 TEST_SUITE("Sorting")
 {

@@ -14,9 +14,9 @@ colourized("PROJECT_BINARY_DIR: ${PROJECT_BINARY_DIR}" ${MAG} )
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-option(BUILD_TESTERS "Build testers" ON)
-option(BUILD_EXAMPLES "Build examples" ON)
-option(BUILD_DOXY_DOC "Build Doxygen documentation" ON)
+option(BUILD_TESTERS "Build testers" OFF)
+option(BUILD_EXAMPLES "Build examples" OFF)
+option(BUILD_DOXY_DOC "Build Doxygen documentation" OFF)
 
 # append path to search for cmake modules
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
@@ -31,11 +31,6 @@ include( cmake/CppCheck.cmake )
 include( cmake/ClangFormat.cmake )
 #set(CMAKE_CXX_CLANG_TIDY "clang-tidy")
 
-if(BUILD_TESTERS)
-	add_definitions(-DBUILD_TESTERS)
-endif()
-
-
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 	add_compile_options (-fdiagnostics-color=always)
 	set(OPTS -Wall -Wextra -Wctor-dtor-privacy -Wno-init-list-lifetime
@@ -45,30 +40,24 @@ endif()
 
 colourized( "Compile Options: ${OPTS}" ${YLW} )
 
-if(BUILD_DOXY_DOC)
-	find_package( Doxygen )
-	if( Doxygen_FOUND )
-		colourized( "Configuring Docs" ${BLU} )
-		add_subdirectory( docs )
-	else()
-		message( STATUS "Doxygen not found, not building docs" )
-	endif()
-endif()
 
+# Add deps
+include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 
 # Add target Ruff
 colourized( "Configuring Ruff Library" ${BLU} )
 add_subdirectory(src)
 
+if(BUILD_DOXY_DOC)
+	find_package(Doxygen REQUIRED)
+	colourized( "Configuring Docs" ${BLU} )
+	add_subdirectory(docs)
+endif()
 
-if(BUILD_TESTING)
-	find_package(doctest)
-	if(doctest_FOUND)
-		colourized( "Configuring Testers Library" ${BLU} )
-		add_subdirectory(test)
-	else()
-		message( STATUS "Doctest not found, not building tests")
-	endif()
+if(BUILD_TESTERS)
+	find_package(doctest REQUIRED)
+	colourized( "Configuring Testers Library" ${BLU} )
+	add_subdirectory(test)
 endif()
 
 if(BUILD_EXAMPLES)

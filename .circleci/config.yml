@@ -29,10 +29,10 @@ jobs:
           command: 'apt-get update && sudo apt-get install -y python3-pip && pip3 install conan'
       - run:
           name: Install conan packages
-          command: 'mkdir build && cd build && conan install .. --build=missing'
+          command: 'mkdir build && cd build && conan install .. --build=missing -o ruff:build_tests=True'
       - run:
           name: Creating Build Files
-          command: 'cmake -H. -Bbuild -GNinja'
+          command: 'cmake -H. -Bbuild -GNinja -DBUILD_TESTERS=ON'
       - run:
           name: Creating Binary Files
           command: 'cmake --build build'

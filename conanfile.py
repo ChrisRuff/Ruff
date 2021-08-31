@@ -21,7 +21,7 @@ class ruffConan(ConanFile):
     def configure_cmake(self):
         cmake = CMake(self)
         cmake.definitions["BUILD_DOXY_DOC"] = "ON" if self.options.build_docs else "OFF"
-        cmake.definitions["BUILD_TESTING"] = "ON" if self.options.build_tests else "OFF"
+        cmake.definitions["BUILD_TESTERS"] = "ON" if self.options.build_tests else "OFF"
         cmake.definitions["BUILD_EXAMPLES"] = "ON" if self.options.build_examples else "OFF"
         cmake.configure()
         return cmake
