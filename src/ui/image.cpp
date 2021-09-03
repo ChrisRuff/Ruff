@@ -68,6 +68,9 @@ void Image::rectangle(const Point2D<uint16_t>& p1, const Point2D<uint16_t>& p2, 
 }
 void Image::resize(uint16_t new_w, uint16_t new_h, RESAMP_METHOD method)
 {
+	(void)new_w;
+	(void)new_h;
+	(void)method;
 
 }
 void Image::overlay(const Image& overlay, uint16_t x, uint16_t y)
@@ -108,6 +111,7 @@ bool Image::write(const std::filesystem::path& out_path) const
 
 Image Image::read(const std::filesystem::path& in_path)
 {
+	(void)in_path;
 	return Image(5,5);
 }
 };

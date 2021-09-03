@@ -39,8 +39,6 @@ namespace ui
 		int mouse_x{ 0 }, mouse_y{ 0 };
 	};
 
-
-	using sint = uint16_t;
 	/* --------------------------------------------------------------------------*/
 	/**
 		 * @Synopsis UI engine to render pixels
@@ -49,12 +47,12 @@ namespace ui
 	class Engine
 	{
 	protected:
-		sint width{};
-		sint height{};
+		uint16_t width{};
+		uint16_t height{};
 		std::string title{};
-		sint screenWidth{};
-		sint screenHeight{};
-		sint pixelRatio{};
+		uint16_t screenWidth{};
+		uint16_t screenHeight{};
+		uint16_t pixelRatio{};
 
 		// Hardware interface
 		MouseState mouse{};
@@ -87,7 +85,7 @@ namespace ui
 			 * @Param title Title of created window
 			 */
 		/* ----------------------------------------------------------------------------*/
-		Engine(const sint width, const sint height, std::string title = "Window", int pixelRatio = 1);
+		Engine(const uint16_t width, const uint16_t height, std::string title = "Window", int pixelRatio = 1);
 
 		virtual ~Engine() = default;
 
@@ -115,13 +113,13 @@ namespace ui
 
 		std::unordered_map<std::string, int> getSpriteInfo(int index);
 
-		void displaySprite(const sint x, const sint y, const int idx, const int scale, const double angle = 0, const int rX = -1, const int rY = -1);
+		void displaySprite(const uint16_t x, const uint16_t y, const int idx, const int scale, const double angle = 0, const int rX = -1, const int rY = -1);
 
-		std::vector<Point2D<sint>> static getLine(const sint x1, const sint y1, 
-				const sint x2, const sint y2, const int line_width);
+		std::vector<Point2D<uint16_t>> static getLine(const uint16_t x1, const uint16_t y1, 
+				const uint16_t x2, const uint16_t y2, const int line_width);
 
-		std::vector<Point2D<sint>> static getLine(const Point2D<sint> p1, 
-				const Point2D<sint> p2, const int line_width);
+		std::vector<Point2D<uint16_t>> static getLine(const Point2D<uint16_t> p1, 
+				const Point2D<uint16_t> p2, const int line_width);
 
 		/* --------------------------------------------------------------------------*/
 		/**
@@ -135,7 +133,7 @@ namespace ui
 			 * @Param line_width How wide the line will be drawn
 			 */
 		/* ----------------------------------------------------------------------------*/
-		void drawLine(const sint x1, const sint y1, const sint x2, const sint y2, const Pixel& color = WHITE, const int line_width = 1);
+		void drawLine(const uint16_t x1, const uint16_t y1, const uint16_t x2, const uint16_t y2, const Pixel& color = WHITE, const int line_width = 1);
 
 		/* --------------------------------------------------------------------------*/
 		/**
@@ -147,7 +145,7 @@ namespace ui
 			 * @Param color Color of the line
 			 */
 		/* ----------------------------------------------------------------------------*/
-		void drawLine(const Point2D<sint>& p1, const Point2D<sint>& p2, const Pixel& color, const int line_width);
+		void drawLine(const Point2D<uint16_t>& p1, const Point2D<uint16_t>& p2, const Pixel& color, const int line_width);
 
 		/* --------------------------------------------------------------------------*/
 		/**
@@ -158,7 +156,7 @@ namespace ui
 			 * @Param color The color that will replace the pixel
 			 */
 		/* ----------------------------------------------------------------------------*/
-		void draw(const sint x, const sint y, const Pixel& color);
+		void draw(const uint16_t x, const uint16_t y, const Pixel& color);
 
 		/* --------------------------------------------------------------------------*/
 		/**
@@ -168,11 +166,11 @@ namespace ui
 			 * @Param color The color that will replace the pixel
 			 */
 		/* ----------------------------------------------------------------------------*/
-		void draw(const Point2D<sint>& p, const Pixel& color);
+		void draw(const Point2D<uint16_t>& p, const Pixel& color);
 
-		void drawSquare(const sint leftX, const sint leftY, const sint rightX, const sint rightY, const Pixel& color, const bool fill = false);
+		void drawSquare(const uint16_t leftX, const uint16_t leftY, const uint16_t rightX, const uint16_t rightY, const Pixel& color, const bool fill = false);
 
-		void drawSquare(const Point2D<sint>& left, const Point2D<sint>& right, const Pixel& color, const bool fill = false);
+		void drawSquare(const Point2D<uint16_t>& left, const Point2D<uint16_t>& right, const Pixel& color, const bool fill = false);
 
 		/* --------------------------------------------------------------------------*/
 		/**
@@ -186,7 +184,7 @@ namespace ui
 			 * draw the circumference(default to no-fill)
 			 */
 		/* ----------------------------------------------------------------------------*/
-		void drawCircle(const sint centerX, const sint centerY, const sint radius, const Pixel& color, const bool fill = false);
+		void drawCircle(const uint16_t centerX, const uint16_t centerY, const uint16_t radius, const Pixel& color, const bool fill = false);
 
 		/* --------------------------------------------------------------------------*/
 		/**
@@ -199,11 +197,11 @@ namespace ui
 			 * draw the circumference(default to no-fill)
 			 */
 		/* ----------------------------------------------------------------------------*/
-		void drawCircle(const Point2D<sint>& center, const sint radius, const Pixel& color, bool fill = false);
+		void drawCircle(const Point2D<uint16_t>& center, const uint16_t radius, const Pixel& color, bool fill = false);
 
 		void drawButton(Button* button);
 
-		int addButton(sint x, sint y, int width, int height, Pixel color, int pixelRatio, std::string fontPath = "", std::string label = "", int fontSize = 12);
+		int addButton(uint16_t x, uint16_t y, int width, int height, Pixel color, int pixelRatio, std::string fontPath = "", std::string label = "", int fontSize = 12);
 
 		/* --------------------------------------------------------------------------*/
 		/**
@@ -212,7 +210,7 @@ namespace ui
 			 * @Returns   
 			 */
 		/* ----------------------------------------------------------------------------*/
-		[[nodiscard]] sint getWidth() const
+		[[nodiscard]] uint16_t getWidth() const
 		{
 			return width / pixelRatio;
 		}
@@ -224,15 +222,15 @@ namespace ui
 			 * @Returns   
 			 */
 		/* ----------------------------------------------------------------------------*/
-		[[nodiscard]] sint getHeight() const
+		[[nodiscard]] uint16_t getHeight() const
 		{
 			return height / pixelRatio;
 		}
 
-		Pixel getPixel(sint x, sint y) const;
-		Pixel getPixel(Point2D<sint> p) const;
-		std::vector<Pixel> getRegion(sint x1, sint y1, sint x2, sint y2);
-		std::vector<Pixel> getRegion(Point2D<sint> p1, Point2D<sint> p2);
+		Pixel getPixel(uint16_t x, uint16_t y) const;
+		Pixel getPixel(Point2D<uint16_t> p) const;
+		std::vector<Pixel> getRegion(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
+		std::vector<Pixel> getRegion(Point2D<uint16_t> p1, Point2D<uint16_t> p2);
 
 		[[nodiscard]] bool onButton(const MouseState& mouse) const;
 

@@ -34,10 +34,19 @@ namespace color
 	};
 }// namespace color
 
+static color::Modifier blue(color::FG_BLUE);
 static color::Modifier yellow(color::FG_LIGHT_YELLOW);
 static color::Modifier red(color::FG_RED);
 static color::Modifier defaultFG(color::FG_DEFAULT);
 
+inline void log(const std::string& message)
+{
+#ifndef NDEBUG
+	std::cout << blue << "\n## INFO: " << message << " ##" << defaultFG << std::endl;
+#else
+	(void)message;
+#endif
+};
 inline void logWarning(const std::string& message)
 {
 #ifndef NDEBUG

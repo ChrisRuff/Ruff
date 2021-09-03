@@ -109,7 +109,6 @@ namespace geometry
 		Mesh<Point<T, dim>> mesh;
 		std::ifstream in_file(file);
 
-		size_t line_count = 0;
 		if(in_file.is_open())
 		{
 			std::vector<Point<T, dim>> vertices;

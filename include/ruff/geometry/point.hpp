@@ -61,6 +61,15 @@ public:
 		}
 		return Point(new_vals);
 	}
+	inline constexpr Point operator/(const Point<T, size>& other) const
+	{
+		std::array<T, size> new_vals;
+		for(size_t i = 0; i < size; ++i)
+		{
+			new_vals[i] = vals[i] / other[i];
+		}
+		return Point(new_vals);
+	}
 	inline constexpr Point operator*(const double scalar) const noexcept
 	{
 		std::array<T, size> new_vals;
@@ -113,10 +122,20 @@ public:
 		}
 		return Point(new_vals);
 	}
+	inline constexpr Point operator-(const Point<T, size>& other) const noexcept
+	{
+		std::array<T, size> new_vals;
+		for(size_t i = 0; i < size; ++i)
+		{
+			new_vals[i] = vals[i] - other[i];
+		}
+		return Point(new_vals);
+	}
 	inline std::string toString() const
 	{ 
 		std::string point_text("[");
-		std::for_each(vals.begin(), vals.end(), [&](const T& val){ point_text += std::to_string(val) + ", "; });
+		std::for_each(vals.begin(), vals.end()-1, [&](const T& val){ point_text += std::to_string(val) + ", "; });
+		point_text += std::to_string(*(vals.end()-1));
 		point_text += "]";
 		return point_text;
 	};
@@ -156,6 +175,7 @@ public:
 
 	constexpr Point2D(const Point2D& new_point) noexcept : Point2D(new_point.vals) {}
 	constexpr Point2D(Point2D&& new_point) noexcept : Point2D(new_point.vals) {}
+
 	constexpr Point2D& operator=(const Point2D<T>& new_point)
 	{
 		this->vals = new_point.vals;

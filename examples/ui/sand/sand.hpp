@@ -14,14 +14,12 @@
 #define SAND ruff::ui::DARK_YELLOW
 #define WATER ruff::ui::DARK_BLUE
 
-using sint = ruff::ui::sint;
+const constexpr static uint16_t width = 1000;
+const constexpr static uint16_t height = 1500;
 
-const constexpr static sint width = 1000;
-const constexpr static sint height = 1500;
-
-const constexpr static sint pr = 6;
-const constexpr static sint w = width / pr;
-const constexpr static sint h = height / pr;
+const constexpr static uint16_t pr = 6;
+const constexpr static uint16_t w = width / pr;
+const constexpr static uint16_t h = height / pr;
 
 class Block;
 
@@ -35,7 +33,7 @@ private:
 	int brush_width = 3;
 
 public:
-	SandEngine(const sint width, const sint height, 
+	SandEngine(const uint16_t width, const uint16_t height, 
 			const std::string& title = "Sand Engine", 
 			const int pixelRatio = pr) 
 		: Engine(height, width, title, pixelRatio) {}
@@ -59,7 +57,7 @@ public:
 				if(i*i + j*j <= brush_width*brush_width)
 				{
 					std::shared_ptr<Block> p = 
-						std::make_shared<T>(ruff::Point2D<sint>(mouse.mouse_x+j, mouse.mouse_y+i));
+						std::make_shared<T>(ruff::Point2D<uint16_t>(mouse.mouse_x+j, mouse.mouse_y+i));
 					blocks.push_back(p);
 				}
 			}
@@ -83,33 +81,26 @@ class Block
 protected:
 	double v_angle{};
 
-	ruff::Point2D<sint> position{};
+	ruff::Point2D<uint16_t> position{};
 	ruff::Point2D<double> velocity{};
 	ruff::Point2D<double> acceleration{};
 	ruff::ui::Pixel color{};
 
 public:
-	[[nodiscard]] Block(ruff::Point2D<sint> position) noexcept : 
+	[[nodiscard]] Block(ruff::Point2D<uint16_t> position) noexcept : 
 		position(position), velocity(0,0), acceleration(0,1), color(EMPTY)
 	{
 	}
 
 	virtual void update(double deltaTime) 
 	{
-		if(position.y < 0)
-		{
-			position.y = 0;
-		}
-		else if(position.y >= w)
+		(void)deltaTime;
+		if(position.y >= w)
 		{
 			position.y = w-1;
 		}
 
-		if(position.x < 0)
-		{
-			position.x = 0;
-		}
-		else if(position.x >= h)
+		if(position.x >= h)
 		{
 			position.x = h-1;
 		}
@@ -128,13 +119,13 @@ public:
 	Block& operator=(const Block&&) = delete;
 
 	[[nodiscard]] auto getColor() const { return color; }
-	void setPosition(ruff::Point2D<sint> p) { this->position = p; }
+	void setPosition(ruff::Point2D<uint16_t> p) { this->position = p; }
 	void setPosition(const double x, const double y) 
 	{ 
 		this->position.x = x; 
 		this->position.y = y; 
 	};
-	[[nodiscard]] ruff::Point2D<sint> getPosition() const { return position; }
+	[[nodiscard]] ruff::Point2D<uint16_t> getPosition() const { return position; }
 
 	void setVelocity(ruff::Point2D<double> v) { this->velocity = v; };
 	void setVelocity(const double vx, const double vy) 
@@ -156,7 +147,7 @@ public:
 class Sand : public Block
 {
 public:
-	Sand(ruff::Point2D<sint> position) noexcept : Block(position) 
+	Sand(ruff::Point2D<uint16_t> position) noexcept : Block(position) 
 	{
 		color = SAND;
 	}
@@ -177,7 +168,7 @@ class Water : public Block
 private:
 	signed char prevDir{-1}; 
 public:
-	Water(ruff::Point2D<sint> position) noexcept : Block(position) 
+	Water(ruff::Point2D<uint16_t> position) noexcept : Block(position) 
 	{
 		color = WATER;
 	}

@@ -49,10 +49,9 @@ void SandEngine::onUpdate(const double deltaTime)
 	{
 		const ruff::Point2D displacement = b->getVelocity() * deltaTime;
 		ruff::Point2D pos(
-			static_cast<sint>(displacement.x + b->getPosition().x), 
-			static_cast<sint>(displacement.y + b->getPosition().y));
+			static_cast<uint16_t>(displacement.x + b->getPosition().x), 
+			static_cast<uint16_t>(displacement.y + b->getPosition().y));
 
-		ruff::logWarning(pos.toString());
 		ruff::logWarning(getPixel(pos));
 		if(getPixel(pos) == ruff::ui::BLANK)
 		{

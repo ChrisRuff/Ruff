@@ -4,7 +4,7 @@ namespace ruff
 {
 namespace ui
 {
-	Engine::Engine(const sint width, const sint height, std::string title, int pixelRatio) : 
+	Engine::Engine(const uint16_t width, const uint16_t height, std::string title, int pixelRatio) : 
 		width(width), height(height), title(title), screenWidth(width / pixelRatio), 
 		screenHeight(height / pixelRatio), pixelRatio(pixelRatio)
 	{
@@ -196,7 +196,7 @@ namespace ui
 		info["height"] = h;
 		return info;
 	}
-	void Engine::displaySprite(const sint x, const sint y, const int idx, const int scale, const double angle, const int rX, const int rY)
+	void Engine::displaySprite(const uint16_t x, const uint16_t y, const int idx, const int scale, const double angle, const int rX, const int rY)
 	{
 		SDL_Point rPoint = { rX, rY };
 		int w{ 0 };
@@ -231,9 +231,9 @@ namespace ui
 			pixels[i + 3] = color[3];
 		}
 	}
-	void Engine::draw(const sint x, const sint y, const Pixel& color)
+	void Engine::draw(const uint16_t x, const uint16_t y, const Pixel& color)
 	{
-		if(x < 0 || y < 0 || x >= screenWidth || y >= screenHeight)
+		if(x >= screenWidth || y >= screenHeight)
 		{
 			return;
 		}
@@ -243,14 +243,14 @@ namespace ui
 		pixels[offset + 2] = color.b;
 		pixels[offset + 3] = color.a;
 	}
-	void Engine::draw(const Point2D<sint>& p, const Pixel& color) { draw(p.x, p.y, color); }
+	void Engine::draw(const Point2D<uint16_t>& p, const Pixel& color) { draw(p.x, p.y, color); }
 
-	std::vector<Point2D<sint>> Engine::getLine(const sint x1, const sint y1, 
-			const sint x2, const sint y2, const int line_width)
+	std::vector<Point2D<uint16_t>> Engine::getLine(const uint16_t x1, const uint16_t y1, 
+			const uint16_t x2, const uint16_t y2, const int line_width)
 	{
-		std::vector<Point2D<sint>> points{};
-		sint dx = x2 - x1;
-		sint dy = y2 - y1;
+		std::vector<Point2D<uint16_t>> points{};
+		int16_t dx = x2 - x1;
+		int16_t dy = y2 - y1;
 
 		//Vertical
 		if(dx == 0)
@@ -261,7 +261,7 @@ namespace ui
 			}
 			else
 			{
-				for(sint y = y1; y <= y2; ++y)
+				for(uint16_t y = y1; y <= y2; ++y)
 				{
 					points.push_back({x1, y});
 				}
@@ -276,7 +276,7 @@ namespace ui
 			}
 			else
 			{
-				for(sint x = x1; x <= x2; ++x)
+				for(uint16_t x = x1; x <= x2; ++x)
 				{
 					points.push_back({x, y1});
 				}
@@ -285,11 +285,11 @@ namespace ui
 		// at an angle not divisible by 90
 		else
 		{
-			sint dx1 = std::abs(dx);
-			sint dy1 = std::abs(dy);
-			sint px = 2 * dy1 - dx1;
-			sint py = 2 * dx1 - dy1;
-			sint x, y, xe, ye;
+			int16_t dx1 = std::abs(dx);
+			int16_t dy1 = std::abs(dy);
+			int16_t px = 2 * dy1 - dx1;
+			int16_t py = 2 * dx1 - dy1;
+			uint16_t x, y, xe, ye;
 			if(dy1 <= dx1)
 			{
 				if(dx >= 0)
@@ -306,7 +306,7 @@ namespace ui
 				}
 
 				points.push_back({x, y});
-				for(sint i = 0; x < xe; ++i)
+				for(uint16_t i = 0; x < xe; ++i)
 				{
 					++x;
 					if(px < 0)
@@ -342,7 +342,7 @@ namespace ui
 
 				points.push_back({x, y});
 
-				for(sint i = 0; y < ye; ++i)
+				for(uint16_t i = 0; y < ye; ++i)
 				{
 					++y;
 					if(py <= 0)
@@ -363,12 +363,12 @@ namespace ui
 		}
 		return points;
 	}
-	std::vector<Point2D<sint>> Engine::getLine(const Point2D<sint> p1, 
-			const Point2D<sint> p2, const int line_width)
+	std::vector<Point2D<uint16_t>> Engine::getLine(const Point2D<uint16_t> p1, 
+			const Point2D<uint16_t> p2, const int line_width)
 	{
 		return Engine::getLine(p1.x, p1.y, p2.x, p2.y, line_width);
 	}
-	void Engine::drawLine(const sint x1, const sint y1, const sint x2, const sint y2, const Pixel& color, const int line_width)
+	void Engine::drawLine(const uint16_t x1, const uint16_t y1, const uint16_t x2, const uint16_t y2, const Pixel& color, const int line_width)
 	{
 		const auto pts = Engine::getLine(x1, y1, x2, y2, line_width);
 		for(const auto& pt : pts)
@@ -376,19 +376,19 @@ namespace ui
 			draw(pt, color);
 		}
 	}
-	void Engine::drawLine(const Point2D<sint>& p1, const Point2D<sint>& p2, const Pixel& color, const int line_width)
+	void Engine::drawLine(const Point2D<uint16_t>& p1, const Point2D<uint16_t>& p2, const Pixel& color, const int line_width)
 	{
 		drawLine(p1.x, p1.y, p2.x, p2.y, color, line_width);
 	}
 
-	void Engine::drawSquare(const sint leftX, const sint leftY, const sint rightX, const sint rightY, const Pixel& color, const bool fill)
+	void Engine::drawSquare(const uint16_t leftX, const uint16_t leftY, const uint16_t rightX, const uint16_t rightY, const Pixel& color, const bool fill)
 	{
 		if(leftX > rightX)
 			drawSquare(rightX, rightY, leftX, leftY, color, fill);
 
 		if(fill)
 		{
-			for(sint i = leftX; i < rightX; ++i)
+			for(uint16_t i = leftX; i < rightX; ++i)
 			{
 				drawLine(i, leftY, i, rightY, color, 1);
 			}
@@ -402,21 +402,21 @@ namespace ui
 		}
 	}
 
-	void Engine::drawSquare(const Point2D<sint>& left, const Point2D<sint>& right, const Pixel& color, const bool fill)
+	void Engine::drawSquare(const Point2D<uint16_t>& left, const Point2D<uint16_t>& right, const Pixel& color, const bool fill)
 	{
 		drawSquare(left.x, left.y, right.x, right.y, color, fill);
 	}
 
 
-	void Engine::drawCircle(const sint centerX, const sint centerY, const sint radius, const Pixel& color, const bool fill)
+	void Engine::drawCircle(const uint16_t centerX, const uint16_t centerY, const uint16_t radius, const Pixel& color, const bool fill)
 	{
 		// Equation of a circle
-		auto y = [centerX, radius](sint x) {
+		auto y = [centerX, radius](uint16_t x) {
 			return std::sqrt((radius * radius) - (x - centerX) * (x - centerX));
 		};
 		if(!fill)
 		{
-			for(sint x = centerX - radius; x <= centerX + radius; ++x)
+			for(uint16_t x = centerX - radius; x <= centerX + radius; ++x)
 			{
 				draw(x, y(x) + centerY, color);
 				draw(x, -y(x) + centerY, color);
@@ -424,21 +424,21 @@ namespace ui
 		}
 		else
 		{
-			for(sint x = centerX - radius; x <= centerX + radius; ++x)
+			for(uint16_t x = centerX - radius; x <= centerX + radius; ++x)
 			{
 				drawLine(x, -y(x) + centerY, x, y(x) + centerY, color);
 			}
 		}
 	}
-	void Engine::drawCircle(const Point2D<sint>& center, const sint radius, const Pixel& color, const bool fill)
+	void Engine::drawCircle(const Point2D<uint16_t>& center, const uint16_t radius, const Pixel& color, const bool fill)
 	{
 		drawCircle(center.x, center.y, radius, color, fill);
 	}
 
 	void Engine::drawButton(Button* button)
 	{
-		sint x = button->getX();
-		sint y = button->getY();
+		uint16_t x = button->getX();
+		uint16_t y = button->getY();
 		drawSquare(x, y, x + button->getWidth(), y + button->getHeight(), button->getColor(), true);
 		SDL_Color white = { 255, 255, 255, 0 };
 		auto surfaceMessage = std::unique_ptr<SDL_Surface, SDLDestroyer>(TTF_RenderText_Solid(button->getFont(), button->getLabel().c_str(), white));
@@ -453,12 +453,12 @@ namespace ui
 
 		SDL_RenderCopy(renderer.get(), message.get(), NULL, &message_rect);
 	}
-	int Engine::addButton(sint x, sint y, int width, int height, Pixel color, int pixelRatio, std::string fontPath, std::string label, int fontSize)
+	int Engine::addButton(uint16_t x, uint16_t y, int width, int height, Pixel color, int pixelRatio, std::string fontPath, std::string label, int fontSize)
 	{
 		buttons.push_back(std::make_unique<Button>(x, y, width, height, color, pixelRatio, fontPath, label, fontSize));
 		return buttons.size() - 1;
 	}
-	Pixel Engine::getPixel(sint x, sint y) const
+	Pixel Engine::getPixel(uint16_t x, uint16_t y) const
 	{
 		const unsigned int offset = (screenWidth * 4 * y) + x * 4;
 		return Pixel(
@@ -467,11 +467,11 @@ namespace ui
 				pixels[offset+2], 
 				pixels[offset+3]);
 	}
-	Pixel Engine::getPixel(Point2D<sint> p) const
+	Pixel Engine::getPixel(Point2D<uint16_t> p) const
 	{
 		return getPixel(p.x, p.y);
 	}
-	std::vector<Pixel> Engine::getRegion(sint x1, sint y1, sint x2, sint y2)
+	std::vector<Pixel> Engine::getRegion(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
 	{
 		if(x1 > x2)
 			return getRegion(x2, y1, x1, y2);
@@ -480,11 +480,11 @@ namespace ui
 
 		std::vector<Pixel> region{};
 		pixels.reserve((x2-x1) * (y2-y1));
-		for(sint y = y1; y <= y2; ++y)
+		for(uint16_t y = y1; y <= y2; ++y)
 		{
-			for(sint x = x1; x <= x2; ++x)
+			for(uint16_t x = x1; x <= x2; ++x)
 			{
-				if(x >= screenWidth || y >= screenHeight || y < 0 || x < 0) 
+				if(x >= screenWidth || y >= screenHeight) 
 				{ 
 					region.push_back(ruff::ui::BLANK); 
 				}
@@ -501,7 +501,7 @@ namespace ui
 		return region;
 	}
 
-	std::vector<Pixel> Engine::getRegion(Point2D<sint> p1, Point2D<sint> p2)
+	std::vector<Pixel> Engine::getRegion(Point2D<uint16_t> p1, Point2D<uint16_t> p2)
 	{
 		return getRegion(p1.x, p1.y, p2.x, p2.y);
 	}
