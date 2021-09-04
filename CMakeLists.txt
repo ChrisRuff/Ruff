@@ -58,6 +58,11 @@ if(BUILD_TESTERS)
 	find_package(doctest REQUIRED)
 	colourized( "Configuring Testers Library" ${BLU} )
 	add_subdirectory(test)
+	file(GLOB_RECURSE RESOURCES 
+		LIST_DIRECTORIES false 
+		CONFIGURE_DEPENDS 
+		${PROJECT_SOURCE_DIR}/test/*.png)
+	file(COPY ${RESOURCES} DESTINATION "${PROJECT_SOURCE_DIR}/bin")
 endif()
 
 if(BUILD_EXAMPLES)
@@ -66,11 +71,9 @@ if(BUILD_EXAMPLES)
 	file(GLOB_RECURSE RESOURCES 
 		LIST_DIRECTORIES false 
 		CONFIGURE_DEPENDS 
-		${PROJECT_SOURCE_DIR}/examples/*.bmp
 		${PROJECT_SOURCE_DIR}/examples/*.png
 		${PROJECT_SOURCE_DIR}/examples/*.ttf
-		${PROJECT_SOURCE_DIR}/examples/*.obj
-		${PROJECT_SOURCE_DIR}/test/*.png)
+		${PROJECT_SOURCE_DIR}/examples/*.obj)
 	file(COPY ${RESOURCES} DESTINATION "${PROJECT_SOURCE_DIR}/bin")
 endif()
 
