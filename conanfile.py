@@ -36,6 +36,7 @@ class ruffConan(ConanFile):
         self.options["sdl"].nas = False
 
         self.requires("sdl_ttf/2.0.15")
+        self.requires("libpng/1.6.37")
         if self.options.build_tests:
             self.requires("doctest/2.4.5")
         if self.options.build_docs:

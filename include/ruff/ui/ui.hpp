@@ -20,12 +20,15 @@
 #include <GL/gl.h>
 
 // Source
+#include "ruff/core/logger.hpp"
+
+#include "ruff/geometry/point.hpp"
+
 #include "ruff/ui/destructors.hpp"
 #include "ruff/ui/text.hpp"
 #include "ruff/ui/pixel.hpp"
 #include "ruff/ui/button.hpp"
-#include "ruff/geometry/point.hpp"
-#include "ruff/core/logger.hpp"
+#include "ruff/ui/image.hpp"
 
 namespace ruff
 {
@@ -71,7 +74,6 @@ namespace ui
 		std::unique_ptr<SDL_Window, SDLDestroyer> window{ nullptr };
 		std::unique_ptr<SDL_Renderer, SDLDestroyer> renderer{ nullptr };
 		std::unique_ptr<SDL_Texture, SDLDestroyer> texture{ nullptr };
-		std::vector<std::unique_ptr<SDL_Texture, SDLDestroyer>> sprites{};
 
 		SDL_GLContext gl_context{};
 
@@ -100,20 +102,7 @@ namespace ui
 
 		Engine& operator=(const Engine& other) = delete;
 
-		/* --------------------------------------------------------------------------*/
-		/**
-			 * @Synopsis Loads a sprite into the engine to be referenced
-			 *
-			 * @Param filepath Location of the sprite 
-			 *
-			 * @Returns index of the sprite in the sprites vector
-			 */
-		/* ----------------------------------------------------------------------------*/
-		int loadSprite(const std::string& filepath);
-
-		std::unordered_map<std::string, int> getSpriteInfo(int index);
-
-		void displaySprite(const uint16_t x, const uint16_t y, const int idx, const int scale, const double angle = 0, const int rX = -1, const int rY = -1);
+		void displayImage(ruff::ui::Image img, const uint16_t x, const uint16_t y, const double rotation=0);
 
 		std::vector<Point2D<uint16_t>> static getLine(const uint16_t x1, const uint16_t y1, 
 				const uint16_t x2, const uint16_t y2, const int line_width);

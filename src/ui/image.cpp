@@ -71,13 +71,16 @@ void Image::resize(uint16_t new_w, uint16_t new_h, RESAMP_METHOD method)
 	(void)new_w;
 	(void)new_h;
 	(void)method;
-
+}
+void Image::rotate(const double rotation, ROTATION_METHOD rotation_method)
+{
+	(void)rotation;
 }
 void Image::overlay(const Image& overlay, uint16_t x, uint16_t y)
 {
-	for(uint16_t i = x; i < overlay.width()+x; ++i)
+	for(uint16_t i = x; i < overlay.width()+x && i < w; ++i)
 	{
-		for(uint16_t j = y; j < overlay.height()+y; ++j)
+		for(uint16_t j = y; j < overlay.height()+y && j < h; ++j)
 		{
 			set(i, j, overlay.get(i-x, j-y));
 		}
@@ -85,13 +88,17 @@ void Image::overlay(const Image& overlay, uint16_t x, uint16_t y)
 }
 bool Image::write(const std::filesystem::path& out_path) const
 {
-	std::ofstream out_file(out_path, std::ios::binary);
-	if(!out_file.is_open())
+	if(out_path.extension() == ".png")
 	{
-		return false;
+
 	}
-	if(!out_path.extension().compare("ppm"))
+	else if(out_path.extension() == ".ppm")
 	{
+		std::ofstream out_file(out_path, std::ios::binary);
+		if(!out_file.is_open())
+		{
+			return false;
+		}
 		out_file << "P6\n" << w << " " << h << "\n255\n";
 		for(size_t i = 0; i < w * h; ++i)
 		{
@@ -111,8 +118,67 @@ bool Image::write(const std::filesystem::path& out_path) const
 
 Image Image::read(const std::filesystem::path& in_path)
 {
-	(void)in_path;
-	return Image(5,5);
+	if(in_path.extension() == ".ppm")
+	{
+		throw std::runtime_error("Filetype not supported");
+	}
+	else if(in_path.extension() == ".png")
+	{
+		if(!std::filesystem::exists(in_path))
+		{
+			throw std::runtime_error("No such file found: " + in_path.string());
+		}
+		// https://fossies.org/linux/libpng/example.c
+		png_image png_image;
+		memset(&png_image, 0, sizeof(png_image));
+		png_image.version = PNG_IMAGE_VERSION;
+		
+		if(png_image_begin_read_from_file(&png_image, in_path.c_str()) != 0)
+		{
+			png_image.format = PNG_FORMAT_RGBA;
+
+			png_bytep buffer = 
+				static_cast<unsigned char*>(malloc(PNG_IMAGE_SIZE(png_image)));
+			if(buffer != NULL &&
+					png_image_finish_read(&png_image, NULL, buffer, 0, NULL) != 0)
+			{
+				// Convert png image to pixels
+				std::vector<Pixel> pixels{};
+				for(size_t i = 0; i < PNG_IMAGE_SIZE(png_image); i+=4)
+				{
+					pixels.emplace_back(
+						buffer[i],
+						buffer[i+1],
+						buffer[i+2],
+						buffer[i+3]
+					);
+				}
+				Image image(png_image.width, png_image.height, pixels);
+				return image;
+			}
+			else
+			{
+				if(buffer == NULL)
+				{
+					png_image_free(&png_image);
+				}
+				else
+				{
+					free(buffer);
+				}
+				throw std::runtime_error("Could not allocate image");
+			}
+		}
+		else
+		{
+			throw std::runtime_error("Could not read PNG file");
+		}
+	}
+	else
+	{
+		ruff::logError("Filetype not supported");
+		throw std::runtime_error("Filetype not supported");
+	}
 }
 };
 };

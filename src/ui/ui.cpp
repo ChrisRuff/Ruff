@@ -157,7 +157,6 @@ namespace ui
 				{
 					drawButton(button.get());
 				}
-				//SDL_RenderCopy( renderer.get(), sprites[0].get(), NULL, NULL );
 
 				SDL_RenderPresent(renderer.get());
 				if(close())
@@ -170,51 +169,16 @@ namespace ui
 		}
 	}
 
-	int Engine::loadSprite(const std::string& filepath)
+	void Engine::displayImage(ruff::ui::Image img, const uint16_t x, const uint16_t y, const double rotation)
 	{
-		SDL_Surface* surface = SDL_LoadBMP(filepath.c_str());
-		SDL_Texture* sprite = SDL_CreateTextureFromSurface(renderer.get(), surface);
-		int success = SDL_RenderCopy(renderer.get(), sprite, nullptr, nullptr);
-		if(success == -1)
+		img.rotate(rotation);
+		for(uint16_t i = x; i < img.width()+x && i < getWidth(); ++i)
 		{
-			return -1;
+			for(uint16_t j = y; j < img.height()+y && j < getHeight(); ++j)
+			{
+				draw(i, j, img.get(i-x, j-y));
+			}
 		}
-		SDL_FreeSurface(surface);
-		sprites.push_back(std::unique_ptr<SDL_Texture, SDLDestroyer>(sprite));
-
-		return static_cast<int>(sprites.size()) - 1;
-	}
-
-	std::unordered_map<std::string, int> Engine::getSpriteInfo(int index)
-	{
-		std::unordered_map<std::string, int> info{};
-
-		int w{ 0 };
-		int h{ 0 };
-		SDL_QueryTexture(sprites[index].get(), nullptr, nullptr, &w, &h);
-		info["width"] = w;
-		info["height"] = h;
-		return info;
-	}
-	void Engine::displaySprite(const uint16_t x, const uint16_t y, const int idx, const int scale, const double angle, const int rX, const int rY)
-	{
-		SDL_Point rPoint = { rX, rY };
-		int w{ 0 };
-		int h{ 0 };
-		if(idx >= static_cast<int>(sprites.size()) || idx == -1)
-		{
-			logWarning("Cannot display sprite at index: " + std::to_string(idx));
-			return;
-		}
-		SDL_QueryTexture(sprites[idx].get(), nullptr, nullptr, &w, &h);
-
-		// Draw texture from the center, not top left
-		SDL_Rect dst;
-		dst.x = x - (w / 2);
-		dst.y = y - (h / 2);
-		dst.w = w * scale;
-		dst.h = h * scale;
-		SDL_RenderCopyEx(renderer.get(), sprites[idx].get(), nullptr, &dst, angle, rX == -1 ? nullptr : &rPoint, SDL_FLIP_NONE);
 	}
 
 	void Engine::clearScreen(Pixel color)

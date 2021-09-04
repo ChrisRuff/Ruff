@@ -13,18 +13,14 @@ public:
 	  : Engine(height, width, title) {}
 	int count{};
 	std::vector<ruff::Point2D<uint16_t>> newPixels{};
-	int marioSprite{};
+	ruff::ui::Image mario_image{};
 
 	virtual void onCreate() override
 	{
 		count = 0;
 
 		// Difference between ninja test(first) and running the binary(second)
-		marioSprite = loadSprite("../../test/mario.bmp");
-		if(marioSprite == -1)
-		{
-			marioSprite = loadSprite("../test/mario.bmp");
-		}
+		mario_image = ruff::ui::Image::read(std::filesystem::path(DATA_DIR) / "mario.png"); 
 	}
 	virtual void onUpdate(double deltaTime) override
 	{
@@ -32,8 +28,7 @@ public:
 		drawLine(0, 0, count, count, Pixel(128, 128, 128, 1));
 		drawCircle(count, count, 50, RED, true);
 		drawCircle(mouse.mouse_x, mouse.mouse_y, 10, Pixel(255, 255, 255, 1), true);
-		if(marioSprite != -1)
-			displaySprite(count, 200, marioSprite, .2);
+		displayImage(mario_image, count, 200);
 		for(const auto& pixel : newPixels)
 		{
 			drawCircle(pixel, 10, Pixel(255, 255, 255, 1), false);

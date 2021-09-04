@@ -28,9 +28,12 @@ make_component( "ui" "${HEADERS_UI}" "${SRCS_UI}" )
 
 find_package(SDL2 REQUIRED)
 find_package(SDL2_ttf REQUIRED)
+find_package(PNG REQUIRED)
 target_link_libraries(ui 
 	PUBLIC
 		core
 		geometry
 		SDL2::SDL2
-		SDL2_ttf::SDL2_ttf)
+		SDL2_ttf::SDL2_ttf
+		PNG::PNG
+		)

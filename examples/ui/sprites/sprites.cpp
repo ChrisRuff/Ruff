@@ -26,9 +26,9 @@ struct Tree
 class Sprites : public ruff::ui::Engine
 {
 private:
-	int tree{ -1 };
-	int stump{ -1 };
-	int shadow{ -1 };
+	ruff::ui::Image tree{};
+	ruff::ui::Image stump{};
+	ruff::ui::Image shadow{};
 	std::vector<std::unordered_map<std::string, int>> spriteInfo{};
 	std::default_random_engine generator{ std::random_device{}() };
 	std::uniform_real_distribution<double> random{};
@@ -54,20 +54,16 @@ public:
 		// Resource dir is defined in root CMakeLists.txt
 		const auto resources = std::filesystem::path(DATA_DIR);
 
-		tree = loadSprite(resources / "tree.bmp");
-		stump = loadSprite(resources / "stump.bmp");
-		shadow = loadSprite(resources / "shadow.bmp");
-
-		spriteInfo.push_back(getSpriteInfo(tree));
-		spriteInfo.push_back(getSpriteInfo(stump));
-		spriteInfo.push_back(getSpriteInfo(shadow));
+		tree = ruff::ui::Image::read(resources / "tree.png");
+		stump = ruff::ui::Image::read(resources / "stump.png");
+		shadow = ruff::ui::Image::read(resources / "shadow.png");
 
 		auto pos = ruff::Point2D<int>{ getWidth() / 2, getHeight() / 2 };
-		trees.emplace_back(pos, 0, spriteInfo[tree]["width"], spriteInfo[tree]["height"]);
+		trees.emplace_back(pos, 0, tree.width(), tree.height());
 		pos = ruff::Point2D<int>{ rand() % getWidth(), rand() % getHeight() };
-		trees.emplace_back(pos, 0, spriteInfo[tree]["width"], spriteInfo[tree]["height"]);
+		trees.emplace_back(pos, 0, tree.width(), tree.height());
 		pos = ruff::Point2D<int>{ rand() % getWidth(), rand() % getHeight() };
-		trees.emplace_back(pos, 0, spriteInfo[tree]["width"], spriteInfo[tree]["height"]);
+		trees.emplace_back(pos, 0, tree.width(), tree.height());
 	}
 	void onUpdate(double deltaTime) override
 	{
@@ -77,16 +73,20 @@ public:
 		// Draw all the shadows
 		for(auto& t : trees)
 		{
-			displaySprite(t.pos.x + (t.angle * 1.6), t.pos.y + 10, shadow, 1);
+			displayImage(shadow, 
+					static_cast<uint16_t>(t.pos.x + (t.angle * 1.6)), 
+					static_cast<uint16_t>(t.pos.y + 10));
 		}
 		// Draw all the stumps
 		for(auto& t : trees)
 		{
-			displaySprite(t.pos.x, t.pos.y, stump, 1);
+			displayImage(stump, t.pos.x, t.pos.y);
 		}
+		// Draw all the trees
 		for(auto& t : trees)
 		{
-			displaySprite(t.pos.x + 3 + (t.angle / 10), t.pos.y - 100 - (t.angle / 10), tree, 1, t.angle, t.width / 2, t.height);
+			displayImage(tree, static_cast<uint16_t>(t.pos.x + 3 + (t.angle / 10)), 
+					static_cast<uint16_t>(t.pos.y - 100 - (t.angle / 10)), t.angle);
 		}
 		// Draw all the trees
 		int size = trees.size();
@@ -101,7 +101,7 @@ public:
 			{
 				t.angle = 0;
 				auto pos = ruff::Point2D<int>{ rand() % getWidth(), rand() % getHeight() };
-				trees.emplace_back(pos, 0, spriteInfo[tree]["width"], spriteInfo[tree]["height"]);
+				trees.emplace_back(pos, 0, tree.width(), tree.height());
 			}
 		}
 		std::sort(trees.begin(), trees.end());
@@ -114,7 +114,7 @@ int main()
 	constexpr int height = 1200;
 	constexpr int pixelWidth = 1;
 
-	Sprites circleEngine(width, height, "Sprites", pixelWidth);
-	circleEngine.launch();
+	Sprites spriteEngine(width, height, "Sprites", pixelWidth);
+	spriteEngine.launch();
 	return 0;
 }

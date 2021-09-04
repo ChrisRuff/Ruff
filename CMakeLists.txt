@@ -67,8 +67,10 @@ if(BUILD_EXAMPLES)
 		LIST_DIRECTORIES false 
 		CONFIGURE_DEPENDS 
 		${PROJECT_SOURCE_DIR}/examples/*.bmp
+		${PROJECT_SOURCE_DIR}/examples/*.png
 		${PROJECT_SOURCE_DIR}/examples/*.ttf
-		${PROJECT_SOURCE_DIR}/examples/*.obj)
+		${PROJECT_SOURCE_DIR}/examples/*.obj
+		${PROJECT_SOURCE_DIR}/test/*.png)
 	file(COPY ${RESOURCES} DESTINATION "${PROJECT_SOURCE_DIR}/bin")
 endif()
 
