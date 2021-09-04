@@ -151,7 +151,10 @@ public:
 		// Draw each body
 		for(Body b : planets)
 		{
-			drawCircle(b.px, b.py, b.radius, ruff::ui::Pixel(b.mass, b.mass, b.mass), true);
+			if(b.px > 0 && b.py > 0)
+			{
+				drawCircle(b.px, b.py, b.radius, ruff::ui::Pixel(b.mass, b.mass, b.mass), true);
+			}
 		}
 	}
 };

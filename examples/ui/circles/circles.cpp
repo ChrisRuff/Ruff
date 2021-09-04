@@ -188,16 +188,25 @@ public:
 		clearScreen();
 		for(Ball b : balls)
 		{
-			drawCircle(b.px, b.py, b.radius, ruff::ui::WHITE);
+			if(b.px > 0 && b.py > 0)
+			{
+				drawCircle(b.px, b.py, b.radius, ruff::ui::WHITE);
+			}
 		}
 
 		for(auto c : collidingBalls)
 		{
-			drawLine(c.first->px, c.first->py, c.second->px, c.second->py, ruff::ui::RED);
+			if(c.first->px > 0 && c.first->py > 0 && c.second->px > 0 && c.second->py > 0)
+			{
+				drawLine(c.first->px, c.first->py, c.second->px, c.second->py, ruff::ui::RED);
+			}
 		}
 		if(selected)
 		{
-			drawLine(selected->px, selected->py, mouse.mouse_x, mouse.mouse_y);
+			if(selected->px > 0 && selected->py > 0)
+			{
+				drawLine(selected->px, selected->py, mouse.mouse_x, mouse.mouse_y);
+			}
 		}
 	}
 };
