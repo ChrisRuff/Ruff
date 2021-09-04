@@ -28,7 +28,7 @@ public:
 		drawLine(0, 0, count, count, Pixel(128, 128, 128, 1));
 		drawCircle(count, count, 50, RED, true);
 		drawCircle(mouse.mouse_x, mouse.mouse_y, 10, Pixel(255, 255, 255, 1), true);
-		displayImage(mario_image, count, 200);
+		displayImage(mario_image, count, 200, count*deltaTime);
 		for(const auto& pixel : newPixels)
 		{
 			drawCircle(pixel, 10, Pixel(255, 255, 255, 1), false);

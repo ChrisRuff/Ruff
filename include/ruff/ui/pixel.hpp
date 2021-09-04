@@ -2,12 +2,12 @@
 #include <cstdlib>
 #include <compare>    // partial_ordering
 #include <string>
+#include "ruff/core/logger.hpp"
 
 namespace ruff
 {
 namespace ui
 {
-	using uint8_t = unsigned char;
 	/* --------------------------------------------------------------------------*/
 	/**
 		 * @Synopsis A pixel represents a color of RGB and alpha
@@ -57,6 +57,17 @@ namespace ui
 		{
 		}
 
+		static Pixel combine(const Pixel& old_p, const Pixel& new_p)
+		{
+			Pixel p(
+				(old_p.r * (1-new_p.a)) + (new_p.r * new_p.a),
+				(old_p.g * (1-new_p.a)) + (new_p.g * new_p.a),
+				(old_p.b * (1-new_p.a)) + (new_p.b * new_p.a),
+				1
+			);
+			return p;
+		}
+
 		~Pixel() = default;
 
 		/* --------------------------------------------------------------------------*/
@@ -94,7 +105,7 @@ namespace ui
 				b == other.b && a == other.a;
 		}
 
-		operator std::string()
+		operator std::string() const
 		{ 
 			return "[" + std::to_string(static_cast<unsigned int>(r)) + 
 				", " + std::to_string(static_cast<unsigned int>(g)) + 

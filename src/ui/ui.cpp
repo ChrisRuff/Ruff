@@ -169,14 +169,25 @@ namespace ui
 		}
 	}
 
-	void Engine::displayImage(ruff::ui::Image img, const uint16_t x, const uint16_t y, const double rotation)
+	void Engine::displayImage(const ruff::ui::Image& img, const uint16_t x, const uint16_t y, const double rotation)
 	{
-		img.rotate(rotation);
-		for(uint16_t i = x; i < img.width()+x && i < getWidth(); ++i)
+		Image image;
+		if(rotation != 0)
 		{
-			for(uint16_t j = y; j < img.height()+y && j < getHeight(); ++j)
+			image = img.rotate(rotation);
+		}
+		else
+		{
+			image = img;
+		}
+		for(uint16_t i = x; i < image.width()+x && i < getWidth(); ++i)
+		{
+			for(uint16_t j = y; j < image.height()+y && j < getHeight(); ++j)
 			{
-				draw(i, j, img.get(i-x, j-y));
+				const Pixel old_p = getPixel(i, j);
+				const Pixel new_p = image.get(i-x, j-y);
+
+				draw(i, j, Pixel::combine(old_p, new_p));
 			}
 		}
 	}
@@ -195,13 +206,21 @@ namespace ui
 			pixels[i + 3] = color[3];
 		}
 	}
-	void Engine::draw(const uint16_t x, const uint16_t y, const Pixel& color)
+	void Engine::draw(const uint16_t x, const uint16_t y, Pixel color)
 	{
 		if(x >= screenWidth || y >= screenHeight)
 		{
 			return;
 		}
 		const unsigned int offset = (screenWidth * 4 * y) + x * 4;
+
+		const Pixel old(
+			pixels[offset],
+			pixels[offset+1],
+			pixels[offset+2],
+			pixels[offset+3]);
+
+		color = Pixel::combine(old, color);
 		pixels[offset] = color.r;
 		pixels[offset + 1] = color.g;
 		pixels[offset + 2] = color.b;

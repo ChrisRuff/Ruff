@@ -102,7 +102,7 @@ namespace ui
 
 		Engine& operator=(const Engine& other) = delete;
 
-		void displayImage(ruff::ui::Image img, const uint16_t x, const uint16_t y, const double rotation=0);
+		void displayImage(const ruff::ui::Image& img, const uint16_t x, const uint16_t y, const double rotation=0);
 
 		std::vector<Point2D<uint16_t>> static getLine(const uint16_t x1, const uint16_t y1, 
 				const uint16_t x2, const uint16_t y2, const int line_width);
@@ -145,7 +145,7 @@ namespace ui
 			 * @Param color The color that will replace the pixel
 			 */
 		/* ----------------------------------------------------------------------------*/
-		void draw(const uint16_t x, const uint16_t y, const Pixel& color);
+		void draw(const uint16_t x, const uint16_t y, Pixel color);
 
 		/* --------------------------------------------------------------------------*/
 		/**

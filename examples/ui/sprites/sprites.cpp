@@ -68,7 +68,7 @@ public:
 	void onUpdate(double deltaTime) override
 	{
 
-		clearScreen();
+		clearScreen(ruff::ui::DARK_GREEN);
 
 		// Draw all the shadows
 		for(auto& t : trees)
@@ -85,23 +85,31 @@ public:
 		// Draw all the trees
 		for(auto& t : trees)
 		{
-			displayImage(tree, static_cast<uint16_t>(t.pos.x + 3 + (t.angle / 10)), 
-					static_cast<uint16_t>(t.pos.y - 100 - (t.angle / 10)), t.angle);
+			if(t.angle != -1)
+			{
+				displayImage(tree, 
+						static_cast<uint16_t>(t.pos.x - 50 - (t.angle*1.5)), 
+						static_cast<uint16_t>(t.pos.y - 200 + (t.angle/2)), 
+						-t.angle*(M_PI/180)+90);
+			}
 		}
-		// Draw all the trees
+		// Update all the trees
 		int size = trees.size();
 		for(int i = 0; i < size; ++i)
 		{
 			Tree& t = trees[i];
 			if(t.angle < 90.0)
 			{
-				t.angle += random(generator) * deltaTime;
+				t.angle += random(generator) * deltaTime/2;
 			}
-			else
+			else if (t.angle > 0)
 			{
-				t.angle = 0;
-				auto pos = ruff::Point2D<int>{ rand() % getWidth(), rand() % getHeight() };
-				trees.emplace_back(pos, 0, tree.width(), tree.height());
+				t.angle = -1;
+				if(rand() % 2)
+				{
+					auto pos = ruff::Point2D<int>{ rand() % getWidth(), rand() % getHeight() };
+					trees.emplace_back(pos, 0, tree.width(), tree.height());
+				}
 			}
 		}
 		std::sort(trees.begin(), trees.end());

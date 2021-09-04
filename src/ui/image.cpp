@@ -12,6 +12,25 @@ Pixel Image::get(const uint16_t x, const uint16_t y) const
 {
 	return pixels[y*w + x];
 }
+
+std::vector<Pixel> Image::column(const uint16_t x, uint16_t height) const
+{
+	if(height==0)
+	{
+		height = h;
+	}
+	
+	std::vector<Pixel> column{};
+	for(size_t y = 0; y < height; ++y)
+	{
+		const size_t pix_y = (y*h) / height;
+		column.push_back(get(x, pix_y));
+	}
+	auto end = column.end();
+	column.insert(end, column.begin(), column.end());
+
+	return column;
+}
 void Image::line(const Point2D<uint16_t>& p1, const Point2D<uint16_t>& p2, const Pixel& color)
 {
 	bool steep = false;
@@ -72,9 +91,42 @@ void Image::resize(uint16_t new_w, uint16_t new_h, RESAMP_METHOD method)
 	(void)new_h;
 	(void)method;
 }
-void Image::rotate(const double rotation, ROTATION_METHOD rotation_method)
+Image Image::rotate(const double theta, ROTATION_METHOD rotation_method) const
 {
-	(void)rotation;
+	// https://gautamnagrawal.medium.com/rotating-image-by-any-angle-shear-transformation-using-only-numpy-d28d16eb5076
+	const Point2D<uint16_t> new_dims(
+			std::round(std::abs(h*std::cos(theta)) + std::abs(w*std::sin(theta)))+1, 
+			std::round(std::abs(w*std::cos(theta)) + std::abs(h*std::sin(theta)))+1);
+
+	Image rotated(new_dims.x, new_dims.y, Pixel(0,0,0,0));
+
+	const Point2D<uint16_t> center(
+			std::round(((w+1)/2)-1), 
+			std::round(((h+1)/2)-1));
+	const Point2D<uint16_t> new_center(
+			std::round(((new_dims.x+1)/2)-1), 
+			std::round(((new_dims.y+1)/2)-1));
+
+	for(uint16_t i = 0; i < w; ++i)
+	{
+		for(uint16_t j = 0; j < h; ++j)
+		{
+			const auto x = w-1-i-center.x;
+			const auto y = h-1-j-center.y;
+
+			const auto new_x = new_center.x - 
+				std::round(-x*std::sin(theta)+y*std::cos(theta));
+			const auto new_y = new_center.y - 
+				std::round(x*std::cos(theta)+y*std::sin(theta));
+
+			if(0 <= new_x && new_x < new_dims.x &&
+					0 <= new_y && new_y < new_dims.y)
+			{
+				rotated.set(new_x, new_y, get(i,j));
+			}
+		}
+	}
+	return rotated;
 }
 void Image::overlay(const Image& overlay, uint16_t x, uint16_t y)
 {
@@ -136,7 +188,6 @@ Image Image::read(const std::filesystem::path& in_path)
 		if(png_image_begin_read_from_file(&png_image, in_path.c_str()) != 0)
 		{
 			png_image.format = PNG_FORMAT_RGBA;
-
 			png_bytep buffer = 
 				static_cast<unsigned char*>(malloc(PNG_IMAGE_SIZE(png_image)));
 			if(buffer != NULL &&
@@ -150,7 +201,7 @@ Image Image::read(const std::filesystem::path& in_path)
 						buffer[i],
 						buffer[i+1],
 						buffer[i+2],
-						buffer[i+3]
+						static_cast<double>(buffer[i+3])/255.
 					);
 				}
 				Image image(png_image.width, png_image.height, pixels);

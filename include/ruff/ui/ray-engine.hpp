@@ -1,5 +1,6 @@
 #include <ruff/core/asserts.hpp>
 #include "ruff/ui/ui.hpp"
+#include "ruff/ui/image.hpp"
 #include "ruff/ui/pixel.hpp"
 
 namespace ruff
@@ -9,6 +10,8 @@ namespace ui
 	struct Tile
 	{
 		bool wall{false};
+		ruff::ui::Image texture{
+			ruff::ui::Image::read(std::filesystem::path(DATA_DIR) / "stone_brick.png")};
 		Pixel shade{ruff::ui::WHITE};
 
 		operator bool()
@@ -16,6 +19,7 @@ namespace ui
 			return wall;
 		}
 	};
+
 	struct Player
 	{
 		// Player traits
@@ -108,9 +112,6 @@ namespace ui
 			}
 			for(size_t i = 0; i < hits.size(); ++i)
 			{
-				ruff::log( player.pos.toString() + " " + 
-						hits[i].toString() + " " +
-						std::to_string(player.angle));
 				Point2D<uint16_t> start{
 						static_cast<uint16_t>(player.pos.x), 
 						static_cast<uint16_t>(player.pos.y)};
@@ -197,7 +198,7 @@ namespace ui
 				}
 
 				bool tile_found = false;
-				float max_dist = 1000.0f;
+				float max_dist = 50.0f;
 				float dist = 0.0f;
 				while(!tile_found && dist < max_dist)
 				{
@@ -226,25 +227,29 @@ namespace ui
 					}
 				}
 
-				Point2D<float> hit;
 				if(tile_found)
 				{
-					hit = player.pos + (ray_dir * dist);
+					Point2D<float> hit = player.pos + (ray_dir * dist);
 					hits.emplace_back(hit.x, hit.y);
-				}
 
+					uint16_t height = (Engine::getHeight() / 
+							(dist*std::cos(angle-player.angle)));
 
-				uint16_t height = (Engine::getHeight() / 
-						(dist*std::cos(angle-player.angle)));
+					height = std::min(height, mid_point);
 
-				height = std::min(height, mid_point);
+					// Get texture column
+					const Image texture = tile_map.at(hit.x, hit.y).texture;
+					uint16_t tex_x = (hit.x-static_cast<int>(hit.x))*texture.width();
+					uint16_t tex_y = (hit.y-static_cast<int>(hit.y))*texture.height();
 
-				// Get texture column
+					std::vector<Pixel> column = texture.column(std::max(tex_x, tex_y), height);
+					size_t idx = 0;
 
-				for(uint16_t j = mid_point-height; j < mid_point+height; ++j)
-				{
-					const ruff::ui::Pixel pixel = ruff::ui::RED;
-					draw(i, j, pixel);
+					for(uint16_t j = mid_point-height; j < mid_point+height; ++j)
+					{
+						const ruff::ui::Pixel pixel = column[idx++];
+						draw(i, j, pixel);
+					}
 				}
 			}
 			drawMap({0,0});
