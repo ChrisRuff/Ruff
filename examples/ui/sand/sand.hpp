@@ -27,16 +27,14 @@ class SandEngine : public ruff::ui::Engine
 {
 private:
 	std::vector<std::shared_ptr<Block>> blocks{};
-	std::vector<int> types{};
+	std::vector<ruff::ui::Button*> types{};
 
 	int selected_type{0};
 	int brush_width = 3;
 
 public:
-	SandEngine(const uint16_t width, const uint16_t height, 
-			const std::string& title = "Sand Engine", 
-			const int pixelRatio = pr) 
-		: Engine(height, width, title, pixelRatio) {}
+	SandEngine(const uint16_t width, const uint16_t height)
+		: Engine(height, width) {}
 
 	template<typename T> 
 	void generate()

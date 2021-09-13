@@ -14,9 +14,12 @@ colourized("PROJECT_BINARY_DIR: ${PROJECT_BINARY_DIR}" ${MAG} )
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-option(BUILD_TESTERS "Build testers" OFF)
-option(BUILD_EXAMPLES "Build examples" OFF)
-option(BUILD_DOXY_DOC "Build Doxygen documentation" OFF)
+option(BUILD_TESTERS "Build testers" ON)
+option(BUILD_EXAMPLES "Build examples" ON)
+option(BUILD_DOXY_DOC "Build Doxygen documentation" ON)
+
+option(USE_SDL2 "Use SDL2 for screen" ON)
+option(USE_EMSCRIPTEN "Generate Emscripten files" OFF)
 
 # append path to search for cmake modules
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
@@ -35,14 +38,15 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 	add_compile_options (-fdiagnostics-color=always)
 	set(OPTS -Wall -Wextra -Wctor-dtor-privacy -Wno-init-list-lifetime
 					-Wnoexcept -Wstrict-null-sentinel -Wold-style-cast 
-					-Weffc++ -Woverloaded-virtual -Wsign-promo -march=native)
+					-Weffc++ -Woverloaded-virtual -Wsign-promo -march=native -fmax-errors=5)
 endif()
 
 colourized( "Compile Options: ${OPTS}" ${YLW} )
 
-
 # Add deps
 include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
+
+set(CMAKE_BUILD_TYPE "Debug")
 
 # Add target Ruff
 colourized( "Configuring Ruff Library" ${BLU} )
@@ -58,23 +62,11 @@ if(BUILD_TESTERS)
 	find_package(doctest REQUIRED)
 	colourized( "Configuring Testers Library" ${BLU} )
 	add_subdirectory(test)
-	file(GLOB_RECURSE RESOURCES 
-		LIST_DIRECTORIES false 
-		CONFIGURE_DEPENDS 
-		${PROJECT_SOURCE_DIR}/test/*.png)
-	file(COPY ${RESOURCES} DESTINATION "${PROJECT_SOURCE_DIR}/bin")
 endif()
 
 if(BUILD_EXAMPLES)
 	colourized( "Configuring examples" ${BLU} )
 	add_subdirectory(examples)
-	file(GLOB_RECURSE RESOURCES 
-		LIST_DIRECTORIES false 
-		CONFIGURE_DEPENDS 
-		${PROJECT_SOURCE_DIR}/examples/*.png
-		${PROJECT_SOURCE_DIR}/examples/*.ttf
-		${PROJECT_SOURCE_DIR}/examples/*.obj)
-	file(COPY ${RESOURCES} DESTINATION "${PROJECT_SOURCE_DIR}/bin")
 endif()
 
 configure_file( 

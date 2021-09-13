@@ -4,6 +4,12 @@
 
 namespace ruff
 {
+enum class rcode
+{
+	FAILURE = 0,
+	SUCCESS = 1
+};
+
 // Code from this stackover flow answer
 // https://stackoverflow.com/questions/2616906/how-do-i-output-coloured-text-to-a-linux-terminal
 namespace color

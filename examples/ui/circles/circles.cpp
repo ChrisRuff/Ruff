@@ -42,9 +42,8 @@ private:
 
 public:
 	Circles(const sint width, const sint height, 
-			const std::string& title = "Circle Engine", 
-			const int pixelRatio = 1)
-	  : Engine(height, width, title, pixelRatio) {}
+			const std::string& title = "Circle Engine")
+	  : Engine(height, width) {}
 
 	Circles(const Circles& other) = delete;
 
@@ -54,9 +53,9 @@ public:
 	{
 		//addBall(width * .25f, height * 0.5f, fDefaultRad);
 		//addBall(width * .75f, height * 0.5f, fDefaultRad);
-		for(size_t i = 0; i < 30; ++i)
+		for(size_t i = 0; i < 100; ++i)
 		{
-			addBall(rand() % screenWidth, rand() % screenHeight, rand() % 16 + 2);
+			addBall(rand() % getWidth(), rand() % getHeight(), rand() % 50 + 10);
 		}
 	}
 	virtual void onUpdate(double deltaTime) override
@@ -116,10 +115,10 @@ public:
 			ball.px += ball.vx * (deltaTime);
 			ball.py += ball.vy * (deltaTime);
 
-			if(ball.px < 0) ball.px += screenWidth;
-			if(ball.py < 0) ball.py += screenHeight;
-			if(ball.px > screenWidth) ball.px -= screenWidth;
-			if(ball.py > screenHeight) ball.py -= screenHeight;
+			if(ball.px < 0) ball.px += getWidth();
+			if(ball.py < 0) ball.py += getHeight();
+			if(ball.px > getWidth()) ball.px -= getWidth();
+			if(ball.py > getHeight()) ball.py -= getHeight();
 
 			if(std::abs(ball.vx * ball.vx + ball.vy * ball.vy) < 0.01f)
 			{
@@ -213,7 +212,7 @@ public:
 
 int main()
 {
-	Circles circleEngine(1000, 1200, "Circles", 6);
+	Circles circleEngine(1000, 1200, "Circles");
 	circleEngine.launch();
 	return 0;
 }

@@ -32,7 +32,7 @@ if( ${HAS_SOURCES} GREATER 0 )
 		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}
 		${PROJECT_SOURCE_DIR}/src)
 
-	target_compile_definitions(${TARGET_TEST} PRIVATE -DDATA_DIR="${PROJECT_SOURCE_DIR}/bin")
+	target_compile_definitions(${TARGET_TEST} PRIVATE -DDATA_DIR="${PROJECT_SOURCE_DIR}/data")
 	target_include_directories(${TARGET_TEST} SYSTEM PRIVATE
 		${CONAN_INCLUDE_DIRS_DOCTEST}
 		${CONAN_INCLUDE_DIRS_OPENCV}

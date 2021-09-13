@@ -5,25 +5,25 @@ void SandEngine::onCreate()
 	// Resource dir is defined in root CMakeLists.txt
 	const auto font_path = 
 		std::filesystem::path(DATA_DIR) / "DejaVuSans.ttf";
-	types.push_back(addButton(getWidth()-15, 5, 10, 5, 
-				ruff::ui::DARK_YELLOW, pixelRatio, font_path, "Sand"));
-	types.push_back(addButton(getWidth()-15, 15, 10, 5, 
-				ruff::ui::DARK_BLUE, pixelRatio, font_path, "Water"));
+	ruff::ui::Button* sand = addButton({getWidth()-15, 5}, {10, 5});
+	sand->setColor(ruff::ui::DARK_YELLOW);
+	types.push_back(sand);
+
+	ruff::ui::Button* water = addButton({getWidth()-15, 15}, {10, 5});
+	water->setColor(ruff::ui::DARK_BLUE);
+	types.push_back(water);
 }
 
 void SandEngine::onUpdate(const double deltaTime)
 {
-	for(int i : types)
+	for(size_t i = 0; i < types.size(); ++i)
 	{
-		if(buttons[i]->isPressed())
+		if(types[i]->isPressed())
 		{
-			if(buttons[i]->isChanged())
+			selected_type = i;
+			if(selected_type != i)
 			{
-				selected_type = i;
-			}
-			else if(selected_type != i)
-			{
-				buttons[i]->press();
+				types[i]->press();
 			}
 		}
 	}

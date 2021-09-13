@@ -4,168 +4,142 @@ namespace ruff
 {
 namespace ui
 {
-	Engine::Engine(const uint16_t width, const uint16_t height, std::string title, int pixelRatio) : 
-		width(width), height(height), title(title), screenWidth(width / pixelRatio), 
-		screenHeight(height / pixelRatio), pixelRatio(pixelRatio)
+	Engine::Engine(const uint16_t width, const uint16_t height, 
+			const Pixel p) : 
+		screen(std::make_unique<Window>(width, height, p))
 	{
 		keys.fill(false);
 	}
 	void Engine::launch()
 	{
-		if(SDL_Init(SDL_INIT_VIDEO) != 0)
-		{
-			logError(SDL_GetError());
-		}
-		else if(TTF_Init() < 0)
-		{
-			logError(TTF_GetError());
-		}
-		else [[likely]]
-		{
-			window = std::unique_ptr<SDL_Window, SDLDestroyer>(SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL));
-			renderer = std::unique_ptr<SDL_Renderer, SDLDestroyer>(SDL_CreateRenderer(window.get(), -1, SDL_RENDERER_ACCELERATED));
-			texture = std::unique_ptr<SDL_Texture, SDLDestroyer>(SDL_CreateTexture(renderer.get(), SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, screenWidth, screenHeight));
-			pixels.reserve(screenWidth * screenHeight * 4);
-			std::fill(pixels.begin(), pixels.end(), 0);
-			onCreate();
+		bool running = true;
 
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-			SDL_SetWindowTitle(window.get(), title.c_str());
-			gl_context = SDL_GL_CreateContext(window.get());
-
+		onCreate();
+		while(running)
+		{
 			SDL_Event event;
-			bool running = true;
-
-			double now = SDL_GetPerformanceCounter();
-			double last = 0.0f;
-			double deltaTime = 0;
-			while(running)
+			if(mouse.mouse_released[0])
 			{
-				last = now;
-				if(mouse.mouse_released[0])
+				mouse.mouse_released[0] = false;
+			}
+			if(mouse.mouse_released[1])
+			{
+				mouse.mouse_released[1] = false;
+			}
+			if(mouse.mouse_pressed[0])
+			{
+				mouse.mouse_pressed[0] = false;
+			}
+			if(mouse.mouse_pressed[1])
+			{
+				mouse.mouse_pressed[1] = false;
+			}
+			while(SDL_PollEvent(&event))
+			{
+				switch(event.type)
 				{
-					mouse.mouse_released[0] = false;
-				}
-				if(mouse.mouse_released[1])
-				{
-					mouse.mouse_released[1] = false;
-				}
-				if(mouse.mouse_pressed[0])
-				{
-					mouse.mouse_pressed[0] = false;
-				}
-				if(mouse.mouse_pressed[1])
-				{
-					mouse.mouse_pressed[1] = false;
-				}
-				while(SDL_PollEvent(&event))
-				{
-					switch(event.type)
-					{
-					case SDL_QUIT:
-						running = false;
-						break;
-					case SDL_MOUSEBUTTONUP:
-						if(event.button.button == SDL_BUTTON(SDL_BUTTON_LEFT))
-						{
-							mouse.mouse_held[0] = false;
-							mouse.mouse_released[0] = true;
-						}
-						else if(event.button.button == SDL_BUTTON_RIGHT)
-						{
-							mouse.mouse_held[1] = false;
-							mouse.mouse_released[1] = true;
-						}
-						break;
-					case SDL_MOUSEBUTTONDOWN:
-						if(event.button.button == 3)//SDL_BUTTON(SDL_BUTTON_RIGHT))
-						{
-							if(mouse.mouse_pressed[1])
-							{
-								mouse.mouse_pressed[1] = false;
-							}
-							else
-							{
-								mouse.mouse_pressed[1] = true;
-							}
-							mouse.mouse_held[1] = true;
-						}
-						else if(event.button.button == SDL_BUTTON(SDL_BUTTON_LEFT))
-						{
-							if(mouse.mouse_pressed[0])
-							{
-								mouse.mouse_pressed[0] = false;
-							}
-							else
-							{
-								mouse.mouse_pressed[0] = true;
-							}
-							mouse.mouse_held[0] = true;
-						}
-						break;
-					case SDL_MOUSEMOTION:
-						SDL_GetMouseState(&mouse.mouse_x, &mouse.mouse_y);
-						mouse.mouse_x /= pixelRatio;
-						mouse.mouse_y /= pixelRatio;
-						break;
-					case SDL_KEYDOWN:
-						if(event.key.keysym.sym == SDLK_ESCAPE)
-						{
-							running = false;
-						}
-						else if(event.key.keysym.sym >= static_cast<int>(keys.size()))
-						{
-							break;
-						}
-						keys[event.key.keysym.sym] = true;
-						break;
-					case SDL_KEYUP:
-						if(event.key.keysym.sym >= static_cast<int>(keys.size()))
-						{
-							break;
-						}
-						keys[event.key.keysym.sym] = false;
-						break;
-					}
-				}
-				if(mouse.mouse_pressed[0])
-				{
-					for(auto& button_ptr : buttons)
-					{
-						Button* button = button_ptr.get();
-						if(mouse.mouse_x - button->getX() < button->getWidth() && 
-								mouse.mouse_x - button->getX() > 0 && 
-								mouse.mouse_y - button->getY() < button->getHeight() && 
-								mouse.mouse_y - button->getY() > 0) [[likely]]
-						{
-							button->press();
-						}
-					}
-				}
-				now = SDL_GetPerformanceCounter();
-				deltaTime = static_cast<double>(now - last) * 100 / static_cast<double>(SDL_GetPerformanceFrequency());
-
-				SDL_RenderClear(renderer.get());
-				SDL_UpdateTexture(texture.get(), nullptr, &pixels[0], screenWidth * 4);
-
-				SDL_RenderCopy(renderer.get(), texture.get(), nullptr, nullptr);
-
-				onUpdate(deltaTime);
-				for(auto& button : buttons)
-				{
-					drawButton(button.get());
-				}
-
-				SDL_RenderPresent(renderer.get());
-				if(close())
-				{
+				case SDL_QUIT:
 					running = false;
+					break;
+				case SDL_WINDOWEVENT:
+					if(event.window.event == SDL_WINDOWEVENT_RESIZED)
+					{
+						onResize();
+						screen->resize({event.window.data1, event.window.data2});
+					}
+					break;
+				case SDL_MOUSEBUTTONUP:
+					if(event.button.button == SDL_BUTTON(SDL_BUTTON_LEFT))
+					{
+						mouse.mouse_held[0] = false;
+						mouse.mouse_released[0] = true;
+					}
+					else if(event.button.button == SDL_BUTTON_RIGHT)
+					{
+						mouse.mouse_held[1] = false;
+						mouse.mouse_released[1] = true;
+					}
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+					if(event.button.button == 3)//SDL_BUTTON(SDL_BUTTON_RIGHT))
+					{
+						if(mouse.mouse_pressed[1])
+						{
+							mouse.mouse_pressed[1] = false;
+						}
+						else
+						{
+							mouse.mouse_pressed[1] = true;
+						}
+						mouse.mouse_held[1] = true;
+					}
+					else if(event.button.button == SDL_BUTTON(SDL_BUTTON_LEFT))
+					{
+						if(mouse.mouse_pressed[0])
+						{
+							mouse.mouse_pressed[0] = false;
+						}
+						else
+						{
+							mouse.mouse_pressed[0] = true;
+						}
+						mouse.mouse_held[0] = true;
+					}
+					break;
+				case SDL_MOUSEMOTION:
+					SDL_GetMouseState(&mouse.mouse_x, &mouse.mouse_y);
+					break;
+				case SDL_KEYDOWN:
+					if(event.key.keysym.sym == SDLK_ESCAPE)
+					{
+						running = false;
+					}
+					else if(event.key.keysym.sym >= static_cast<int>(keys.size()))
+					{
+						break;
+					}
+					keys[event.key.keysym.sym] = true;
+					break;
+				case SDL_KEYUP:
+					if(event.key.keysym.sym >= static_cast<int>(keys.size()))
+					{
+						break;
+					}
+					keys[event.key.keysym.sym] = false;
+					break;
 				}
 			}
-			TTF_Quit();
-			SDL_Quit();
+
+			screen->clear();
+			double delta = screen->renderer->getDeltaTime();
+			ruff::log(std::to_string(delta));
+			onUpdate(delta);
+			for(auto& button : buttons)
+			{
+				drawButton(button.get());
+			}
+			if(mouse.mouse_pressed[0])
+			{
+				for(auto& button_ptr : buttons)
+				{
+					Button* button = button_ptr.get();
+					const Point2D<uint16_t> size = button->dims();
+					const Point2D<uint16_t> pos = button->xy();
+					if(mouse.mouse_x - pos.x < size.x && 
+							mouse.mouse_x - pos.x > 0 && 
+							mouse.mouse_y - pos.y < size.y && 
+							mouse.mouse_y - pos.y > 0) [[likely]]
+					{
+						button->press();
+					}
+				}
+			}
+			screen->push_to_screen();
+
+			if(close())
+			{
+				running = false;
+			}
 		}
 	}
 
@@ -184,47 +158,19 @@ namespace ui
 		{
 			for(uint16_t j = y; j < image.height()+y && j < getHeight(); ++j)
 			{
-				const Pixel old_p = getPixel(i, j);
 				const Pixel new_p = image.get(i-x, j-y);
-
-				draw(i, j, Pixel::combine(old_p, new_p));
+				draw(i, j, new_p);
 			}
 		}
 	}
 
 	void Engine::clearScreen(Pixel color)
 	{
-		// Calculate all possible pixels
-		size_t size = (screenWidth * screenHeight) * 4;
-
-		// Replace the pixel at each location with the given color
-		for(size_t i = 0; i < size; i += 4)
-		{
-			pixels[i] = color[0];
-			pixels[i + 1] = color[1];
-			pixels[i + 2] = color[2];
-			pixels[i + 3] = color[3];
-		}
+		screen->clear();
 	}
 	void Engine::draw(const uint16_t x, const uint16_t y, Pixel color)
 	{
-		if(x >= screenWidth || y >= screenHeight)
-		{
-			return;
-		}
-		const unsigned int offset = (screenWidth * 4 * y) + x * 4;
-
-		const Pixel old(
-			pixels[offset],
-			pixels[offset+1],
-			pixels[offset+2],
-			pixels[offset+3]);
-
-		color = Pixel::combine(old, color);
-		pixels[offset] = color.r;
-		pixels[offset + 1] = color.g;
-		pixels[offset + 2] = color.b;
-		pixels[offset + 3] = color.a;
+		screen->draw(x,y,color);
 	}
 	void Engine::draw(const Point2D<uint16_t>& p, const Pixel& color) { draw(p.x, p.y, color); }
 
@@ -420,35 +366,34 @@ namespace ui
 
 	void Engine::drawButton(Button* button)
 	{
-		uint16_t x = button->getX();
-		uint16_t y = button->getY();
-		drawSquare(x, y, x + button->getWidth(), y + button->getHeight(), button->getColor(), true);
+		const Point2D<uint16_t> size = button->dims();
+		const Point2D<uint16_t> pos = button->xy();
+		drawSquare(pos.x, pos.y, pos.x + size.x, pos.y + size.y, button->getColor(), true);
 		SDL_Color white = { 255, 255, 255, 0 };
-		auto surfaceMessage = std::unique_ptr<SDL_Surface, SDLDestroyer>(TTF_RenderText_Solid(button->getFont(), button->getLabel().c_str(), white));
 
-		auto message = std::unique_ptr<SDL_Texture, SDLDestroyer>(SDL_CreateTextureFromSurface(renderer.get(), surfaceMessage.get()));
+		auto message = std::unique_ptr<SDL_Texture, SDLDestroyer>(
+				SDL_CreateTextureFromSurface(screen->renderer->getRenderer(), nullptr));
 
 		SDL_Rect message_rect;
-		message_rect.x = button->getX() * button->getPixelRatio();
-		message_rect.y = button->getY() * button->getPixelRatio();
-		message_rect.w = button->getWidth() * button->getPixelRatio();
-		message_rect.h = button->getHeight() * button->getPixelRatio();
+		message_rect.x = pos.x;
+		message_rect.y = pos.y;
+		message_rect.w = size.x;
+		message_rect.h = size.y;
 
-		SDL_RenderCopy(renderer.get(), message.get(), NULL, &message_rect);
+		SDL_RenderCopy(screen->renderer->getRenderer(), message.get(), NULL, &message_rect);
 	}
-	int Engine::addButton(uint16_t x, uint16_t y, int width, int height, Pixel color, int pixelRatio, std::string fontPath, std::string label, int fontSize)
+	Button* Engine::addButton(const Point2D<uint16_t> xy, const Point2D<uint16_t> size)
 	{
-		buttons.push_back(std::make_unique<Button>(x, y, width, height, color, pixelRatio, fontPath, label, fontSize));
-		return buttons.size() - 1;
+		size_t idx = buttons.size();
+		buttons.push_back(
+			std::make_unique<Button>(
+					Point2D<uint16_t>(xy.x, xy.y), 
+					Point2D<uint16_t>(size.x, size.y)));
+		return buttons[idx].get();
 	}
 	Pixel Engine::getPixel(uint16_t x, uint16_t y) const
 	{
-		const unsigned int offset = (screenWidth * 4 * y) + x * 4;
-		return Pixel(
-				pixels[offset], 
-				pixels[offset+1], 
-				pixels[offset+2], 
-				pixels[offset+3]);
+		screen->get(x,y);
 	}
 	Pixel Engine::getPixel(Point2D<uint16_t> p) const
 	{
@@ -462,22 +407,17 @@ namespace ui
 			return getRegion(x1, y2, y1, x2);
 
 		std::vector<Pixel> region{};
-		pixels.reserve((x2-x1) * (y2-y1));
 		for(uint16_t y = y1; y <= y2; ++y)
 		{
 			for(uint16_t x = x1; x <= x2; ++x)
 			{
-				if(x >= screenWidth || y >= screenHeight) 
+				if(x >= getWidth() || y >= getHeight()) 
 				{ 
 					region.push_back(ruff::ui::BLANK); 
 				}
 				else
 				{
-					const unsigned int offset = (screenWidth * 4 * y) + x * 4;
-					region.emplace_back(pixels[offset], 
-							pixels[offset+1], 
-							pixels[offset+2], 
-							pixels[offset+3]);
+					region.emplace_back(screen->get(x,y));
 				}
 			}
 		}
@@ -493,8 +433,10 @@ namespace ui
 	{
 		for(const auto& b : buttons)
 		{
-			if(std::abs(b->getX() - mouse.mouse_x) < b->getWidth() && 
-					std::abs(b->getY() - mouse.mouse_y) < b->getHeight())
+			const Point2D<uint16_t> size = b->dims();
+			const Point2D<uint16_t> pos = b->xy();
+			if(std::abs(pos.x - mouse.mouse_x) < size.x && 
+					std::abs(pos.y - mouse.mouse_y) < size.y)
 			{
 				return true;
 			}

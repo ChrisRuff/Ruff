@@ -36,8 +36,8 @@ private:
 	std::vector<Tree> trees{};
 
 public:
-	Sprites(const sint width, const sint height, std::string title = "Sprite Engine", int pixelRatio = 1)
-	  : Engine(height, width, std::move(title), pixelRatio) {}
+	Sprites(const sint width, const sint height)
+	  : Engine(height, width) {}
 
 	Sprites(const Sprites& other) = delete;
 	Sprites(const Sprites&& other) = delete;
@@ -122,7 +122,7 @@ int main()
 	constexpr int height = 1200;
 	constexpr int pixelWidth = 1;
 
-	Sprites spriteEngine(width, height, "Sprites", pixelWidth);
+	Sprites spriteEngine(width, height);
 	spriteEngine.launch();
 	return 0;
 }

@@ -50,9 +50,8 @@ private:
 
 public:
 	Gravity(const sint width, const sint height, 
-			const std::string& title = "Gravity Engine", 
-			int pixelRatio = 1)
-	  : Engine(height, width, title, pixelRatio) {}
+			const std::string& title = "Gravity Engine")
+	  : Engine(height, width) {}
 
 	Gravity(const Gravity& other) = delete;
 
@@ -162,7 +161,7 @@ public:
 int main()
 {
 	// Create game engine and then run it
-	Gravity gravityEngine(1000, 1500, "Gravity", 2);
+	Gravity gravityEngine(1000, 1500, "Gravity");
 	gravityEngine.launch();
 	return 0;
 }

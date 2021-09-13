@@ -39,7 +39,7 @@ function(make_example COMPONENT )
 			$<INSTALL_INTERFACE:include>
 			PRIVATE
 			${PROJECT_BINARY_DIR})
-		target_compile_definitions(${COMPONENT} PRIVATE -DDATA_DIR="${PROJECT_SOURCE_DIR}/bin")
+	target_compile_definitions(${COMPONENT} PRIVATE -DDATA_DIR="${PROJECT_SOURCE_DIR}/data")
 endfunction()
 
 function(make_component COMPONENT HEADERS SRC)
@@ -62,6 +62,7 @@ function(make_component COMPONENT HEADERS SRC)
 		RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
 	)
 	target_compile_options( ${COMPONENT} PRIVATE ${OPTS} )
+	target_compile_definitions(${COMPONENT} PRIVATE -DDATA_DIR="${PROJECT_SOURCE_DIR}/data")
 
 	target_include_directories( ${COMPONENT} PUBLIC 
 		${OpenCV_INCLUDE_DIRS}

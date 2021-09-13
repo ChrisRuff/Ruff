@@ -77,10 +77,8 @@ namespace ui
 
 	public:
 		RayEngine(const uint16_t width, const uint16_t height, 
-				const float px=map_width/2, const float py=map_height/2,
-				const std::string& title = "Ray Engine", 
-				const int pixelRatio = 5) 
-			: ruff::ui::Engine(height, width, title, pixelRatio), 
+				const float px=map_width/2, const float py=map_height/2)
+			: ruff::ui::Engine(height, width), 
 				tile_map(
 					{map_width,    map_height},
 					{num_cells_x, num_cells_y}),

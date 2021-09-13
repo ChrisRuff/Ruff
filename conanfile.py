@@ -10,9 +10,21 @@ class ruffConan(ConanFile):
     url = "https://github.com/ChrisRuff/Ruff"
     description = "Package for any utility I may require in the future."
     settings = "os", "compiler", "build_type", "arch"
-    options = {"build_docs": [False, True], "build_tests": [False, True], "build_examples": [False, True]}
+    options = \
+    {
+            "build_docs": [False, True], 
+            "build_tests": [False, True], 
+            "build_examples": [False, True], 
+            "full": [False, True]
+    }
     generators = ["cmake_find_package", "cmake_paths"]
-    default_options = {"build_docs": False, "build_tests": False, "build_examples": False}
+    default_options = \
+    {
+            "build_docs": False, 
+            "build_tests": False, 
+            "build_examples": False,
+            "full": True
+    }
     exports_sources = ["src/*", "include/*", "CMakeLists.txt", "cmake/*", "tests/*"]
 
     def build_requirements(self):
@@ -29,13 +41,15 @@ class ruffConan(ConanFile):
     def config_options(self):
         if self.settings.os == "Windows":
             del self.options.fPIC
+        if self.options.full:
+            self.options.build_tests = True
+            self.options.build_docs = True
 
     def requirements(self):
         self.requires("sdl/2.0.16")
         self.options["sdl"].pulse = False
         self.options["sdl"].nas = False
 
-        self.requires("sdl_ttf/2.0.15")
         self.requires("libpng/1.6.37")
         if self.options.build_tests:
             self.requires("doctest/2.4.5")

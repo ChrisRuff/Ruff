@@ -7,11 +7,9 @@ template<
 class Ray : public ruff::ui::RayEngine<map_width, map_height, num_cells_x, num_cells_y>
 {
 public:
-	Ray(const uint16_t width, const uint16_t height, 
-			const std::string& title = "Ray Engine", 
-			const int pixelRatio = 2) :
-			ruff::ui::RayEngine<map_width, map_height, num_cells_x, num_cells_y>
-				(width, height, 20, 20, title, pixelRatio)
+	Ray(const uint16_t width, const uint16_t height) :
+			ruff::ui::RayEngine<map_width, map_height, num_cells_x, num_cells_y>(
+					width, height, 20, 20)
 	{
 	}
 

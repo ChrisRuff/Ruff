@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include <sstream>
 #include <type_traits>
 
 #include "ruff/geometry/point.hpp"

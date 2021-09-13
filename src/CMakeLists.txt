@@ -27,13 +27,16 @@ target_link_libraries(geometry
 make_component( "ui" "${HEADERS_UI}" "${SRCS_UI}" )
 
 find_package(SDL2 REQUIRED)
-find_package(SDL2_ttf REQUIRED)
 find_package(PNG REQUIRED)
 target_link_libraries(ui 
 	PUBLIC
 		core
 		geometry
 		SDL2::SDL2
-		SDL2_ttf::SDL2_ttf
 		PNG::PNG
 		)
+if(USE_SDL2)
+	target_compile_definitions(ui PUBLIC "-DUSE_SDL2")
+else()
+
+endif()

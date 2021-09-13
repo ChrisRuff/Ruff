@@ -13,35 +13,20 @@
 
 #include <iostream>
 
-// Packages
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
-#include <SDL2/SDL_ttf.h>
-#include <GL/gl.h>
 
 // Source
 #include "ruff/core/logger.hpp"
-
 #include "ruff/geometry/point.hpp"
-
 #include "ruff/ui/destructors.hpp"
 #include "ruff/ui/text.hpp"
 #include "ruff/ui/pixel.hpp"
 #include "ruff/ui/button.hpp"
-#include "ruff/ui/image.hpp"
+#include "ruff/ui/window.hpp"
 
 namespace ruff
 {
 namespace ui
 {
-	struct MouseState
-	{
-		std::array<bool, 2> mouse_pressed{ false, false };
-		std::array<bool, 2> mouse_held{ false, false };
-		std::array<bool, 2> mouse_released{ false, false };
-		int mouse_x{ 0 }, mouse_y{ 0 };
-	};
-
 	/* --------------------------------------------------------------------------*/
 	/**
 		 * @Synopsis UI engine to render pixels
@@ -49,14 +34,10 @@ namespace ui
 	/* ----------------------------------------------------------------------------*/
 	class Engine
 	{
-	protected:
-		uint16_t width{};
-		uint16_t height{};
-		std::string title{};
-		uint16_t screenWidth{};
-		uint16_t screenHeight{};
-		uint16_t pixelRatio{};
+	private:
+		std::unique_ptr<Window> screen;
 
+	protected:
 		// Hardware interface
 		MouseState mouse{};
 
@@ -65,17 +46,7 @@ namespace ui
 		// if(keys[SDLK_r])
 		std::array<bool, 322> keys{};
 
-		// All pixels in the image
-		std::vector<unsigned char> pixels{};
-
 		std::vector<std::unique_ptr<Button>> buttons{};
-
-		// SDL Variables used for rendering
-		std::unique_ptr<SDL_Window, SDLDestroyer> window{ nullptr };
-		std::unique_ptr<SDL_Renderer, SDLDestroyer> renderer{ nullptr };
-		std::unique_ptr<SDL_Texture, SDLDestroyer> texture{ nullptr };
-
-		SDL_GLContext gl_context{};
 
 	public:
 		/* --------------------------------------------------------------------------*/
@@ -87,8 +58,7 @@ namespace ui
 			 * @Param title Title of created window
 			 */
 		/* ----------------------------------------------------------------------------*/
-		Engine(const uint16_t width, const uint16_t height, std::string title = "Window", int pixelRatio = 1);
-
+		Engine(const uint16_t width, const uint16_t height, const Pixel p=BLACK);
 		virtual ~Engine() = default;
 
 		/* --------------------------------------------------------------------------*/
@@ -99,7 +69,6 @@ namespace ui
 			 */
 		/* ----------------------------------------------------------------------------*/
 		Engine(const Engine& other) = delete;
-
 		Engine& operator=(const Engine& other) = delete;
 
 		void displayImage(const ruff::ui::Image& img, const uint16_t x, const uint16_t y, const double rotation=0);
@@ -190,7 +159,7 @@ namespace ui
 
 		void drawButton(Button* button);
 
-		int addButton(uint16_t x, uint16_t y, int width, int height, Pixel color, int pixelRatio, std::string fontPath = "", std::string label = "", int fontSize = 12);
+		Button* addButton(const Point2D<uint16_t> xy, const Point2D<uint16_t> size);
 
 		/* --------------------------------------------------------------------------*/
 		/**
@@ -201,7 +170,7 @@ namespace ui
 		/* ----------------------------------------------------------------------------*/
 		[[nodiscard]] uint16_t getWidth() const
 		{
-			return width / pixelRatio;
+			return screen->size().x;
 		}
 
 		/* --------------------------------------------------------------------------*/
@@ -213,7 +182,7 @@ namespace ui
 		/* ----------------------------------------------------------------------------*/
 		[[nodiscard]] uint16_t getHeight() const
 		{
-			return height / pixelRatio;
+			return screen->size().y;
 		}
 
 		Pixel getPixel(uint16_t x, uint16_t y) const;
@@ -256,6 +225,8 @@ namespace ui
 			 */
 		/* ----------------------------------------------------------------------------*/
 		virtual void onUpdate(double deltaTime) = 0;
+
+		virtual void onResize() {};
 
 		/* --------------------------------------------------------------------------*/
 		/**

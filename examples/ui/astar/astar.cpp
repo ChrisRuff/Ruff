@@ -13,7 +13,7 @@ using sint = short int;
 class AStar : public ruff::ui::Engine
 {
 private:
-	int startButton{};
+	ruff::ui::Button* startButton{nullptr};
 	int blockWidthX{};
 	int blockWidthY{};
 	int gap{ 1 };
@@ -22,8 +22,8 @@ private:
 	std::vector<std::vector<bool>> path{};
 
 public:
-	AStar(const sint width, const sint height, const std::string& title = "AStar Engine", int pixelRatio = 1)
-	  : Engine(height, width, title, pixelRatio) {}
+	AStar(const sint width, const sint height)
+	  : Engine(height, width) {}
 
 	AStar(const AStar& other) = delete;
 
@@ -46,11 +46,23 @@ public:
 		blockWidthX = getWidth() / map.size();
 		blockWidthY = getHeight() / map[0].size();
 
-	// Resource dir is defined in root CMakeLists.txt
-	const auto font_path = std::filesystem::path(DATA_DIR) / "DejaVuSans.ttf";
+		// Resource dir is defined in root CMakeLists.txt
+		const auto font_path = std::filesystem::path(DATA_DIR) / "DejaVuSans.ttf";
 
 		// Add start button
-		startButton = addButton(0, 0, blockWidthX, blockWidthY, ruff::ui::GREEN, pixelRatio, font_path, "Start", 28);
+		startButton = addButton({0, 0}, {blockWidthX, blockWidthY});
+		startButton->setColor(ruff::ui::GREEN);
+	}
+	virtual void onResize() override
+	{
+		bool pressed = startButton->isPressed();
+		buttons.clear();
+		onCreate();
+		if(startButton->isPressed() != pressed)
+		{
+			startButton->press();
+		}
+		changed = true;
 	}
 	virtual void onUpdate(double deltaTime) override
 	{
@@ -71,7 +83,7 @@ public:
 
 		clearScreen();
 
-		if(buttons[startButton].get()->isPressed() && changed)
+		if(startButton->isPressed() && changed)
 		{
 			// Set start and end points to be true
 			map[0][0] = true;
@@ -112,7 +124,7 @@ public:
 					// Draw obstacles
 					drawSquare(i * blockWidthX + gap, j * blockWidthY + gap, i * blockWidthX + getWidth() / map.size() - gap, j * blockWidthY + getHeight() / map[0].size() - gap, ruff::ui::RED, true);
 				}
-				else if(path[i][j] && buttons[startButton]->isPressed())
+				else if(path[i][j] && startButton->isPressed())
 				{
 					// Draw path
 					drawSquare(i * blockWidthX + gap, j * blockWidthY + gap, i * blockWidthX + getWidth() / map.size() - gap, j * blockWidthY + getHeight() / map[0].size() - gap, ruff::ui::YELLOW, true);
@@ -125,7 +137,7 @@ public:
 int main()
 {
 	// Create game engine and then run it
-	AStar astarEngine(1000, 1200, "AStar", 2);
+	AStar astarEngine(1000, 1200);
 	astarEngine.launch();
 	return EXIT_SUCCESS;
 }

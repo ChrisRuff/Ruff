@@ -9,8 +9,8 @@ using namespace ruff::ui;
 class TestEngine : public Engine
 {
 public:
-	TestEngine(const uint16_t width, const uint16_t height, const std::string& title = "Ruff Pixel Engine")
-	  : Engine(height, width, title) {}
+	TestEngine(const uint16_t width, const uint16_t height)
+	  : Engine(height, width) {}
 	int count{};
 	std::vector<ruff::Point2D<uint16_t>> newPixels{};
 	ruff::ui::Image mario_image{};
@@ -47,7 +47,7 @@ public:
 	}
 	virtual bool close() override
 	{
-		if(count > width)
+		if(count > getWidth())
 		{
 			return true;
 		}
@@ -57,6 +57,6 @@ public:
 
 TEST_CASE("UI Test")
 {
-	TestEngine engine(500, 500, std::string("Title"));
+	TestEngine engine(500, 500);
 	engine.launch();
 }

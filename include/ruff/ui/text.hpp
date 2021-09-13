@@ -8,6 +8,5 @@ namespace ruff
 {
 namespace ui
 {
-	std::unique_ptr<TTF_Font, SDLDestroyer> makeFont(std::string path, int fontsize);
 }
 }// namespace ruff

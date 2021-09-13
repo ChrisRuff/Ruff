@@ -6,10 +6,18 @@ namespace ui
 {
 void Image::set(const uint16_t x, const uint16_t y, const Pixel& color)
 {
+	if(x >= w || y >= h)
+	{
+		return;
+	}
 	pixels[y*w + x] = color;
 }
 Pixel Image::get(const uint16_t x, const uint16_t y) const
 {
+	if(x >= w || y >= h)
+	{
+		return BLANK;
+	}
 	return pixels[y*w + x];
 }
 
@@ -30,6 +38,19 @@ std::vector<Pixel> Image::column(const uint16_t x, uint16_t height) const
 	column.insert(end, column.begin(), column.end());
 
 	return column;
+}
+std::vector<unsigned char> Image::data() const
+{
+	std::vector<unsigned char> data(pixels.size()*4);
+	size_t idx = 0;
+	for(size_t i = 0; i < data.size(); i+=4)
+	{
+		data[i] =   pixels[idx].r;
+		data[i+1] = pixels[idx].g;
+		data[i+2] = pixels[idx].b;
+		data[i+3] = pixels[idx++].a;
+	}
+	return data;
 }
 void Image::line(const Point2D<uint16_t>& p1, const Point2D<uint16_t>& p2, const Pixel& color)
 {
@@ -230,6 +251,11 @@ Image Image::read(const std::filesystem::path& in_path)
 		ruff::logError("Filetype not supported");
 		throw std::runtime_error("Filetype not supported");
 	}
+}
+void Image::clear(const Pixel& p)
+{
+	pixels.clear();
+	pixels.assign(w*h, p);
 }
 };
 };
