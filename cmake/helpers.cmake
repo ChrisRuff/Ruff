@@ -101,4 +101,5 @@ function(make_component COMPONENT HEADERS SRC)
 	install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/ruff/${COMPONENT}"
 					COMPONENT ${COMPONENT}
 					DESTINATION "${CMAKE_INSTALL_PREFIX}/include/ruff")
+
 endfunction()

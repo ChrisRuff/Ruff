@@ -5,12 +5,13 @@
 
 namespace ruff
 {
-	constexpr inline void ruff_assert(const bool error, const std::string& msg)
+constexpr inline void ruff_assert(const bool error,
+                                  const std::string& msg)
+{
+	if(!error)
 	{
-		if(!error)
-		{
-			logError(msg);
-			assert(error);
-		}
+		logError(msg);
+		assert(error);
 	}
-};
+}
+};// namespace ruff

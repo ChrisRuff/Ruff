@@ -7,19 +7,16 @@ using namespace ruff;
 
 bool findEasyPath()
 {
-	std::vector<std::vector<bool>> map = { { false, false, true, false, false, true },
-																				 { false, true, true, false, true, true },
-																				 { true, true, false, false, true, false },
-																				 { true, true, true, true, true, true } };
-	std::vector<Point2D<int>> rightPath = { 
-		Point2D<int>(0, 2), 
-		Point2D<int>(1, 2), 
-		Point2D<int>(2, 1), 
-		Point2D<int>(3, 2), 
-		Point2D<int>(3, 3), 
-		Point2D<int>(2, 4), 
-		Point2D<int>(1, 5), 
-		Point2D<int>(0, 5) 
+	std::vector<std::vector<bool>> map = {
+		{ false, false, true, false, false, true },
+		{ false, true, true, false, true, true },
+		{ true, true, false, false, true, false },
+		{ true, true, true, true, true, true }
+	};
+	std::vector<Point2D<int>> rightPath = {
+		Point2D<int>(0, 2), Point2D<int>(1, 2), Point2D<int>(2, 1),
+		Point2D<int>(3, 2), Point2D<int>(3, 3), Point2D<int>(2, 4),
+		Point2D<int>(1, 5), Point2D<int>(0, 5)
 	};
 
 	Point2D<int> start(0, 2), end(0, 5);
@@ -28,16 +25,10 @@ bool findEasyPath()
 	if(pathRet)
 	{
 		auto path = pathRet.value();
-		if(path.size() != rightPath.size())
-		{
-			return false;
-		}
+		if(path.size() != rightPath.size()) { return false; }
 		for(size_t i = 0; i < path.size(); ++i)
 		{
-			if(path[i] != rightPath[i])
-			{
-				return false;
-			}
+			if(path[i] != rightPath[i]) { return false; }
 		}
 	}
 	else
@@ -47,7 +38,4 @@ bool findEasyPath()
 	return true;
 };
 
-TEST_CASE("Testing AStar Search")
-{
-	CHECK(findEasyPath());
-};
+TEST_CASE("Testing AStar Search") { CHECK(findEasyPath()); };

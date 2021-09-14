@@ -7,7 +7,8 @@ namespace search
 	AStar::AStar(const std::vector<std::vector<bool>>& map) : map(map)
 	{
 	}
-	std::optional<std::vector<Point2D<int>>> AStar::getPath(const Point2D<int>& start, const Point2D<int>& end)
+	std::optional<std::vector<Point2D<int>>>
+	  AStar::getPath(const Point2D<int>& start, const Point2D<int>& end)
 	{
 		Node endNode(end);
 		std::vector<Node> empty;
@@ -53,8 +54,7 @@ namespace search
 		while(!open_list.empty())
 		{
 			Node node;
-			do
-			{
+			do {
 				double temp = doubleMax;
 				std::vector<Node>::iterator itNode;
 				for(std::vector<Node>::iterator it = open_list.begin();
@@ -88,14 +88,17 @@ namespace search
 							allMap[x + xNew][y + yNew].parentX = x;
 							allMap[x + xNew][y + yNew].parentY = y;
 							auto path = makePath(allMap, endNode);
-							return std::optional<std::vector<Point2D<int>>>{ convertToPoints(path) };
+							return std::optional<std::vector<Point2D<int>>>{
+								convertToPoints(path)
+							};
 						}
 						else if(!closed_list[x + xNew][y + yNew])
 						{
 							gNew = node.cost[0] + 1.0;
 							hNew = calculateH(x + xNew, y + yNew, end);
 							fNew = gNew + hNew;
-							if(allMap[x + xNew][y + yNew].cost[2] == doubleMax || allMap[x + xNew][y + yNew].cost[2] > fNew)
+							if(allMap[x + xNew][y + yNew].cost[2] == doubleMax
+							   || allMap[x + xNew][y + yNew].cost[2] > fNew)
 							{
 								allMap[x + xNew][y + yNew].cost[2] = fNew;
 								allMap[x + xNew][y + yNew].cost[1] = hNew;
@@ -112,7 +115,8 @@ namespace search
 		logWarning("Destination was not found");
 		return std::nullopt;
 	}
-	std::optional<std::vector<Point2D<int>>> AStar::getPath(const int& x1, const int& y1, const int& x2, const int& y2)
+	std::optional<std::vector<Point2D<int>>> AStar::getPath(
+	  const int& x1, const int& y1, const int& x2, const int& y2)
 	{
 		Point2D<int> start(x1, y1);
 		Point2D<int> end(x2, y2);
@@ -120,7 +124,9 @@ namespace search
 		return getPath(start, end);
 	}
 
-	std::optional<std::vector<Node>> AStar::makePath(const std::vector<std::vector<Node>>& mapping, const Node& end)
+	std::optional<std::vector<Node>>
+	  AStar::makePath(const std::vector<std::vector<Node>>& mapping,
+	                  const Node& end)
 	{
 		try
 		{
@@ -129,7 +135,9 @@ namespace search
 			std::stack<Node> path;
 			std::vector<Node> usablePath;
 
-			while(!(mapping[x][y].parentX == x && mapping[x][y].parentY == y) && mapping[x][y].x != -1 && mapping[x][y].y != -1)
+			while(
+			  !(mapping[x][y].parentX == x && mapping[x][y].parentY == y)
+			  && mapping[x][y].x != -1 && mapping[x][y].y != -1)
 			{
 				path.push(mapping[x][y]);
 				int tempX = mapping[x][y].parentX;

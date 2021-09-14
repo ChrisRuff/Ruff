@@ -7,10 +7,13 @@ namespace ui
 {
 	/* --------------------------------------------------------------------------*/
 	/**
-		 * @Synopsis  Struct to destroy SDL object pointers, this is mainly useful for 
-		 * storing SDL object pointers as a unique_ptr.
-		 * Syntax: std::unique_ptr<SDL_XXXXXX, SDLDestroyer> ptr;
-		 */
+	 * @Synopsis  Struct to destroy SDL
+	 * object pointers, this is mainly
+	 * useful for storing SDL object
+	 * pointers as a unique_ptr. Syntax:
+	 * std::unique_ptr<SDL_XXXXXX,
+	 * SDLDestroyer> ptr;
+	 */
 	/* ----------------------------------------------------------------------------*/
 	struct SDLDestroyer
 	{

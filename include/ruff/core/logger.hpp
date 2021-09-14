@@ -33,7 +33,8 @@ namespace color
 
 	public:
 		explicit Modifier(Code pCode) noexcept : code(pCode) {}
-		friend std::ostream& operator<<(std::ostream& os, const Modifier& mod)
+		friend std::ostream& operator<<(std::ostream& os,
+		                                const Modifier& mod)
 		{
 			return os << "\033[" << static_cast<int>(mod.code) << "m";
 		}
@@ -48,7 +49,8 @@ static color::Modifier defaultFG(color::FG_DEFAULT);
 inline void log(const std::string& message)
 {
 #ifndef NDEBUG
-	std::cout << blue << "\n## INFO: " << message << " ##" << defaultFG << std::endl;
+	std::cout << blue << "\n## INFO: " << message << " ##" << defaultFG
+	          << std::endl;
 #else
 	(void)message;
 #endif

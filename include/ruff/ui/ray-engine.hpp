@@ -9,23 +9,20 @@ namespace ui
 {
 	struct Tile
 	{
-		bool wall{false};
-		ruff::ui::Image texture{
-			ruff::ui::Image::read(std::filesystem::path(DATA_DIR) / "stone_brick.png")};
-		Pixel shade{ruff::ui::WHITE};
+		bool wall{ false };
+		ruff::ui::Image texture{ ruff::ui::Image::read(
+			std::filesystem::path(DATA_DIR) / "stone_brick.png") };
+		Pixel shade{ ruff::ui::WHITE };
 
-		operator bool()
-		{
-			return wall;
-		}
+		operator bool() { return wall; }
 	};
 
 	struct Player
 	{
 		// Player traits
-		Point2D<float> pos{0,0};
-		double angle{0};
-		double fov{M_PI/3};
+		Point2D<float> pos{ 0, 0 };
+		double angle{ 0 };
+		double fov{ M_PI / 3 };
 	};
 	class Map
 	{
@@ -38,52 +35,57 @@ namespace ui
 		const uint8_t cols;
 
 	public:
-		Map(const Point2D<uint16_t>& map_size, 
-				const Point2D<uint16_t>& num_cells) :
-			map_size(map_size), cell_size(map_size/num_cells), 
-			rows(num_cells.x), cols(num_cells.y)
+		Map(const Point2D<uint16_t>& map_size,
+		    const Point2D<uint16_t>& num_cells)
+		  : map_size(map_size), cell_size(map_size / num_cells),
+		    rows(num_cells.x), cols(num_cells.y)
 		{
-			ruff_assert(map_size[0] % num_cells[0] == 0, 
-					"Map size must be a multiple of cell size");
-			ruff_assert(map_size[1] % num_cells[1] == 0, 
-					"Map size must be a multiple of cell size");
+			ruff_assert(map_size[0] % num_cells[0] == 0,
+			            "Map size must be a multiple "
+			            "of cell size");
+			ruff_assert(map_size[1] % num_cells[1] == 0,
+			            "Map size must be a multiple "
+			            "of cell size");
 
 			game_map.resize(rows * cols);
 		}
 		[[nodiscard]] Tile at(const uint16_t x, const uint16_t y) const
 		{
-			return game_map[x*cols + y];
+			return game_map[x * cols + y];
 		}
-		[[nodiscard]] Tile& at(const uint16_t x, const uint16_t y) 
+		[[nodiscard]] Tile& at(const uint16_t x, const uint16_t y)
 		{
-			return game_map[x*cols + y];
+			return game_map[x * cols + y];
 		}
 	};
 
-	template<
-		size_t map_width, size_t map_height,
-		size_t num_cells_x, size_t num_cells_y>
+	template<size_t map_width,
+	         size_t map_height,
+	         size_t num_cells_x,
+	         size_t num_cells_y>
 	class RayEngine : public Engine
 	{
 	public:
 		Map tile_map;
 		Player player{};
-		const double move_scale{0.1};
-		const double turn_scale{0.01};
+		const double move_scale{ 0.1 };
+		const double turn_scale{ 0.01 };
 
 		std::vector<Point2D<uint16_t>> hits{};
-		const uint16_t mid_point = getHeight()/2;
+		const uint16_t mid_point = getHeight() / 2;
 
 
 	public:
-		RayEngine(const uint16_t width, const uint16_t height, 
-				const float px=map_width/2, const float py=map_height/2)
-			: ruff::ui::Engine(height, width), 
-				tile_map(
-					{map_width,    map_height},
-					{num_cells_x, num_cells_y}),
-				player({px,py})
-		{}
+		RayEngine(const uint16_t width,
+		          const uint16_t height,
+		          const float px = map_width / 2,
+		          const float py = map_height / 2)
+		  : ruff::ui::Engine(height, width),
+		    tile_map({ map_width, map_height },
+		             { num_cells_x, num_cells_y }),
+		    player({ px, py })
+		{
+		}
 
 		void drawMap(const Point2D<uint16_t>& top_left)
 		{
@@ -92,31 +94,35 @@ namespace ui
 				for(uint16_t j = 0; j < tile_map.rows; ++j)
 				{
 					const Point2D<uint16_t> tl{
-						static_cast<uint16_t>(top_left.x+i*tile_map.cell_size.x), 
-						static_cast<uint16_t>(top_left.y+j*tile_map.cell_size.y)};
+						static_cast<uint16_t>(top_left.x
+						                      + i * tile_map.cell_size.x),
+						static_cast<uint16_t>(top_left.y
+						                      + j * tile_map.cell_size.y)
+					};
 
 					const Point2D<uint16_t> br = tl + tile_map.cell_size;
 					if(tile_map.at(i, j))
 					{
-						drawSquare(tl, br,
-									ruff::ui::RED, true);
+						drawSquare(tl, br, ruff::ui::RED, true);
 					}
 					else
 					{
-						drawSquare(tl, br,
-									ruff::ui::DARK_GREY, true);
+						drawSquare(tl, br, ruff::ui::DARK_GREY, true);
 					}
 				}
 			}
 			for(size_t i = 0; i < hits.size(); ++i)
 			{
-				Point2D<uint16_t> start{
-						static_cast<uint16_t>(player.pos.x), 
-						static_cast<uint16_t>(player.pos.y)};
+				Point2D<uint16_t> start{ static_cast<uint16_t>(player.pos.x),
+					                       static_cast<uint16_t>(
+					                         player.pos.y) };
 				drawLine(start, hits[i], ruff::ui::WHITE, 1);
 			}
 		}
-		virtual void onCreate() override {}
+		virtual void onCreate() override
+		{
+			screen->setBackground(VERY_DARK_GREY);
+		}
 		virtual void onUpdate(double deltaTime) override
 		{
 			if(Engine::keys[SDLK_a])
@@ -129,10 +135,14 @@ namespace ui
 			}
 			if(Engine::keys[SDLK_w])
 			{
-				const float new_x = player.pos.x +
-					(deltaTime*std::cos(player.angle-(player.fov/2))*(move_scale));
-				const float new_y = player.pos.y + 
-					(deltaTime*std::sin(player.angle-(player.fov/2))*(move_scale));
+				const float new_x =
+				  player.pos.x
+				  + (deltaTime * std::cos(player.angle - (player.fov / 2))
+				     * (move_scale));
+				const float new_y =
+				  player.pos.y
+				  + (deltaTime * std::sin(player.angle - (player.fov / 2))
+				     * (move_scale));
 				if(!tile_map.at(new_x, new_y))
 				{
 					player.pos.x = new_x;
@@ -141,10 +151,14 @@ namespace ui
 			}
 			if(Engine::keys[SDLK_s])
 			{
-				const float new_x = player.pos.x - 
-					(deltaTime*std::cos(player.angle-(player.fov/2))*move_scale);
-				const float new_y = player.pos.y - 
-					(deltaTime*std::sin(player.angle-(player.fov/2))*move_scale);
+				const float new_x =
+				  player.pos.x
+				  - (deltaTime * std::cos(player.angle - (player.fov / 2))
+				     * move_scale);
+				const float new_y =
+				  player.pos.y
+				  - (deltaTime * std::sin(player.angle - (player.fov / 2))
+				     * move_scale);
 
 				if(!tile_map.at(new_x, new_y))
 				{
@@ -153,46 +167,56 @@ namespace ui
 				}
 			}
 
-			Engine::clearScreen(VERY_DARK_GREY);
+			Engine::clearScreen();
 
 			hits.clear();
 			for(size_t i = 0; i < Engine::getWidth(); ++i)
 			{
-				float angle = (player.angle-player.fov) + 
-					(player.fov*i)/Engine::getWidth();
+				float angle = (player.angle - player.fov)
+				              + (player.fov * i) / Engine::getWidth();
 
-				// DDA algorithm 
+				// DDA algorithm
 				// https://www.youtube.com/watch?v=NbSee-XM7WA
 				Point2D<float> ray_dir(std::cos(angle), std::sin(angle));
 				Point2D<float> ray_step{
-					std::sqrt(1 + (ray_dir.y / ray_dir.x) * (ray_dir.y / ray_dir.x)), 
-					std::sqrt(1 + (ray_dir.x / ray_dir.y) * (ray_dir.x / ray_dir.y))};
+					std::sqrt(
+					  1 + (ray_dir.y / ray_dir.x) * (ray_dir.y / ray_dir.x)),
+					std::sqrt(
+					  1 + (ray_dir.x / ray_dir.y) * (ray_dir.x / ray_dir.y))
+				};
 
-				Point2D<int> check_point{
-					static_cast<int>(player.pos.x), 
-					static_cast<int>(player.pos.y)};
+				Point2D<int> check_point{ static_cast<int>(player.pos.x),
+					                        static_cast<int>(player.pos.y) };
 				Point2D<int> step;
 				Point2D<float> ray_length;
 
 				if(ray_dir.x < 0)
 				{
 					step.x = -1;
-					ray_length.x = (player.pos.x - static_cast<float>(check_point.x)) * ray_step.x;
+					ray_length.x =
+					  (player.pos.x - static_cast<float>(check_point.x))
+					  * ray_step.x;
 				}
 				else
 				{
 					step.x = 1;
-					ray_length.x = (static_cast<float>(check_point.x+1)-player.pos.x) * ray_step.x;
+					ray_length.x =
+					  (static_cast<float>(check_point.x + 1) - player.pos.x)
+					  * ray_step.x;
 				}
 				if(ray_dir.y < 0)
 				{
 					step.y = -1;
-					ray_length.y = (player.pos.y - static_cast<float>(check_point.y)) * ray_step.y;
+					ray_length.y =
+					  (player.pos.y - static_cast<float>(check_point.y))
+					  * ray_step.y;
 				}
 				else
 				{
 					step.y = 1;
-					ray_length.y = (static_cast<float>(check_point.y+1)-player.pos.y) * ray_step.y;
+					ray_length.y =
+					  (static_cast<float>(check_point.y + 1) - player.pos.y)
+					  * ray_step.y;
 				}
 
 				bool tile_found = false;
@@ -213,10 +237,9 @@ namespace ui
 						ray_length.y += ray_step.y;
 					}
 
-					if(check_point.x >= 0 && 
-							check_point.y >= 0 && 
-							check_point.x < static_cast<float>(map_width) && 
-							check_point.y < static_cast<float>(map_height))
+					if(check_point.x >= 0 && check_point.y >= 0
+					   && check_point.x < static_cast<float>(map_width)
+					   && check_point.y < static_cast<float>(map_height))
 					{
 						if(tile_map.at(check_point.x, check_point.y))
 						{
@@ -230,27 +253,32 @@ namespace ui
 					Point2D<float> hit = player.pos + (ray_dir * dist);
 					hits.emplace_back(hit.x, hit.y);
 
-					uint16_t height = (Engine::getHeight() / 
-							(dist*std::cos(angle-player.angle)));
+					uint16_t height =
+					  (Engine::getHeight()
+					   / (dist * std::cos(angle - player.angle)));
 
 					height = std::min(height, mid_point);
 
 					// Get texture column
 					const Image texture = tile_map.at(hit.x, hit.y).texture;
-					uint16_t tex_x = (hit.x-static_cast<int>(hit.x))*texture.width();
-					uint16_t tex_y = (hit.y-static_cast<int>(hit.y))*texture.height();
+					uint16_t tex_x =
+					  (hit.x - static_cast<int>(hit.x)) * texture.width();
+					uint16_t tex_y =
+					  (hit.y - static_cast<int>(hit.y)) * texture.height();
 
-					std::vector<Pixel> column = texture.column(std::max(tex_x, tex_y), height);
+					std::vector<Pixel> column =
+					  texture.column(std::max(tex_x, tex_y), height);
 					size_t idx = 0;
 
-					for(uint16_t j = mid_point-height; j < mid_point+height; ++j)
+					for(uint16_t j = mid_point - height; j < mid_point + height;
+					    ++j)
 					{
 						const ruff::ui::Pixel pixel = column[idx++];
 						draw(i, j, pixel);
 					}
 				}
 			}
-			drawMap({0,0});
+			drawMap({ 0, 0 });
 		};
 
 		RayEngine(const RayEngine&) = delete;
@@ -259,5 +287,5 @@ namespace ui
 		RayEngine& operator=(const RayEngine&) = delete;
 		~RayEngine() override = default;
 	};
-};
-};
+};// namespace ui
+};// namespace ruff

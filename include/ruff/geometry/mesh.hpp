@@ -17,15 +17,16 @@ namespace geometry
 	private:
 		std::vector<P> vertices{};
 		std::vector<Face> faces{};
-		size_t n_verts{0};
-		size_t n_edges{0};
-		size_t n_faces{0};
+		size_t n_verts{ 0 };
+		size_t n_edges{ 0 };
+		size_t n_faces{ 0 };
 
 	public:
 		Mesh() = default;
 
-		template<typename It> 
-			requires std::is_same_v<P, typename std::iterator_traits<It>::value_type>
+		template<typename It>
+		requires std::
+		  is_same_v<P, typename std::iterator_traits<It>::value_type>
 		void add_vertices(It begin, const It end)
 		{
 			while(begin != end)
@@ -54,16 +55,21 @@ namespace geometry
 			{
 				out_file << std::string("ply\n");
 				out_file << std::string("format ascii 1.0\n");
-				out_file << std::string("element vertex ") + std::to_string(n_verts) + "\n";
+				out_file << std::string("element vertex ")
+				              + std::to_string(n_verts) + "\n";
 				out_file << std::string("property float x\n");
 				out_file << std::string("property float y\n");
 				out_file << std::string("property float z\n");
 				out_file << std::string("property uchar red\n");
 				out_file << std::string("property uchar green\n");
 				out_file << std::string("property uchar blue\n");
-				out_file << std::string("element face ") + std::to_string(n_faces) + "\n";
-				out_file << std::string("property list uchar int vertex_index\n");
-				out_file << std::string("element edge ") + std::to_string(n_edges) + "\n";
+				out_file << std::string("element face ")
+				              + std::to_string(n_faces) + "\n";
+				out_file << std::string(
+				  "property list uchar int "
+				  "vertex_index\n");
+				out_file << std::string("element edge ")
+				              + std::to_string(n_edges) + "\n";
 				out_file << std::string("property int vertex1\n");
 				out_file << std::string("property int vertex2\n");
 				out_file << std::string("property uchar red\n");
@@ -72,10 +78,7 @@ namespace geometry
 				out_file << std::string("end_header\n");
 				for(const auto pt : vertices)
 				{
-					for(const auto val : pt.vals)
-					{
-						out_file << val << " ";
-					}
+					for(const auto val : pt.vals) { out_file << val << " "; }
 					out_file << "255 255 255\n";
 				}
 				for(size_t i = 0; i < n_faces; ++i)
@@ -85,7 +88,7 @@ namespace geometry
 					out_file << std::to_string(verts.size()) + " ";
 					for(const auto& v : verts)
 					{
-						out_file << std::to_string(v) + " "; 
+						out_file << std::to_string(v) + " ";
 					}
 					out_file << "\n";
 				}
@@ -122,10 +125,7 @@ namespace geometry
 				std::stringstream line_stream(line);
 
 				line_stream >> command >> input[0] >> input[1] >> input[2];
-				if(input[2].size() == 0)
-				{
-					continue;
-				}
+				if(input[2].size() == 0) { continue; }
 				if(!command.compare("v"))
 				{
 					std::array<T, dim> vert;
@@ -142,10 +142,11 @@ namespace geometry
 					for(size_t i = 0; i < dim; ++i)
 					{
 						// Take the first value
-						std::stringstream inputss(input[i].substr(0, input[i].find("/")));
+						std::stringstream inputss(
+						  input[i].substr(0, input[i].find("/")));
 						size_t idx;
 						inputss >> idx;
-						face_points[i] = idx-1;
+						face_points[i] = idx - 1;
 					}
 
 					Face face(face_points.begin(), face_points.end());
@@ -156,5 +157,5 @@ namespace geometry
 		}
 		return mesh;
 	}
-};
-};
+};// namespace geometry
+};// namespace ruff

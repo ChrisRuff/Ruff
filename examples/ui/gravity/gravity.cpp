@@ -49,9 +49,13 @@ private:
 	}
 
 public:
-	Gravity(const sint width, const sint height, 
-			const std::string& title = "Gravity Engine")
-	  : Engine(height, width) {}
+	Gravity(const sint width,
+	        const sint height,
+	        const std::string& title = "Gravity Engine")
+	  : Engine(height, width)
+	{
+		screen->setTitle(title);
+	}
 
 	Gravity(const Gravity& other) = delete;
 
@@ -59,7 +63,8 @@ public:
 
 	float distance(Body a, Body b)
 	{
-		return std::sqrt(std::pow(b.px - a.px, 2) + std::pow(b.py - a.py, 2));
+		return std::sqrt(std::pow(b.px - a.px, 2)
+		                 + std::pow(b.py - a.py, 2));
 	}
 
 	virtual void onCreate() override
@@ -83,7 +88,8 @@ public:
 			mouse.mouse_pressed[0] = false;
 		}
 
-		// Right click to change the number of anchors
+		// Right click to change the number
+		// of anchors
 		if(mouse.mouse_pressed[1])
 		{
 			planets.clear();
@@ -110,8 +116,7 @@ public:
 
 		for(auto& ball : planets)
 		{
-			if(!ball.moveable)
-				continue;
+			if(!ball.moveable) continue;
 
 			// Update positions and velocities
 			ball.px += ball.vx * deltaTime;
@@ -128,15 +133,20 @@ public:
 					double dy = ball.py - target.py;
 					double dist = distance(ball, target);
 
-					// Skip when the distance is very small so there isn't silly launching
-					if(dist <= 0.5)
-						continue;
+					// Skip when the distance is
+					// very small so there isn't
+					// silly launching
+					if(dist <= 0.5) continue;
 
-					// Calculate orbital force and displacement between each body
-					double force = G * ball.mass * target.mass / (dist /* * dist */);
+					// Calculate orbital force and
+					// displacement between each
+					// body
+					double force =
+					  G * ball.mass * target.mass / (dist /* * dist */);
 					double angle = std::atan2(dy, dx);
 
-					// Sum cumulative forces between all bodies
+					// Sum cumulative forces
+					// between all bodies
 					total_fx += (std::cos(angle) * force);
 					total_fy += (std::sin(angle) * force);
 				}
@@ -152,7 +162,11 @@ public:
 		{
 			if(b.px > 0 && b.py > 0)
 			{
-				drawCircle(b.px, b.py, b.radius, ruff::ui::Pixel(b.mass, b.mass, b.mass), true);
+				drawCircle(b.px,
+				           b.py,
+				           b.radius,
+				           ruff::ui::Pixel(b.mass, b.mass, b.mass),
+				           true);
 			}
 		}
 	}

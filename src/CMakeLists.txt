@@ -26,17 +26,20 @@ target_link_libraries(geometry
 
 make_component( "ui" "${HEADERS_UI}" "${SRCS_UI}" )
 
-find_package(SDL2 REQUIRED)
-find_package(PNG REQUIRED)
 target_link_libraries(ui 
 	PUBLIC
 		core
-		geometry
-		SDL2::SDL2
-		PNG::PNG
-		)
-if(USE_SDL2)
-	target_compile_definitions(ui PUBLIC "-DUSE_SDL2")
-else()
+		geometry)
+target_compile_definitions(ui PUBLIC "-DUSE_SDL2")
 
+if(USE_SDL2)
+	find_package(SDL2 REQUIRED)
+	find_package(PNG REQUIRED)
+target_link_libraries(ui 
+	PUBLIC
+		SDL2::SDL2
+		PNG::PNG)
+else()
+	set_target_properties(ui PROPERTIES LINK_FLAGS "-s WASM=2 -s USE_SDL2=2 -s USE_LIBPNG=1 -s DEMANGLE_SUPPORT=1 -s ASSERTIONS=1 --bind")
+	set(CMAKE_EXECUTABLE_SUFFIX ".html")
 endif()
