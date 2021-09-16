@@ -11,117 +11,128 @@ namespace ui
 	{
 		keys.fill(false);
 	}
+
+	double Engine::iterate()
+	{
+		SDL_Event event;
+		if(mouse.mouse_released[0]) { mouse.mouse_released[0] = false; }
+		if(mouse.mouse_released[1]) { mouse.mouse_released[1] = false; }
+		if(mouse.mouse_released[2]) { mouse.mouse_released[2] = false; }
+		if(mouse.mouse_pressed[0]) { mouse.mouse_pressed[0] = false; }
+		if(mouse.mouse_pressed[1]) { mouse.mouse_pressed[1] = false; }
+		if(mouse.mouse_pressed[2]) { mouse.mouse_pressed[2] = false; }
+		while(SDL_PollEvent(&event))
+		{
+			switch(event.type)
+			{
+			case SDL_QUIT:
+				running = false;
+				break;
+			case SDL_WINDOWEVENT:
+				if(event.window.event == SDL_WINDOWEVENT_RESIZED)
+				{
+					onResize();
+					screen->resize(
+						{ static_cast<uint16_t>(event.window.data1),
+							static_cast<uint16_t>(event.window.data2) });
+				}
+				break;
+			case SDL_MOUSEBUTTONUP:
+				if(event.button.button == SDL_BUTTON(SDL_BUTTON_LEFT))
+				{
+					mouse.mouse_held[0] = false;
+					mouse.mouse_released[0] = true;
+				}
+				else if(event.button.button == SDL_BUTTON_RIGHT)
+				{
+					mouse.mouse_held[1] = false;
+					mouse.mouse_released[1] = true;
+				}
+				else if(event.button.button == SDL_BUTTON_MIDDLE)
+				{
+					mouse.mouse_held[2] = false;
+					mouse.mouse_released[2] = true;
+				}
+				break;
+			case SDL_MOUSEBUTTONDOWN:
+				if(event.button.button == SDL_BUTTON_RIGHT)
+				{
+					mouse.mouse_pressed[1] = true;
+					mouse.mouse_held[1] = true;
+				}
+				else if(event.button.button == SDL_BUTTON(SDL_BUTTON_LEFT))
+				{
+					mouse.mouse_pressed[0] = true;
+					mouse.mouse_held[0] = true;
+				}
+				else if(event.button.button == SDL_BUTTON_MIDDLE)
+				{
+					mouse.mouse_pressed[2] = true;
+					mouse.mouse_held[2] = true;
+				}
+				break;
+			case SDL_MOUSEMOTION:
+				SDL_GetMouseState(&mouse.mouse_x, &mouse.mouse_y);
+				break;
+			case SDL_KEYDOWN:
+				if(event.key.keysym.sym == SDLK_ESCAPE) { running = false; }
+				else if(event.key.keysym.sym
+								>= static_cast<int>(keys.size()))
+				{
+					break;
+				}
+				keys[event.key.keysym.sym] = true;
+				break;
+			case SDL_KEYUP:
+				if(event.key.keysym.sym >= static_cast<int>(keys.size()))
+				{
+					break;
+				}
+				keys[event.key.keysym.sym] = false;
+				break;
+			}
+		}
+
+		double delta = screen->renderer->getDeltaTime();
+		onUpdate(delta);
+		for(auto& button : buttons) { drawButton(button.get()); }
+		if(mouse.mouse_pressed[0])
+		{
+			for(auto& button_ptr : buttons)
+			{
+				Button* button = button_ptr.get();
+				const Point2D<uint16_t> size = button->dims();
+				const Point2D<uint16_t> pos = button->xy();
+				if(mouse.mouse_x - pos.x < size.x
+					 && mouse.mouse_x - pos.x > 0
+					 && mouse.mouse_y - pos.y < size.y
+					 && mouse.mouse_y - pos.y > 0) [[likely]]
+				{
+					button->press();
+				}
+			}
+		}
+		screen->push_to_screen();
+
+		if(close()) { running = false; }
+		return delta;
+	}
 	void Engine::launch()
 	{
-		bool running = true;
-
 		onCreate();
+		double frame_timer{0};
+		size_t frame_count{0};
 		while(running)
 		{
-			SDL_Event event;
-			if(mouse.mouse_released[0]) { mouse.mouse_released[0] = false; }
-			if(mouse.mouse_released[1]) { mouse.mouse_released[1] = false; }
-			if(mouse.mouse_pressed[0]) { mouse.mouse_pressed[0] = false; }
-			if(mouse.mouse_pressed[1]) { mouse.mouse_pressed[1] = false; }
-			while(SDL_PollEvent(&event))
+			double delta = iterate();
+			frame_timer += delta;
+			++frame_count;
+			if(frame_timer >= 1)
 			{
-				switch(event.type)
-				{
-				case SDL_QUIT:
-					running = false;
-					break;
-				case SDL_WINDOWEVENT:
-					if(event.window.event == SDL_WINDOWEVENT_RESIZED)
-					{
-						onResize();
-						screen->resize(
-						  { static_cast<uint16_t>(event.window.data1),
-						    static_cast<uint16_t>(event.window.data2) });
-					}
-					break;
-				case SDL_MOUSEBUTTONUP:
-					if(event.button.button == SDL_BUTTON(SDL_BUTTON_LEFT))
-					{
-						mouse.mouse_held[0] = false;
-						mouse.mouse_released[0] = true;
-					}
-					else if(event.button.button == SDL_BUTTON_RIGHT)
-					{
-						mouse.mouse_held[1] = false;
-						mouse.mouse_released[1] = true;
-					}
-					break;
-				case SDL_MOUSEBUTTONDOWN:
-					if(event.button.button == SDL_BUTTON_RIGHT)
-					{
-						if(mouse.mouse_pressed[1])
-						{
-							mouse.mouse_pressed[1] = false;
-						}
-						else
-						{
-							mouse.mouse_pressed[1] = true;
-						}
-						mouse.mouse_held[1] = true;
-					}
-					else if(event.button.button == SDL_BUTTON(SDL_BUTTON_LEFT))
-					{
-						if(mouse.mouse_pressed[0])
-						{
-							mouse.mouse_pressed[0] = false;
-						}
-						else
-						{
-							mouse.mouse_pressed[0] = true;
-						}
-						mouse.mouse_held[0] = true;
-					}
-					break;
-				case SDL_MOUSEMOTION:
-					SDL_GetMouseState(&mouse.mouse_x, &mouse.mouse_y);
-					break;
-				case SDL_KEYDOWN:
-					if(event.key.keysym.sym == SDLK_ESCAPE) { running = false; }
-					else if(event.key.keysym.sym
-					        >= static_cast<int>(keys.size()))
-					{
-						break;
-					}
-					keys[event.key.keysym.sym] = true;
-					break;
-				case SDL_KEYUP:
-					if(event.key.keysym.sym >= static_cast<int>(keys.size()))
-					{
-						break;
-					}
-					keys[event.key.keysym.sym] = false;
-					break;
-				}
+				frame_timer -= 1;
+				screen->setTitle(std::string("Ruff UI Engine - FPS:" + std::to_string(frame_count)));
+				frame_count = 0;
 			}
-
-			screen->clear();
-			double delta = screen->renderer->getDeltaTime();
-			onUpdate(delta);
-			for(auto& button : buttons) { drawButton(button.get()); }
-			if(mouse.mouse_pressed[0])
-			{
-				for(auto& button_ptr : buttons)
-				{
-					Button* button = button_ptr.get();
-					const Point2D<uint16_t> size = button->dims();
-					const Point2D<uint16_t> pos = button->xy();
-					if(mouse.mouse_x - pos.x < size.x
-					   && mouse.mouse_x - pos.x > 0
-					   && mouse.mouse_y - pos.y < size.y
-					   && mouse.mouse_y - pos.y > 0) [[likely]]
-					{
-						button->press();
-					}
-				}
-			}
-			screen->push_to_screen();
-
-			if(close()) { running = false; }
 		}
 	}
 
@@ -347,9 +358,18 @@ namespace ui
 		}
 		else
 		{
-			for(uint16_t x = centerX - radius; x <= centerX + radius; ++x)
+			for(int x = centerX - radius; x <= centerX + radius; ++x)
 			{
-				drawLine(x, -y(x) + centerY, x, y(x) + centerY, color);
+				if(x < 0)
+				{
+					continue;
+				}
+				double lowerbound = centerY - y(x);
+				double upperbound = centerY + y(x);
+
+				drawLine(x, lowerbound < 0 ? 0 : lowerbound,
+				         x, upperbound,
+				         color);
 			}
 		}
 	}

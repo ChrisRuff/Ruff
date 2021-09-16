@@ -37,6 +37,7 @@ namespace ui
 		uint16_t h{};
 		std::vector<Pixel> pixels{};
 
+
 	public:
 		Image(const uint16_t width,
 		      const uint16_t height,
@@ -68,7 +69,6 @@ namespace ui
 		// Querying
 		std::vector<Pixel> column(const uint16_t x,
 		                          uint16_t height = 0) const;
-		std::vector<unsigned char> data() const;
 
 		// Image manipulation
 		Image rotate(const double theta,
@@ -97,6 +97,14 @@ namespace ui
 		  const std::filesystem::path& in_path);
 
 		void clear(const Pixel& p);
+
+	// Getter/setters
+	public:
+		std::vector<unsigned char> data() const;
+		const std::vector<Pixel>& getPixels() const
+		{
+			return pixels;
+		}
 	};
 };// namespace ui
 };// namespace ruff

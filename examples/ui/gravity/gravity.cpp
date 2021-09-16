@@ -30,6 +30,7 @@ class Gravity : public ruff::ui::Engine
 private:
 	std::vector<Body> planets{};
 	bool singleAnchor{ false };
+	bool clear_screen{ true };
 	float G = 6.673E-3;
 
 	void addBody(const float x, const float y, const float r = 10.0f)
@@ -80,6 +81,9 @@ public:
 	}
 	virtual void onUpdate(double deltaTime) override
 	{
+		// Move a lil faster plz
+		deltaTime *= 100;
+
 		// Left click to add bodies
 		if(mouse.mouse_pressed[0])
 		{
@@ -97,22 +101,28 @@ public:
 			{
 				addBody(getWidth() * 0.5f, getHeight() * 0.5f, 2);
 				planets[0].moveable = false;
-				planets[0].mass = 700;
+				planets[0].mass = 1000;
 				singleAnchor = true;
 			}
 			else
 			{
 				addBody(getWidth() * 0.35f, getHeight() * 0.5f, 2);
 				planets[0].moveable = false;
-				planets[0].mass = 700;
+				planets[0].mass = 1000;
 
 				addBody(getWidth() * 0.65f, getHeight() * 0.5f, 2);
 				planets[1].moveable = false;
-				planets[1].mass = 700;
+				planets[1].mass = 1000;
 				singleAnchor = false;
 			}
 			mouse.mouse_pressed[1] = false;
 		}
+
+		if(mouse.mouse_pressed[2])
+		{
+			clear_screen = !clear_screen;
+		}
+
 
 		for(auto& ball : planets)
 		{
@@ -155,7 +165,10 @@ public:
 			ball.ay = -total_fy / ball.mass;
 		}
 
-		clearScreen();
+		if(clear_screen)
+		{
+			clearScreen();
+		}
 
 		// Draw each body
 		for(Body b : planets)
@@ -172,10 +185,34 @@ public:
 	}
 };
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+
+bool first = true;
+void runner()
+{
+	static Gravity engine(500, 500, "Gravity");
+	if(first)
+	{
+		engine.onCreate();
+		first = false;
+	}
+
+	engine.iterate();
+}
+
 int main()
 {
 	// Create game engine and then run it
-	Gravity gravityEngine(1000, 1500, "Gravity");
+	emscripten_set_main_loop(runner, 0, 1);
+	return 0;
+}
+#else
+int main()
+{
+	// Create game engine and then run it
+	Gravity gravityEngine(750, 500, "Gravity");
 	gravityEngine.launch();
 	return 0;
 }
+#endif

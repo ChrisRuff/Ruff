@@ -28,7 +28,7 @@ bool findEasyPath()
 		if(path.size() != rightPath.size()) { return false; }
 		for(size_t i = 0; i < path.size(); ++i)
 		{
-			if(path[i] != rightPath[i]) { return false; }
+			if(!(path[i] == rightPath[i])) { return false; }
 		}
 	}
 	else

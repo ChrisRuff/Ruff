@@ -20,6 +20,9 @@ option(BUILD_DOXY_DOC "Build Doxygen documentation" ON)
 
 option(USE_SDL2 "Use SDL2 for screen" ON)
 option(USE_EMSCRIPTEN "Generate Emscripten files" OFF)
+if(USE_EMSCRIPTEN)
+	set(CMAKE_EXECUTABLE_SUFFIX ".html")
+endif()
 
 # append path to search for cmake modules
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})

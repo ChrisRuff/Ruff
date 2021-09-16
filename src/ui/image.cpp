@@ -35,13 +35,15 @@ namespace ui
 	std::vector<unsigned char> Image::data() const
 	{
 		std::vector<unsigned char> data(pixels.size() * 4);
-		size_t idx = 0;
+
+#pragma omp parallel for
 		for(size_t i = 0; i < data.size(); i += 4)
 		{
-			data[i] = pixels[idx].r;
+			const size_t idx = i/4 + i%4;
+			data[i] =     pixels[idx].r;
 			data[i + 1] = pixels[idx].g;
 			data[i + 2] = pixels[idx].b;
-			data[i + 3] = pixels[idx++].a;
+			data[i + 3] = pixels[idx].a;
 		}
 		return data;
 	}
@@ -245,8 +247,7 @@ namespace ui
 	}
 	void Image::clear(const Pixel& p)
 	{
-		pixels.clear();
-		pixels.assign(w * h, p);
+		std::fill(pixels.begin(), pixels.end(), p);
 	}
 };// namespace ui
 };// namespace ruff

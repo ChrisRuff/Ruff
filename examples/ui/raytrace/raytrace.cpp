@@ -15,7 +15,7 @@ public:
 	{
 	}
 
-	virtual void onCreate() override
+	void onCreate() override
 	{
 		for(size_t i = 0; i < num_cells_x; ++i)
 		{

@@ -35,6 +35,8 @@ namespace ui
 	/* ----------------------------------------------------------------------------*/
 	class Engine
 	{
+	private:
+		bool running{true};
 
 	protected:
 		// Hardware interface
@@ -50,6 +52,7 @@ namespace ui
 		std::vector<std::unique_ptr<Button>> buttons{};
 
 		std::unique_ptr<Window> screen;
+
 
 	public:
 		/* --------------------------------------------------------------------------*/
@@ -283,6 +286,7 @@ namespace ui
 		 */
 		/* ----------------------------------------------------------------------------*/
 		void launch();
+		double iterate();
 
 		/* --------------------------------------------------------------------------*/
 		/**
@@ -322,6 +326,8 @@ namespace ui
 		 */
 		/* ----------------------------------------------------------------------------*/
 		virtual bool close() { return false; }
+
+		void shutdown() { running = false; }
 	};
 
 	Pixel getRandColor();

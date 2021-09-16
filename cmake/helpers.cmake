@@ -40,6 +40,7 @@ function(make_example COMPONENT )
 			PRIVATE
 			${PROJECT_BINARY_DIR})
 	target_compile_definitions(${COMPONENT} PRIVATE -DDATA_DIR="${PROJECT_SOURCE_DIR}/data")
+
 endfunction()
 
 function(make_component COMPONENT HEADERS SRC)

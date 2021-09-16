@@ -23,6 +23,11 @@ namespace ui
 		Point2D<float> pos{ 0, 0 };
 		double angle{ 0 };
 		double fov{ M_PI / 3 };
+
+		Player(const Point2D<float> pos) : pos(pos)
+		{
+
+		}
 	};
 	class Map
 	{
@@ -67,7 +72,7 @@ namespace ui
 	{
 	public:
 		Map tile_map;
-		Player player{};
+		Player player;
 		const double move_scale{ 0.1 };
 		const double turn_scale{ 0.01 };
 
