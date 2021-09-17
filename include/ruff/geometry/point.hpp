@@ -70,6 +70,11 @@ public:
 		}
 		return Point(new_vals);
 	}
+	inline constexpr Point& operator/=(const double scalar)
+	{
+		std::transform(vals.begin(), vals.end(), vals.begin(), [scalar](const T& val) { return val / scalar; });
+		return *this;
+	}
 	inline constexpr Point operator*(const double scalar) const noexcept
 	{
 		std::array<T, size> new_vals;

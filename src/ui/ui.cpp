@@ -73,6 +73,8 @@ namespace ui
 				break;
 			case SDL_MOUSEMOTION:
 				SDL_GetMouseState(&mouse.mouse_x, &mouse.mouse_y);
+				mouse.mouse_x /= screen->getRatio();
+				mouse.mouse_y /= screen->getRatio();
 				break;
 			case SDL_KEYDOWN:
 				if(event.key.keysym.sym == SDLK_ESCAPE) { running = false; }
@@ -100,15 +102,14 @@ namespace ui
 		{
 			for(auto& button_ptr : buttons)
 			{
-				Button* button = button_ptr.get();
-				const Point2D<uint16_t> size = button->dims();
-				const Point2D<uint16_t> pos = button->xy();
+				const Point2D<uint16_t> size = button_ptr->dims();
+				const Point2D<uint16_t> pos = button_ptr->xy();
 				if(mouse.mouse_x - pos.x < size.x
 					 && mouse.mouse_x - pos.x > 0
 					 && mouse.mouse_y - pos.y < size.y
 					 && mouse.mouse_y - pos.y > 0) [[likely]]
 				{
-					button->press();
+					button_ptr->press();
 				}
 			}
 		}
@@ -184,21 +185,23 @@ namespace ui
 			if(y2 < y1) { return getLine(x2, y2, y1, y1, line_width); }
 			else
 			{
+				points.reserve(y2 - y1);
 				for(uint16_t y = y1; y <= y2; ++y)
 				{
-					points.push_back({ x1, y });
+					points.emplace_back( x1, y );
 				}
 			}
 		}
 		// Horizontal
 		else if(dy == 0)
 		{
+			points.reserve(x2 - x1);
 			if(x2 < x1) { return getLine(x2, y2, x1, y1, line_width); }
 			else
 			{
 				for(uint16_t x = x1; x <= x2; ++x)
 				{
-					points.push_back({ x, y1 });
+					points.emplace_back( x, y1 );
 				}
 			}
 		}
@@ -225,7 +228,8 @@ namespace ui
 					xe = x1;
 				}
 
-				points.push_back({ x, y });
+				points.emplace_back( x, y );
+				points.reserve(xe);
 				for(uint16_t i = 0; x < xe; ++i)
 				{
 					++x;
@@ -239,7 +243,7 @@ namespace ui
 
 						px += 2 * (dy1 - dx1);
 					}
-					points.push_back({ x, y });
+					points.emplace_back(x, y);
 				}
 			}
 			else
@@ -257,7 +261,7 @@ namespace ui
 					ye = y1;
 				}
 
-				points.push_back({ x, y });
+				points.emplace_back( x, y );
 
 				for(uint16_t i = 0; y < ye; ++i)
 				{
@@ -271,15 +275,15 @@ namespace ui
 							--x;
 						py += 2 * (dx1 - dy1);
 					}
-					points.push_back({ x, y });
+					points.emplace_back( x, y );
 				}
 			}
 		}
 		return points;
 	}
 	std::vector<Point2D<uint16_t>>
-	  Engine::getLine(const Point2D<uint16_t> p1,
-	                  const Point2D<uint16_t> p2,
+	  Engine::getLine(const Point2D<uint16_t>& p1,
+	                  const Point2D<uint16_t>& p2,
 	                  const int line_width)
 	{
 		return Engine::getLine(p1.x, p1.y, p2.x, p2.y, line_width);

@@ -61,7 +61,7 @@ public:
 		ruff::ui::RayEngine<map_width,
 		                    map_height,
 		                    num_cells_x,
-		                    num_cells_y>::onUpdate(deltaTime);
+		                    num_cells_y>::onUpdate(deltaTime*100);
 	}
 };
 int main()

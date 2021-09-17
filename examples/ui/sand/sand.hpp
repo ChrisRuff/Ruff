@@ -25,7 +25,7 @@ private:
 	std::vector<std::shared_ptr<Block>> blocks{};
 
 	int selected_type{ -1 };
-	int brush_width = 25;
+	int brush_width{ 10 };
 
 public:
 	SandEngine(const uint16_t width, const uint16_t height)
@@ -41,7 +41,7 @@ public:
 
 	bool query(const ruff::Point2D<uint16_t> pos)
 	{
-		return getPixel(pos) != ruff::ui::BLANK;
+		return getPixel(pos) == EMPTY;
 	};
 
 	template<typename T>
@@ -88,7 +88,7 @@ protected:
 public:
 	[[nodiscard]] Block(ruff::Point2D<uint16_t> position,
 	                    SandEngine* engine) noexcept
-	  : engine(engine), position(position), velocity(0, 0),
+	  : engine(engine), position(position), velocity(1, 1),
 	    acceleration(0, 1), color(EMPTY)
 	{
 	}
@@ -96,8 +96,8 @@ public:
 	virtual void update(double deltaTime)
 	{
 		(void)deltaTime;
+		setVelocity(getVelocity() + getAcceleration());
 		if(position.y >= width) { position.y = width - 1; }
-
 		if(position.x >= height) { position.x = height - 1; }
 	};
 	virtual ~Block() = default;
@@ -155,25 +155,60 @@ public:
 	void update(double deltaTime) override
 	{
 		Block::update(deltaTime);
-		const ruff::Point2D<uint16_t> size = getPosition();
-		if(engine->query({ size.x, static_cast<unsigned short>(size.y - 1) }))
+		const ruff::Point2D<uint16_t>& pos = getPosition();
+
+		ruff::Point2D<uint16_t> down = pos;
+		down.y += std::round(velocity.y);
+		const auto line_down = engine->getLine(pos, down, 1);
+		ruff::Point2D<uint16_t> left = pos;
+		left.x -= std::round(velocity.x);
+		left.y += std::round(velocity.y);
+		const auto line_left = engine->getLine(pos, left, 1);
+		ruff::Point2D<uint16_t> right = pos;
+		right.x += std::round(velocity.x);
+		right.y += std::round(velocity.y);
+		const auto line_right = engine->getLine(pos, right, 1);
+
+		for(auto down_it=line_down.rbegin(),left_it=line_left.rbegin(),right_it=line_right.rbegin();
+		    down_it != line_down.rend()-1 || left_it != line_left.rend()-1 || right_it != line_right.rend()-1;)
 		{
-			position.y--;
-		}
-		else if(
-		  engine->query({ static_cast<unsigned short>(size.x - 1),
-		            static_cast<unsigned short>(size.y - 1) })
-		        )
-		{
-			position.y--;
-			position.x--;
-		}
-		else if(
-		  engine->query({ static_cast<unsigned short>(size.x + 1),
-		                        static_cast<unsigned short>(size.y - 1) }))
-		{
-			position.y--;
-			position.x++;
+			if(down_it != line_down.rend())
+			{
+				if(engine->query(*down_it))
+				{
+					position = *down_it;
+					return;
+				}
+				else
+				{
+					++down_it;
+				}
+			}
+			if(left_it != line_left.rend())
+			{
+				if(engine->query(*left_it))
+				{
+					position = *left_it;
+					return;
+				}
+				else
+				{
+					++left_it;
+				}
+			}
+			if(right_it != line_right.rend())
+			{
+				if(engine->query(*right_it))
+				{
+					position = *right_it;
+					return;
+				}
+				else
+				{
+					++right_it;
+				}
+			}
+			velocity.y = 0;
 		}
 	}
 };

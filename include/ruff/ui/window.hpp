@@ -14,6 +14,8 @@ namespace ui
 		Pixel bg;
 		std::string title{ "Ruff UI Engine" };
 
+		size_t ratio{1};
+
 	public:
 		std::unique_ptr<SDL2_Renderer> renderer;
 
@@ -27,13 +29,13 @@ namespace ui
 		{
 		}
 
-		void draw(uint16_t x, uint16_t y, const Pixel p)
+		void draw(uint16_t x, uint16_t y, const Pixel& p)
 		{
-			Pixel old_p = frame.get(x, y);
-			Pixel new_p = Pixel::combine(old_p, p);
+			const Pixel& old_p = frame.get(x, y);
+			const Pixel& new_p = Pixel::combine(old_p, p);
 			frame.set(x, y, new_p);
 		}
-		Pixel get(uint16_t x, uint16_t y) { return frame.get(x, y); }
+		Pixel get(uint16_t x, uint16_t y) const { return frame.get(x, y); }
 
 
 		void push_to_screen() { renderer->render(&frame); }
@@ -45,6 +47,7 @@ namespace ui
 		}
 		void resize(Point2D<uint16_t> new_size)
 		{
+			new_size /= ratio;
 			frame = Image(new_size.x, new_size.y, bg);
 			renderer->resize(new_size);
 		}
@@ -53,10 +56,14 @@ namespace ui
 			this->title = title;
 			renderer->setTitle(title);
 		}
-		Point2D<uint16_t> size() const
+		Point2D<uint16_t> size() const { return { frame.width(), frame.height() }; };
+		void setRatio(const size_t pr)
 		{
-			return { frame.width(), frame.height() };
+			this->ratio = pr;
+			resize({static_cast<unsigned short>(frame.width()/pr),
+			         static_cast<unsigned short>(frame.height()/pr)});
 		}
+		size_t getRatio() const { return this->ratio; };
 	};
 };// namespace ui
 };// namespace ruff

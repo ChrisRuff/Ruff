@@ -98,8 +98,8 @@ namespace ui
 		  const int line_width);
 
 		std::vector<Point2D<uint16_t>> static getLine(
-		  const Point2D<uint16_t> p1,
-		  const Point2D<uint16_t> p2,
+		  const Point2D<uint16_t>& p1,
+		  const Point2D<uint16_t>& p2,
 		  const int line_width);
 
 		/* --------------------------------------------------------------------------*/
@@ -243,7 +243,7 @@ namespace ui
 		/* ----------------------------------------------------------------------------*/
 		[[nodiscard]] uint16_t getWidth() const
 		{
-			return screen->size().x;
+			return screen->size().x * (screen->getRatio() * screen->getRatio());
 		}
 
 		/* --------------------------------------------------------------------------*/
@@ -256,7 +256,7 @@ namespace ui
 		/* ----------------------------------------------------------------------------*/
 		[[nodiscard]] uint16_t getHeight() const
 		{
-			return screen->size().y;
+			return screen->size().y * screen->getRatio();
 		}
 
 		Pixel getPixel(uint16_t x, uint16_t y) const;
