@@ -39,7 +39,7 @@ public:
 	SandEngine& operator=(const SandEngine&) = delete;
 	~SandEngine() override = default;
 
-	bool query(const ruff::Point2D<uint16_t> pos)
+	bool query(const ruff::Point2D<uint16_t>& pos)
 	{
 		return getPixel(pos) == EMPTY;
 	};
@@ -156,66 +156,29 @@ public:
 	{
 		Block::update(deltaTime);
 		const ruff::Point2D<uint16_t>& pos = getPosition();
+		const ruff::Point2D<uint16_t> down = {pos.x, pos.y+1};
+		const ruff::Point2D<uint16_t> right = {pos.x + 1, pos.y+1};
+		const ruff::Point2D<uint16_t> left = {pos.x - 1, pos.y+1};
 
-		ruff::Point2D<uint16_t> down = pos;
-		down.y += std::round(velocity.y);
-		const auto line_down = engine->getLine(pos, down, 1);
-		ruff::Point2D<uint16_t> left = pos;
-		left.x -= std::round(velocity.x);
-		left.y += std::round(velocity.y);
-		const auto line_left = engine->getLine(pos, left, 1);
-		ruff::Point2D<uint16_t> right = pos;
-		right.x += std::round(velocity.x);
-		right.y += std::round(velocity.y);
-		const auto line_right = engine->getLine(pos, right, 1);
-
-		for(auto down_it=line_down.rbegin(),left_it=line_left.rbegin(),right_it=line_right.rbegin();
-		    down_it != line_down.rend()-1 || left_it != line_left.rend()-1 || right_it != line_right.rend()-1;)
+		if(engine->query(down))
 		{
-			if(down_it != line_down.rend())
-			{
-				if(engine->query(*down_it))
-				{
-					position = *down_it;
-					return;
-				}
-				else
-				{
-					++down_it;
-				}
-			}
-			if(left_it != line_left.rend())
-			{
-				if(engine->query(*left_it))
-				{
-					position = *left_it;
-					return;
-				}
-				else
-				{
-					++left_it;
-				}
-			}
-			if(right_it != line_right.rend())
-			{
-				if(engine->query(*right_it))
-				{
-					position = *right_it;
-					return;
-				}
-				else
-				{
-					++right_it;
-				}
-			}
-			velocity.y = 0;
+			position = down;
+		}
+		else if(engine->query(left))
+		{
+			position = left;
+		}
+		else if(engine->query(right))
+		{
+			position = right;
 		}
 	}
 };
 class Water : public Block
 {
 private:
-	signed char prevDir{ -1 };
+	enum class DIR { LEFT, RIGHT};
+	DIR travel{ DIR::LEFT };
 
 public:
 	Water(ruff::Point2D<uint16_t> position, SandEngine* engine) noexcept
@@ -223,5 +186,52 @@ public:
 	{
 		color = WATER;
 	}
-	void update(double deltaTime) override { Block::update(deltaTime); }
+	void update(double deltaTime) override
+	{
+		Block::update(deltaTime);
+		const ruff::Point2D<uint16_t>& pos = getPosition();
+		const ruff::Point2D<uint16_t> down = {pos.x, pos.y+1};
+		const ruff::Point2D<uint16_t> left = {pos.x - 1, pos.y+1};
+		const ruff::Point2D<uint16_t> right = {pos.x + 1, pos.y+1};
+		const ruff::Point2D<uint16_t> mid_left = {pos.x - 1, pos.y};
+		const ruff::Point2D<uint16_t> mid_right = {pos.x + 1, pos.y};
+
+		if(engine->query(down))
+		{
+			position = down;
+		}
+		else if(engine->query(left))
+		{
+			position = left;
+		}
+		else if(engine->query(right))
+		{
+			position = right;
+			travel = DIR::RIGHT;
+		}
+		else if(travel == DIR::LEFT)
+		{
+			if(engine->query(mid_left))
+			{
+				position = mid_left;
+			}
+			else if(engine->query(mid_right))
+			{
+				position = mid_right;
+				travel = DIR::RIGHT;
+			}
+		}
+		else if(travel == DIR::RIGHT)
+		{
+			if(engine->query(mid_right))
+			{
+				position = mid_right;
+			}
+			else if(engine->query(mid_left))
+			{
+				position = mid_left;
+				travel = DIR::LEFT;
+			}
+		}
+	}
 };

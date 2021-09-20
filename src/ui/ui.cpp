@@ -175,7 +175,6 @@ namespace ui
 	                                               const uint16_t y2,
 	                                               const int line_width)
 	{
-		std::vector<Point2D<uint16_t>> points{};
 		int16_t dx = x2 - x1;
 		int16_t dy = y2 - y1;
 
@@ -185,25 +184,27 @@ namespace ui
 			if(y2 < y1) { return getLine(x2, y2, y1, y1, line_width); }
 			else
 			{
-				points.reserve(y2 - y1);
+				std::vector<Point2D<uint16_t>> points(y2-y1+1);
 				for(uint16_t y = y1; y <= y2; ++y)
 				{
-					points.emplace_back( x1, y );
+					points[y-y1] = { x1, y };
 				}
+				return points;
 			}
 		}
 		// Horizontal
 		else if(dy == 0)
 		{
-			points.reserve(x2 - x1);
+			std::vector<Point2D<uint16_t>> points(x2-x1+1);
 			if(x2 < x1) { return getLine(x2, y2, x1, y1, line_width); }
 			else
 			{
 				for(uint16_t x = x1; x <= x2; ++x)
 				{
-					points.emplace_back( x, y1 );
+					points[x-x1] = { x, y1 };
 				}
 			}
+			return points;
 		}
 		// at an angle not divisible by 90
 		else
@@ -228,8 +229,8 @@ namespace ui
 					xe = x1;
 				}
 
-				points.emplace_back( x, y );
-				points.reserve(xe);
+				std::vector<Point2D<uint16_t>> points(1);
+				points[0] = { x, y };
 				for(uint16_t i = 0; x < xe; ++i)
 				{
 					++x;
@@ -245,6 +246,7 @@ namespace ui
 					}
 					points.emplace_back(x, y);
 				}
+				return points;
 			}
 			else
 			{
@@ -261,7 +263,8 @@ namespace ui
 					ye = y1;
 				}
 
-				points.emplace_back( x, y );
+				std::vector<Point2D<uint16_t>> points(1);
+				points[0] = { x, y };
 
 				for(uint16_t i = 0; y < ye; ++i)
 				{
@@ -277,9 +280,9 @@ namespace ui
 					}
 					points.emplace_back( x, y );
 				}
+				return points;
 			}
 		}
-		return points;
 	}
 	std::vector<Point2D<uint16_t>>
 	  Engine::getLine(const Point2D<uint16_t>& p1,
