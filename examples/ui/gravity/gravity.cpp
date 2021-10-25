@@ -3,7 +3,7 @@
 #include <memory>
 
 // Source
-#include "ui/ui.hpp"
+#include "ruff/ui/ui.hpp"
 
 using sint = short int;
 
@@ -30,6 +30,7 @@ class Gravity : public ruff::ui::Engine
 private:
 	std::vector<Body> planets{};
 	bool singleAnchor{ false };
+	bool clear_screen{ true };
 	float G = 6.673E-3;
 
 	void addBody(const float x, const float y, const float r = 10.0f)
@@ -49,10 +50,13 @@ private:
 	}
 
 public:
-	Gravity(const sint width, const sint height, 
-			const std::string& title = "Gravity Engine", 
-			int pixelRatio = 1)
-	  : Engine(height, width, title, pixelRatio) {}
+	Gravity(const sint width,
+	        const sint height,
+	        const std::string& title = "Gravity Engine")
+	  : Engine(height, width)
+	{
+		screen->setTitle(title);
+	}
 
 	Gravity(const Gravity& other) = delete;
 
@@ -60,7 +64,8 @@ public:
 
 	float distance(Body a, Body b)
 	{
-		return std::sqrt(std::pow(b.px - a.px, 2) + std::pow(b.py - a.py, 2));
+		return std::sqrt(std::pow(b.px - a.px, 2)
+		                 + std::pow(b.py - a.py, 2));
 	}
 
 	virtual void onCreate() override
@@ -76,6 +81,9 @@ public:
 	}
 	virtual void onUpdate(double deltaTime) override
 	{
+		// Move a lil faster plz
+		deltaTime *= 100;
+
 		// Left click to add bodies
 		if(mouse.mouse_pressed[0])
 		{
@@ -84,7 +92,8 @@ public:
 			mouse.mouse_pressed[0] = false;
 		}
 
-		// Right click to change the number of anchors
+		// Right click to change the number
+		// of anchors
 		if(mouse.mouse_pressed[1])
 		{
 			planets.clear();
@@ -92,27 +101,32 @@ public:
 			{
 				addBody(getWidth() * 0.5f, getHeight() * 0.5f, 2);
 				planets[0].moveable = false;
-				planets[0].mass = 700;
+				planets[0].mass = 1000;
 				singleAnchor = true;
 			}
 			else
 			{
 				addBody(getWidth() * 0.35f, getHeight() * 0.5f, 2);
 				planets[0].moveable = false;
-				planets[0].mass = 700;
+				planets[0].mass = 1000;
 
 				addBody(getWidth() * 0.65f, getHeight() * 0.5f, 2);
 				planets[1].moveable = false;
-				planets[1].mass = 700;
+				planets[1].mass = 1000;
 				singleAnchor = false;
 			}
 			mouse.mouse_pressed[1] = false;
 		}
 
+		if(mouse.mouse_pressed[2])
+		{
+			clear_screen = !clear_screen;
+		}
+
+
 		for(auto& ball : planets)
 		{
-			if(!ball.moveable)
-				continue;
+			if(!ball.moveable) continue;
 
 			// Update positions and velocities
 			ball.px += ball.vx * deltaTime;
@@ -129,15 +143,20 @@ public:
 					double dy = ball.py - target.py;
 					double dist = distance(ball, target);
 
-					// Skip when the distance is very small so there isn't silly launching
-					if(dist <= 0.5)
-						continue;
+					// Skip when the distance is
+					// very small so there isn't
+					// silly launching
+					if(dist <= 0.5) continue;
 
-					// Calculate orbital force and displacement between each body
-					double force = G * ball.mass * target.mass / (dist /* * dist */);
+					// Calculate orbital force and
+					// displacement between each
+					// body
+					double force =
+					  G * ball.mass * target.mass / (dist /* * dist */);
 					double angle = std::atan2(dy, dx);
 
-					// Sum cumulative forces between all bodies
+					// Sum cumulative forces
+					// between all bodies
 					total_fx += (std::cos(angle) * force);
 					total_fy += (std::sin(angle) * force);
 				}
@@ -146,20 +165,54 @@ public:
 			ball.ay = -total_fy / ball.mass;
 		}
 
-		clearScreen();
+		if(clear_screen)
+		{
+			clearScreen();
+		}
 
 		// Draw each body
 		for(Body b : planets)
 		{
-			drawCircle(b.px, b.py, b.radius, ruff::ui::Pixel(b.mass, b.mass, b.mass), true);
+			if(b.px > 0 && b.py > 0)
+			{
+				drawCircle(b.px,
+				           b.py,
+				           b.radius,
+				           ruff::ui::Pixel(b.mass, b.mass, b.mass),
+				           true);
+			}
 		}
 	}
 };
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+
+bool first = true;
+void runner()
+{
+	static Gravity engine(500, 500, "Gravity");
+	if(first)
+	{
+		engine.onCreate();
+		first = false;
+	}
+
+	engine.iterate();
+}
+
 int main()
 {
 	// Create game engine and then run it
-	Gravity gravityEngine(1000, 1500, "Gravity", 2);
+	emscripten_set_main_loop(runner, 0, 1);
+	return 0;
+}
+#else
+int main()
+{
+	// Create game engine and then run it
+	Gravity gravityEngine(750, 500, "Gravity");
 	gravityEngine.launch();
 	return 0;
 }
+#endif

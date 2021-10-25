@@ -7,8 +7,11 @@ jobs:
     docker:
       - image: cimg/base:stable
         user: root
+        environment:
+            DISPLAY: :99
     steps:
       - checkout
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq xvfb
       - run:
           name: Installing SUDO
           command: 'apt-get update && apt-get install -y sudo'
@@ -27,18 +30,21 @@ jobs:
       - run:
           name: Install Conan
           command: 'apt-get update && sudo apt-get install -y python3-pip && pip3 install conan'
-      - run: # replacement for a bug with conan
-          name: Build project
-          command: './conan-fix.sh'
-          #- run:
-          #    name: Creating Build Files
-          #    command: 'cmake -H. -Bbuild -GNinja'
-          #- run:
-          #    name: Creating Binary Files
-          #    command: 'cmake --build build'
+      - run:
+          name: Install conan packages
+          command: 'mkdir build && cd build && conan install .. --build=missing -o ruff:build_tests=True'
+      - run:
+          name: Creating Build Files
+          command: 'cmake -H. -Bbuild -GNinja -DBUILD_TESTERS=ON'
+      - run:
+          name: Creating Binary Files
+          command: 'cmake --build build'
+      - run:
+          command: Xvfb -ac :99 -screen 0 800x600x16 +extension RANDR
+          background: true
       - run:
           name: Ruff Testing
-          command: './build/bin/ruff_test -r=junit > build/out.xml'
+          command: './bin/ruff_test -r=junit'
       - codecov/upload:
           file: 'build/out.xml'
           token: 61b967e0-2c32-474d-862c-27282a72365a

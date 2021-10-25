@@ -19,19 +19,20 @@ if( ${HAS_SOURCES} GREATER 0 )
     RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
   )
 
-	target_link_libraries(${TARGET_TEST} CONAN_PKG::doctest)
-	target_link_libraries(${TARGET_TEST} Ruff)
+	target_link_libraries(${TARGET_TEST} doctest::doctest)
+	target_link_libraries(${TARGET_TEST} ruff::ui ruff::geometry ruff::core)
 
 	# I didn't like ctest implementation so I did it this way 
 	add_custom_target(
 					Tester
 					COMMAND ${CMAKE_BINARY_DIR}/bin/${TARGET_TEST} 
-					DEPENDS Ruff ${TARGET_TEST})
+					DEPENDS ruff::ui ruff::geometry ruff::core ${TARGET_TEST})
 
 	target_include_directories( ${TARGET_TEST} PUBLIC ${PROJECT_BINARY_DIR}
 		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}
 		${PROJECT_SOURCE_DIR}/src)
 
+	target_compile_definitions(${TARGET_TEST} PRIVATE -DDATA_DIR="${PROJECT_SOURCE_DIR}/data")
 	target_include_directories(${TARGET_TEST} SYSTEM PRIVATE
 		${CONAN_INCLUDE_DIRS_DOCTEST}
 		${CONAN_INCLUDE_DIRS_OPENCV}

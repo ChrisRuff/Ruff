@@ -1,0 +1,5 @@
+include(CMakeFindDependencyMacro)
+find_dependency(OpenCV 4)
+find_dependency(SDL2)
+find_dependency(SDL2_ttf)
+include("${CMAKE_CURRENT_LIST_DIR}/ui-targets.cmake")

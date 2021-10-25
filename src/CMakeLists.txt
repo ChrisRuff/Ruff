@@ -1,47 +1,58 @@
-# glob collection of src files not 100% reliable
-file( GLOB_RECURSE SRCS LIST_DIRECTORIES false CONFIGURE_DEPENDS *.cpp )
+include(helpers)
+
+# I like globs and I know they are bad practice but...
+file( GLOB_RECURSE SRCS_CORE LIST_DIRECTORIES false CONFIGURE_DEPENDS 
+	"${PROJECT_SOURCE_DIR}/src/core/*.cpp" )
+file( GLOB_RECURSE SRCS_GEO LIST_DIRECTORIES false CONFIGURE_DEPENDS 
+	"${PROJECT_SOURCE_DIR}/src/geometry/*.cpp" )
+file( GLOB_RECURSE SRCS_UI LIST_DIRECTORIES false CONFIGURE_DEPENDS 
+	"${PROJECT_SOURCE_DIR}/src/ui/*.cpp" )
 
 # headers won't affect library but will let IDEs find them
-file( GLOB_RECURSE HEADERS LIST_DIRECTORIES false CONFIGURE_DEPENDS
-	"*.hpp" "${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/*.hpp" )
+file( GLOB_RECURSE HEADERS_CORE LIST_DIRECTORIES false CONFIGURE_DEPENDS 
+	"${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/core/*.hpp" )
+file( GLOB_RECURSE HEADERS_GEO LIST_DIRECTORIES false CONFIGURE_DEPENDS
+	"${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/geometry/*.hpp" )
+file( GLOB_RECURSE HEADERS_UI LIST_DIRECTORIES false CONFIGURE_DEPENDS
+	"${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/ui/*.hpp" )
 
-# only run if source files were found
-list( LENGTH SRCS HAS_SOURCES )
-if( ${HAS_SOURCES} GREATER 0 )
-	add_library( Ruff STATIC ${HEADERS} ${SRCS})
+make_component( "core" "${HEADERS_CORE}" "${SRCS_CORE}" )
+#target_link_libraries(core)
 
-	set_target_properties( Ruff
-		PROPERTIES
-		CXX_STANDARD 20
-		CXX_STANDARD_REQUIRED True
-		ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib"
-		LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib"
-		RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
-	)
+make_component( "geometry" "${HEADERS_GEO}" "${SRCS_GEO}" )
+target_link_libraries(geometry 
+	PUBLIC 
+		core)
 
-	# PRIVATE will not propogate opts to all linked targets
-	target_compile_options( Ruff PRIVATE ${OPTS} )
+make_component( "ui" "${HEADERS_UI}" "${SRCS_UI}" )
 
-	target_include_directories( Ruff PUBLIC 
-		${PROJECT_BINARY_DIR} 
-		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}
-		${PROJECT_SOURCE_DIR}/src)
+target_link_libraries(ui 
+	PUBLIC
+		core
+		geometry)
 
-	# Make conan includes system dirs to prevent gcc warnings
-	target_include_directories( Ruff SYSTEM PRIVATE 
-		${CONAN_INCLUDE_DIRS_SDL2}
-		${CONAN_INCLUDE_DIRS_SDL2_TTF}
-		${CONAN_INCLUDE_DIRS_XTENSOR}
-		${CONAN_INCLUDE_DIRS_OPENCV})
+if(USE_SDL2)
+	find_package(SDL2 REQUIRED)
+	find_package(PNG REQUIRED)
+	target_link_libraries(ui
+			PUBLIC
+			SDL2::SDL2
+			PNG::PNG)
+elseif(USE_EMSCRIPTEN)
+	set(EMS_FLAGS
+		"SHELL:-s USE_SDL=2"
+		"SHELL:-s USE_LIBPNG=1"
+		"SHELL:-o gravity.html")
+	set(EMS_LINKER_FLAGS
+		"SHELL:-s ALLOW_MEMORY_GROWTH=1"
+		"SHELL:-s ASSERTIONS=1")
 
-	target_link_libraries(Ruff PRIVATE
-			CONAN_PKG::opencv
-			CONAN_PKG::sdl2
-			CONAN_PKG::sdl2_ttf)
-
-	find_package(OpenMP)
-	if(OpenMP_CXX_FOUND)
-		target_link_libraries(Ruff PUBLIC OpenMP::OpenMP_CXX)
-	endif()
+	target_compile_options(ui PUBLIC
+			${EMS_FLAGS})
+	target_link_options(ui PUBLIC
+			${EMS_LINKER_FLAGS})
+	target_link_libraries(ui
+			PUBLIC
+			SDL2
+			png)
 endif()
-

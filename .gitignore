@@ -3,3 +3,10 @@ build/*
 lib/*
 bin/*
 .cache/*
+
+test_package/build
+.idea/
+
+cmake-build-debug/
+
+cmake-build-release/
