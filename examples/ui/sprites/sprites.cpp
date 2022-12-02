@@ -6,7 +6,8 @@
 #include <filesystem>
 
 // Source
-#include "ruff/ui/ui.hpp"
+#include <ruff/imgproc/image_io.hpp>
+#include <ruff/ui/ui.hpp>
 
 using sint = short int;
 
@@ -33,9 +34,11 @@ struct Tree
 class Sprites : public ruff::ui::Engine
 {
 private:
-	ruff::ui::Image tree{};
-	ruff::ui::Image stump{};
-	ruff::ui::Image shadow{};
+    // Resource dir is defined in root
+    // CMakeLists.txt
+	ruff::imgproc::Image tree = ruff::imgproc::ImageIO::read(std::filesystem::path(DATA_DIR) / "tree.png");
+	ruff::imgproc::Image stump = ruff::imgproc::ImageIO::read(std::filesystem::path(DATA_DIR) / "stump.png");
+	ruff::imgproc::Image shadow = ruff::imgproc::ImageIO::read(std::filesystem::path(DATA_DIR) / "shadow.png");
 	std::vector<std::unordered_map<std::string, int>> spriteInfo{};
 	std::default_random_engine generator{ std::random_device{}() };
 	std::uniform_real_distribution<double> random{};
@@ -45,6 +48,7 @@ private:
 public:
 	Sprites(const sint width, const sint height) : Engine(height, width)
 	{
+
 	}
 
 	Sprites(const Sprites& other) = delete;
@@ -59,24 +63,16 @@ public:
 	{
 		random = std::uniform_real_distribution<double>(0.1, 1.5);
 
-		// Resource dir is defined in root
-		// CMakeLists.txt
-		const auto resources = std::filesystem::path(DATA_DIR);
-
-		tree = ruff::ui::Image::read(resources / "tree.png");
-		stump = ruff::ui::Image::read(resources / "stump.png");
-		shadow = ruff::ui::Image::read(resources / "shadow.png");
-
 		auto pos = ruff::Point2D<int>{ getWidth() / 2, getHeight() / 2 };
-		trees.emplace_back(pos, 0, tree.width(), tree.height());
+		trees.emplace_back(pos, 0, tree.Width(), tree.Height());
 		pos =
 		  ruff::Point2D<int>{ rand() % getWidth(), rand() % getHeight() };
-		trees.emplace_back(pos, 0, tree.width(), tree.height());
+		trees.emplace_back(pos, 0, tree.Width(), tree.Height());
 		pos =
 		  ruff::Point2D<int>{ rand() % getWidth(), rand() % getHeight() };
-		trees.emplace_back(pos, 0, tree.width(), tree.height());
+		trees.emplace_back(pos, 0, tree.Width(), tree.Height());
 
-		screen->setBackground(ruff::ui::DARK_BLUE);
+		screen->setBackground(ruff::imgproc::DARK_BLUE);
 	}
 	void onUpdate(double deltaTime) override
 	{
@@ -120,7 +116,7 @@ public:
 				{
 					auto pos = ruff::Point2D<int>{ rand() % getWidth(),
 						                             rand() % getHeight() };
-					trees.emplace_back(pos, 0, tree.width(), tree.height());
+					trees.emplace_back(pos, 0, tree.Width(), tree.Height());
 				}
 			}
 		}

@@ -11,7 +11,7 @@ class Ray
 public:
 	Ray(const uint16_t width, const uint16_t height)
 	  : ruff::ui::RayEngine<map_width, map_height, num_cells_x, num_cells_y>(
-	        width, height, 20, 20)
+	    width, height, 20, 20)
 	{
 	}
 
@@ -61,7 +61,7 @@ public:
 		ruff::ui::RayEngine<map_width,
 		                    map_height,
 		                    num_cells_x,
-		                    num_cells_y>::onUpdate(deltaTime*100);
+		                    num_cells_y>::onUpdate(deltaTime * 100);
 	}
 };
 int main()

@@ -14,12 +14,27 @@ colourized("PROJECT_BINARY_DIR: ${PROJECT_BINARY_DIR}" ${MAG} )
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+include(CMakeDependentOption)
 option(BUILD_TESTERS "Build testers" ON)
 option(BUILD_EXAMPLES "Build examples" ON)
 option(BUILD_DOXY_DOC "Build Doxygen documentation" ON)
 
-option(USE_SDL2 "Use SDL2 for screen" ON)
-option(USE_EMSCRIPTEN "Generate Emscripten files" OFF)
+option(BUILD_GEOMETRY "Build geometry" ON)
+cmake_dependent_option(BUILD_UI "Build ui engine" ON "BUILD_GEOMETRY" ON)
+option(BUILD_AI "Build ai module" ON)
+option(BUILD_SECURITY "Build security module" ON)
+option(BUILD_NLP "Build natural language processing module" ON)
+option(BUILD_IMGPROC "Build image processing module" ON)
+
+cmake_dependent_option(USE_SDL2 "Use SDL2 for screen" ON "BUILD_UI" ON)
+cmake_dependent_option(USE_EMSCRIPTEN "Generate Emscripten files" OFF "BUILD_UI" ON)
+
+option(SILENT_CONAN "Suppress conan messages" ON)
+if(SILENT_CONAN)
+	set(CONAN_CMAKE_SILENT_OUTPUT ON)
+endif()
+include("${PROJECT_SOURCE_DIR}/cmake/Conan.cmake")
+
 if(USE_EMSCRIPTEN)
 	set(CMAKE_EXECUTABLE_SUFFIX ".html")
 endif()
@@ -48,9 +63,9 @@ colourized( "Compile Options: ${OPTS}" ${YLW} )
 
 # Add deps
 include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
-
 set(CMAKE_BUILD_TYPE "Debug")
 
+add_compile_definitions(DATA_DIR="${PROJECT_SOURCE_DIR}/data")
 # Add target Ruff
 colourized( "Configuring Ruff Library" ${BLU} )
 add_subdirectory(src)
@@ -62,8 +77,10 @@ if(BUILD_DOXY_DOC)
 endif()
 
 if(BUILD_TESTERS)
-	find_package(doctest REQUIRED)
 	colourized( "Configuring Testers Library" ${BLU} )
+	find_package(doctest REQUIRED)
+	enable_testing()
+
 	add_subdirectory(test)
 endif()
 

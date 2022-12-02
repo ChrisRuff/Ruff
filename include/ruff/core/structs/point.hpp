@@ -6,6 +6,7 @@
 
 #include <compare>    // partial_ordering
 #include <concepts>   // requires
+#include <algorithm>  // for_each
 #include <type_traits>// is_arithmetic_v
 
 namespace ruff

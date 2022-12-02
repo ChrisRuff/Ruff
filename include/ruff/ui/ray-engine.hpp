@@ -1,7 +1,8 @@
 #include <ruff/core/asserts.hpp>
-#include "ruff/ui/ui.hpp"
-#include "ruff/ui/image.hpp"
-#include "ruff/ui/pixel.hpp"
+#include <ruff/imgproc/image.hpp>
+#include <ruff/imgproc/image_io.hpp>
+#include <ruff/imgproc/pixel.hpp>
+#include <ruff/ui/ui.hpp>
 
 namespace ruff
 {
@@ -10,9 +11,9 @@ namespace ui
 	struct Tile
 	{
 		bool wall{ false };
-		ruff::ui::Image texture{ ruff::ui::Image::read(
+		imgproc::Image texture{ imgproc::ImageIO::read(
 			std::filesystem::path(DATA_DIR) / "stone_brick.png") };
-		Pixel shade{ ruff::ui::WHITE };
+		imgproc::Pixel shade{ imgproc::WHITE };
 
 		operator bool() { return wall; }
 	};
@@ -26,7 +27,6 @@ namespace ui
 
 		Player(const Point2D<float> pos) : pos(pos)
 		{
-
 		}
 	};
 	class Map
@@ -108,11 +108,11 @@ namespace ui
 					const Point2D<uint16_t> br = tl + tile_map.cell_size;
 					if(tile_map.at(i, j))
 					{
-						drawSquare(tl, br, ruff::ui::RED, true);
+						drawSquare(tl, br, ruff::imgproc::RED, true);
 					}
 					else
 					{
-						drawSquare(tl, br, ruff::ui::DARK_GREY, true);
+						drawSquare(tl, br, ruff::imgproc::DARK_GREY, true);
 					}
 				}
 			}
@@ -121,12 +121,12 @@ namespace ui
 				Point2D<uint16_t> start{ static_cast<uint16_t>(player.pos.x),
 					                       static_cast<uint16_t>(
 					                         player.pos.y) };
-				drawLine(start, hits[i], ruff::ui::WHITE, 1);
+				drawLine(start, hits[i], imgproc::WHITE, 1);
 			}
 		}
 		virtual void onCreate() override
 		{
-			screen->setBackground(VERY_DARK_GREY);
+			screen->setBackground(imgproc::VERY_DARK_GREY);
 		}
 		virtual void onUpdate(double deltaTime) override
 		{
@@ -265,25 +265,26 @@ namespace ui
 					height = std::min(height, mid_point);
 
 					// Get texture column
-					const Image texture = tile_map.at(hit.x, hit.y).texture;
+					const imgproc::Image& texture = tile_map.at(hit.x, hit.y).texture;
 					uint16_t tex_x =
-					  (hit.x - static_cast<int>(hit.x)) * texture.width();
+					  (hit.x - static_cast<int>(hit.x)) * texture.Width();
 					uint16_t tex_y =
-					  (hit.y - static_cast<int>(hit.y)) * texture.height();
+					  (hit.y - static_cast<int>(hit.y)) * texture.Height();
 
-					std::vector<Pixel> column =
-					  texture.column(std::max(tex_x, tex_y), height);
+					std::vector<imgproc::Pixel> column =
+					  texture.Column(std::max(tex_x, tex_y), height);
 					size_t idx = 0;
 
+#pragma omp parallel for
 					for(uint16_t j = mid_point - height; j < mid_point + height;
 					    ++j)
 					{
-						const ruff::ui::Pixel pixel = column[idx++];
+						const imgproc::Pixel pixel = column[idx++];
 						draw(i, j, pixel);
 					}
 				}
 			}
-			drawMap({ 0, 0 });
+			// drawMap({ 0, 0 });
 		};
 
 		RayEngine(const RayEngine&) = delete;

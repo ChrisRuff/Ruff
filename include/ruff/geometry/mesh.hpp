@@ -4,9 +4,9 @@
 #include <sstream>
 #include <type_traits>
 
-#include "ruff/geometry/point.hpp"
-#include "ruff/geometry/line.hpp"
-#include "ruff/geometry/face.hpp"
+#include <ruff/core/structs/point.hpp>
+#include <ruff/geometry/line.hpp>
+#include <ruff/geometry/face.hpp>
 namespace ruff
 {
 namespace geometry

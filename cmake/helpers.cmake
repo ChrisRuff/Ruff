@@ -12,45 +12,28 @@ if( NOT WIN32 )
 	endfunction()
 endif()
 
-function(make_example COMPONENT )
-	file( GLOB_RECURSE SRCS LIST_DIRECTORIES false CONFIGURE_DEPENDS
-		"${CMAKE_CURRENT_LIST_DIR}/${COMPONENT}/*.c" 
-		"${CMAKE_CURRENT_LIST_DIR}/${COMPONENT}/*.cpp")
+function(get_files COMPONENT)
+	file( GLOB_RECURSE SRC_${COMPONENT} LIST_DIRECTORIES false CONFIGURE_DEPENDS
+			"${PROJECT_SOURCE_DIR}/src/${COMPONENT}/*.cpp" )
+	set(SRC_${COMPONENT} ${SRC_${COMPONENT}} PARENT_SCOPE)
+
 	# headers won't affect library but will let IDEs find them
-	file( GLOB_RECURSE HEADERS LIST_DIRECTORIES false CONFIGURE_DEPENDS
-		${CMAKE_CURRENT_LIST_DIR}/${COMPONENT}/"*.h" 
-		${CMAKE_CURRENT_LIST_DIR}/${COMPONENT}/"*.hpp")
-
-	add_executable( ${COMPONENT} ${HEADERS} ${SRCS})
-	set_target_properties( ${COMPONENT}
-		PROPERTIES
-		CXX_STANDARD 20
-		CXX_STANDARD_REQUIRED True
-		ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib"
-		LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib"
-		RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
-	)
-	target_link_libraries(${COMPONENT} ruff::core ruff::geometry ruff::ui)
-
-	target_compile_options( ${COMPONENT} PRIVATE ${OPTS} )
-	target_include_directories( ${COMPONENT} PUBLIC 
-			$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}>
-			$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
-			$<INSTALL_INTERFACE:include>
-			PRIVATE
-			${PROJECT_BINARY_DIR})
-	target_compile_definitions(${COMPONENT} PRIVATE -DDATA_DIR="${PROJECT_SOURCE_DIR}/data")
-
+	file( GLOB_RECURSE HEADERS_${COMPONENT} LIST_DIRECTORIES false CONFIGURE_DEPENDS
+			"${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/${COMPONENT}/*.hpp"
+			"${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/${COMPONENT}/*.tpp") # templated implementation files
+	set(HEADERS_${COMPONENT} ${HEADERS_${COMPONENT}} PARENT_SCOPE)
 endfunction()
 
-function(make_component COMPONENT HEADERS SRC)
-	colourized("TARGET ${COMPONENT}\n" ${BLU})
-	string(REPLACE ";" "\n" hs "${HEADERS}")
+function(make_component COMPONENT)
+	get_files(${COMPONENT} HEADERS SRC)
+	colourized("TARGET ${COMPONENT}" ${BLU})
+	string(REPLACE ";" "\n" hs "${HEADERS_${COMPONENT}}")
 	colourized("HEADERS:\n${hs}" ${CYN})
 
-	string(REPLACE ";" "\n" ss "${SRC}")
-	colourized("SRC:\n${ss}" ${CYN})
-	add_library( ${COMPONENT} STATIC ${HEADERS} ${SRC})
+	string(REPLACE ";" "\n" ss "${SRC_${COMPONENT}}")
+	colourized("SRC:\n${ss}\n" ${CYN})
+
+	add_library( ${COMPONENT} STATIC ${HEADERS_${COMPONENT}} ${SRC_${COMPONENT}})
 	set_target_properties( ${COMPONENT} PROPERTIES OUTPUT_NAME "ruff-${COMPONENT}")
 	add_library( ruff::${COMPONENT} ALIAS ${COMPONENT})
 	set_target_properties( ${COMPONENT}
@@ -63,7 +46,6 @@ function(make_component COMPONENT HEADERS SRC)
 		RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
 	)
 	target_compile_options( ${COMPONENT} PRIVATE ${OPTS} )
-	target_compile_definitions(${COMPONENT} PRIVATE -DDATA_DIR="${PROJECT_SOURCE_DIR}/data")
 
 	target_include_directories( ${COMPONENT} PUBLIC 
 		${OpenCV_INCLUDE_DIRS}
@@ -72,7 +54,7 @@ function(make_component COMPONENT HEADERS SRC)
 
 	find_package(OpenMP)
 	if(OpenMP_CXX_FOUND)
-		target_link_libraries(${COMPONENT} PRIVATE OpenMP::OpenMP_CXX)
+		target_link_libraries(${COMPONENT} PUBLIC OpenMP::OpenMP_CXX)
 	endif()
 	install(TARGETS ${COMPONENT}
 					EXPORT  ${COMPONENT}-targets
@@ -102,5 +84,42 @@ function(make_component COMPONENT HEADERS SRC)
 	install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/ruff/${COMPONENT}"
 					COMPONENT ${COMPONENT}
 					DESTINATION "${CMAKE_INSTALL_PREFIX}/include/ruff")
+
+endfunction()
+
+function(make_example COMPONENT)
+	file( GLOB_RECURSE SRCS LIST_DIRECTORIES false CONFIGURE_DEPENDS
+			"${CMAKE_CURRENT_LIST_DIR}/${COMPONENT}/*.c"
+			"${CMAKE_CURRENT_LIST_DIR}/${COMPONENT}/*.cpp")
+	# headers won't affect library but will let IDEs find them
+	file( GLOB_RECURSE HEADERS LIST_DIRECTORIES false CONFIGURE_DEPENDS
+			${CMAKE_CURRENT_LIST_DIR}/${COMPONENT}/"*.h"
+			${CMAKE_CURRENT_LIST_DIR}/${COMPONENT}/"*.hpp")
+
+	colourized("TARGET ${COMPONENT}" ${BLU})
+	string(REPLACE ";" "\n" hs "${HEADERS}")
+	colourized("HEADERS:\n${hs}" ${CYN})
+
+	string(REPLACE ";" "\n" ss "${SRCS}")
+	colourized("SRC:\n${ss}\n" ${CYN})
+
+	add_executable( ${COMPONENT} ${HEADERS} ${SRCS})
+	set_target_properties( ${COMPONENT}
+			PROPERTIES
+			CXX_STANDARD 20
+			CXX_STANDARD_REQUIRED True
+			ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib"
+			LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib"
+			RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
+			)
+	target_link_libraries(${COMPONENT} ruff::core)
+
+	target_compile_options( ${COMPONENT} PRIVATE ${OPTS} )
+	target_include_directories( ${COMPONENT} PUBLIC
+			$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}>
+			$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
+			$<INSTALL_INTERFACE:include>
+			PRIVATE
+			${PROJECT_BINARY_DIR})
 
 endfunction()

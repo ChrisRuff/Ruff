@@ -1,0 +1,45 @@
+#include <ruff/security/rsa.hpp>
+
+#include <iostream>
+#include <chrono>
+using namespace ruff::security;
+int main(int argc, char* argv[])
+{
+    // ignore compiler errors of unused vars
+    (void)argc;
+    (void)argv;
+
+    std::string p_in = "19211916981990472618936322908621863986876987146317321175477459636156953561475008733870517275438245830106443145241548501528064000686696553079813968930084003413592173929258239545538559059522893001415540383237712787805857248668921475503029012210091798624401493551321836739170290569343885146402734119714622761918874473987849224658821203492683692059569546468953937059529709368583742816455260753650612502430591087268113652659115398868234585603351162620007030560547611";
+    std::string q_in = "49400957163547757452528775346560420645353827504469813702447095057241998403355821905395551250978714023163401985077729384422721713135644084394023796644398582673187943364713315617271802772949577464712104737208148338528834981720321532125957782517699692081175107563795482281654333294693930543491780359799856300841301804870312412567636723373557700882499622073341225199446003974972311496703259471182056856143760293363135470539860065760306974196552067736902898897585691";
+    RSA rsa(p_in, q_in);
+
+    std::string m, msg;
+    std::cout << "Chosen message is m=";
+    std::cin >> m;
+    std::getline(std::cin, msg);
+    m += msg;
+
+    std::string ciphertext = rsa.Encrypt(m);
+    std::cout << "Ciphertext is c=" << ciphertext << std::endl;
+    std::cout << "Decrypted message m=" << rsa.Decrypt(ciphertext, RSA::DECRYPT_MODE::CRT) << std::endl;
+    typedef std::chrono::high_resolution_clock Clock;
+    {
+        auto start = Clock::now();
+        rsa.Decrypt(ciphertext);
+        auto end = Clock::now();
+        std::cout << "Computation time of c^d mod n is: "
+            << std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count() << "ms"
+            << std::endl;
+
+    }
+    {
+        auto start = Clock::now();
+        rsa.Decrypt(ciphertext, RSA::DECRYPT_MODE::CRT);
+        auto end = Clock::now();
+        std::cout << "Computation time of the CRT-based RSA decryption is: "
+            << std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count() << "ms"
+            << std::endl;
+    }
+
+
+}

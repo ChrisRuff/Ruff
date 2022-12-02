@@ -2,8 +2,8 @@
 #include <vector>
 #include <type_traits>
 
-#include "ruff/geometry/point.hpp"
-#include "ruff/geometry/line.hpp"
+#include <ruff/core/structs/point.hpp>
+#include <ruff/geometry/line.hpp>
 
 namespace ruff
 {

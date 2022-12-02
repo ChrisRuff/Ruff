@@ -2,11 +2,10 @@
 #include <cstdlib>
 #include <compare>// partial_ordering
 #include <string>
-#include "ruff/core/logger.hpp"
 
-namespace ruff
-{
-namespace ui
+#include <ruff/core/logger.hpp>
+
+namespace ruff::imgproc
 {
 	/* --------------------------------------------------------------------------*/
 	/**
@@ -71,6 +70,11 @@ namespace ui
 		  : r(r), g(g), b(b), a(a)
 		{
 		}
+
+        uint8_t Magnitude() const
+        {
+            return (r + g + b) / 3;
+        }
 
 		static Pixel combine(const Pixel& old_p, const Pixel& new_p)
 		{
@@ -141,5 +145,4 @@ namespace ui
 	  DARK_MAGENTA(128, 0, 128), VERY_DARK_MAGENTA(64, 0, 64),
 	  WHITE(255, 255, 255), BLACK(0, 0, 0), BLANK(0, 0, 0, 0);
 
-};// namespace ui
 };// namespace ruff

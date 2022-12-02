@@ -216,7 +216,7 @@ public:
 		{
 			if(b.px > 0 && b.py > 0)
 			{
-				drawCircle(b.px, b.py, b.radius, ruff::ui::WHITE);
+				drawCircle(b.px, b.py, b.radius, ruff::imgproc::WHITE);
 			}
 		}
 
@@ -229,7 +229,7 @@ public:
 				         c.first->py,
 				         c.second->px,
 				         c.second->py,
-				         ruff::ui::RED);
+				         ruff::imgproc::RED);
 			}
 		}
 		if(selected)

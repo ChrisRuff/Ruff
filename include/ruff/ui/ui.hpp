@@ -15,13 +15,13 @@
 
 
 // Source
-#include "ruff/core/logger.hpp"
-#include "ruff/geometry/point.hpp"
-#include "ruff/ui/destructors.hpp"
-#include "ruff/ui/text.hpp"
-#include "ruff/ui/pixel.hpp"
-#include "ruff/ui/button.hpp"
-#include "ruff/ui/window.hpp"
+#include <ruff/core/logger.hpp>
+#include <ruff/imgproc/pixel.hpp>
+#include <ruff/core/structs/point.hpp>
+#include <ruff/ui/destructors.hpp>
+#include <ruff/ui/text.hpp>
+#include <ruff/ui/button.hpp>
+#include <ruff/ui/window.hpp>
 
 namespace ruff
 {
@@ -36,7 +36,7 @@ namespace ui
 	class Engine
 	{
 	private:
-		bool running{true};
+		bool running{ true };
 
 	protected:
 		// Hardware interface
@@ -70,7 +70,7 @@ namespace ui
 		/* ----------------------------------------------------------------------------*/
 		Engine(const uint16_t width,
 		       const uint16_t height,
-		       const Pixel p = BLACK);
+		       const imgproc::Pixel p = imgproc::BLACK);
 		virtual ~Engine() = default;
 
 		/* --------------------------------------------------------------------------*/
@@ -85,7 +85,7 @@ namespace ui
 		Engine(const Engine& other) = delete;
 		Engine& operator=(const Engine& other) = delete;
 
-		void displayImage(const ruff::ui::Image& img,
+		void displayImage(const imgproc::Image& img,
 		                  const uint16_t x,
 		                  const uint16_t y,
 		                  const double rotation = 0);
@@ -124,7 +124,7 @@ namespace ui
 		              const uint16_t y1,
 		              const uint16_t x2,
 		              const uint16_t y2,
-		              const Pixel& color = WHITE,
+		              const imgproc::Pixel& color = imgproc::WHITE,
 		              const int line_width = 1);
 
 		/* --------------------------------------------------------------------------*/
@@ -140,7 +140,7 @@ namespace ui
 		/* ----------------------------------------------------------------------------*/
 		void drawLine(const Point2D<uint16_t>& p1,
 		              const Point2D<uint16_t>& p2,
-		              const Pixel& color,
+		              const imgproc::Pixel& color,
 		              const int line_width);
 
 		/* --------------------------------------------------------------------------*/
@@ -156,7 +156,7 @@ namespace ui
 		 * replace the pixel
 		 */
 		/* ----------------------------------------------------------------------------*/
-		void draw(const uint16_t x, const uint16_t y, Pixel color);
+		void draw(const uint16_t x, const uint16_t y, imgproc::Pixel color);
 
 		/* --------------------------------------------------------------------------*/
 		/**
@@ -168,18 +168,18 @@ namespace ui
 		 * replace the pixel
 		 */
 		/* ----------------------------------------------------------------------------*/
-		void draw(const Point2D<uint16_t>& p, const Pixel& color);
+		void draw(const Point2D<uint16_t>& p, const imgproc::Pixel& color);
 
 		void drawSquare(const uint16_t leftX,
 		                const uint16_t leftY,
 		                const uint16_t rightX,
 		                const uint16_t rightY,
-		                const Pixel& color,
+		                const imgproc::Pixel& color,
 		                const bool fill = false);
 
 		void drawSquare(const Point2D<uint16_t>& left,
 		                const Point2D<uint16_t>& right,
-		                const Pixel& color,
+		                const imgproc::Pixel& color,
 		                const bool fill = false);
 
 		/* --------------------------------------------------------------------------*/
@@ -204,7 +204,7 @@ namespace ui
 		void drawCircle(const uint16_t centerX,
 		                const uint16_t centerY,
 		                const uint16_t radius,
-		                const Pixel& color,
+		                const imgproc::Pixel& color,
 		                const bool fill = false);
 
 		/* --------------------------------------------------------------------------*/
@@ -225,7 +225,7 @@ namespace ui
 		/* ----------------------------------------------------------------------------*/
 		void drawCircle(const Point2D<uint16_t>& center,
 		                const uint16_t radius,
-		                const Pixel& color,
+		                const imgproc::Pixel& color,
 		                bool fill = false);
 
 		void drawButton(Button* button);
@@ -259,11 +259,11 @@ namespace ui
 			return screen->size().y * screen->getRatio();
 		}
 
-		Pixel getPixel(uint16_t x, uint16_t y) const;
-		Pixel getPixel(Point2D<uint16_t> p) const;
-		std::vector<Pixel>
+		imgproc::Pixel getPixel(uint16_t x, uint16_t y) const;
+		imgproc::Pixel getPixel(Point2D<uint16_t> p) const;
+		std::vector<imgproc::Pixel>
 		  getRegion(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
-		std::vector<Pixel> getRegion(Point2D<uint16_t> p1,
+		std::vector<imgproc::Pixel> getRegion(Point2D<uint16_t> p1,
 		                             Point2D<uint16_t> p2);
 
 		[[nodiscard]] bool onButton(const MouseState& mouse) const;
@@ -330,6 +330,6 @@ namespace ui
 		void shutdown() { running = false; }
 	};
 
-	Pixel getRandColor();
+	imgproc::Pixel getRandColor();
 };// namespace ui
 };// namespace ruff

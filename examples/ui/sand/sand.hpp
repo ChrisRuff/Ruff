@@ -6,13 +6,13 @@
 #include <iostream>
 
 // Source
-#include "ruff/core/logger.hpp"
-#include "ruff/geometry/point.hpp"
-#include "ruff/ui/ui.hpp"
+#include <ruff/core/structs/point.hpp>
+#include <ruff/core/logger.hpp>
+#include <ruff/ui/ui.hpp>
 
-#define EMPTY ruff::ui::BLACK
-#define SAND ruff::ui::DARK_YELLOW
-#define WATER ruff::ui::DARK_BLUE
+#define EMPTY ruff::imgproc::BLACK
+#define SAND ruff::imgproc::DARK_YELLOW
+#define WATER ruff::imgproc::DARK_BLUE
 
 const constexpr static uint16_t width = 1000;
 const constexpr static uint16_t height = 1500;
@@ -47,7 +47,7 @@ public:
 	template<typename T>
 	void generate()
 	{
-		std::vector<ruff::ui::Pixel> ROI =
+		std::vector<ruff::imgproc::Pixel> ROI =
 		  getRegion(mouse.mouse_x - brush_width,
 		            mouse.mouse_y - brush_width,
 		            mouse.mouse_x + brush_width,
@@ -83,7 +83,7 @@ protected:
 	ruff::Point2D<uint16_t> position{};
 	ruff::Point2D<double> velocity{};
 	ruff::Point2D<double> acceleration{};
-	ruff::ui::Pixel color{};
+	ruff::imgproc::Pixel color{};
 
 public:
 	[[nodiscard]] Block(ruff::Point2D<uint16_t> position,
@@ -156,9 +156,10 @@ public:
 	{
 		Block::update(deltaTime);
 		const ruff::Point2D<uint16_t>& pos = getPosition();
-		const ruff::Point2D<uint16_t> down = {pos.x, pos.y+1};
-		const ruff::Point2D<uint16_t> right = {pos.x + 1, pos.y+1};
-		const ruff::Point2D<uint16_t> left = {pos.x - 1, pos.y+1};
+	  auto ToSINT = [](int in){ return static_cast<uint16_t>(in);};
+	  const ruff::Point2D<uint16_t> down =      { ToSINT(pos.x),     ToSINT(pos.y + 1) };
+	  const ruff::Point2D<uint16_t> left =      { ToSINT(pos.x - 1), ToSINT(pos.y + 1) };
+	  const ruff::Point2D<uint16_t> right =     { ToSINT(pos.x + 1), ToSINT(pos.y + 1) };
 
 		if(engine->query(down))
 		{
@@ -177,7 +178,11 @@ public:
 class Water : public Block
 {
 private:
-	enum class DIR { LEFT, RIGHT};
+	enum class DIR
+	{
+		LEFT,
+		RIGHT
+	};
 	DIR travel{ DIR::LEFT };
 
 public:
@@ -189,12 +194,13 @@ public:
 	void update(double deltaTime) override
 	{
 		Block::update(deltaTime);
+		auto ToSINT = [](int in){ return static_cast<uint16_t>(in);};
 		const ruff::Point2D<uint16_t>& pos = getPosition();
-		const ruff::Point2D<uint16_t> down = {pos.x, pos.y+1};
-		const ruff::Point2D<uint16_t> left = {pos.x - 1, pos.y+1};
-		const ruff::Point2D<uint16_t> right = {pos.x + 1, pos.y+1};
-		const ruff::Point2D<uint16_t> mid_left = {pos.x - 1, pos.y};
-		const ruff::Point2D<uint16_t> mid_right = {pos.x + 1, pos.y};
+ 		const ruff::Point2D<uint16_t> down =      { ToSINT(pos.x),     ToSINT(pos.y + 1) };
+		const ruff::Point2D<uint16_t> left =      { ToSINT(pos.x - 1), ToSINT(pos.y + 1) };
+		const ruff::Point2D<uint16_t> right =     { ToSINT(pos.x + 1), ToSINT(pos.y + 1) };
+		const ruff::Point2D<uint16_t> mid_left =  { ToSINT(pos.x - 1), ToSINT(pos.y) };
+		const ruff::Point2D<uint16_t> mid_right = { ToSINT(pos.x + 1), ToSINT(pos.y) };
 
 		if(engine->query(down))
 		{

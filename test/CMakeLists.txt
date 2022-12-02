@@ -1,46 +1,39 @@
 set( TARGET_TEST ${CMAKE_PROJECT_NAME}_test )
 
 file( GLOB_RECURSE TEST_SRCS LIST_DIRECTORIES false CONFIGURE_DEPENDS *.cpp )
+add_executable( ${TARGET_TEST} ${TEST_SRCS} )
 
-# only run if there are sources
-list( LENGTH TEST_SRCS HAS_SOURCES )
-if( ${HAS_SOURCES} GREATER 0 )
+# can use different options that the rest of the lib
+#colourized( "Test Compile Options: ${OPTS}" ${YLW} )
+target_compile_options( ${TARGET_TEST} PUBLIC ${OPTS} )
 
-  add_executable( ${TARGET_TEST} ${TEST_SRCS} )
+set_target_properties( ${TARGET_TEST}
+	PROPERTIES
+	CXX_STANDARD 20
+	CXX_STANDARD_REQUIRED True
+	RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
+)
 
-  # can use different options that the rest of the lib
-  #colourized( "Test Compile Options: ${OPTS}" ${YLW} )
-  target_compile_options( ${TARGET_TEST} PUBLIC ${OPTS} )
+target_link_libraries(${TARGET_TEST} doctest::doctest)
+target_link_libraries(${TARGET_TEST}
+		ruff::core
+		ruff::geometry
+		ruff::ui
+		ruff::nlp
+		ruff::ai
+		ruff::imgproc
+		ruff::security)
 
-  set_target_properties( ${TARGET_TEST}
-    PROPERTIES
-    CXX_STANDARD 20
-    CXX_STANDARD_REQUIRED True
-    RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
-  )
+foreach(component core geometry ui nlp ai security imgproc)
+	#file( GLOB_RECURSE FILES LIST_DIRECTORIES false CONFIGURE_DEPENDS ${CMAKE_CURRENT_LIST_DIR}/${component}/*.cpp)
+	add_test(NAME ${component}_test COMMAND ${TARGET_TEST} -sf=${CMAKE_CURRENT_LIST_DIR}/${component}/*.cpp)
+endforeach()
 
-	target_link_libraries(${TARGET_TEST} doctest::doctest)
-	target_link_libraries(${TARGET_TEST} ruff::ui ruff::geometry ruff::core)
+include(CodeCoverage)
 
-	# I didn't like ctest implementation so I did it this way 
-	add_custom_target(
-					Tester
-					COMMAND ${CMAKE_BINARY_DIR}/bin/${TARGET_TEST} 
-					DEPENDS ruff::ui ruff::geometry ruff::core ${TARGET_TEST})
-
-	target_include_directories( ${TARGET_TEST} PUBLIC ${PROJECT_BINARY_DIR}
-		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}
-		${PROJECT_SOURCE_DIR}/src)
-
-	target_compile_definitions(${TARGET_TEST} PRIVATE -DDATA_DIR="${PROJECT_SOURCE_DIR}/data")
-	target_include_directories(${TARGET_TEST} SYSTEM PRIVATE
-		${CONAN_INCLUDE_DIRS_DOCTEST}
-		${CONAN_INCLUDE_DIRS_OPENCV}
-		${CONAN_INCLUDE_DIRS_SDL2}
-		${CONAN_INCLUDE_DIRS_SDL2_TTF}
-		${CONAN_INCLUDE_DIRS_XTENSOR})
-		
-endif()
-
+APPEND_COVERAGE_COMPILER_FLAGS()
+SETUP_TARGET_FOR_COVERAGE_GCOVR_HTML(
+		NAME coverage
+		EXECUTABLE ${TARGET_TEST})
 
 include(GNUInstallDirs)

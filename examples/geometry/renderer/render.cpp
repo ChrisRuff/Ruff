@@ -1,7 +1,7 @@
-#include "ruff/ui/pixel.hpp"
-#include "ruff/ui/image.hpp"
-#include "ruff/geometry/point.hpp"
-#include "ruff/geometry/mesh.hpp"
+#include <ruff/core/structs/point.hpp>
+#include <ruff/imgproc/pixel.hpp>
+#include <ruff/imgproc/image.hpp>
+#include <ruff/geometry/mesh.hpp>
 
 constexpr static int height = 800;
 constexpr static int width = 800;

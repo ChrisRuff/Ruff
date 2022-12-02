@@ -3,29 +3,29 @@
 #include <chrono>
 #include <thread>
 
-#include "ui/ui.hpp"
+#include <ruff/imgproc/image_io.hpp>
+#include <ruff/ui/ui.hpp>
+
+using namespace ruff::core;
 using namespace ruff::ui;
+using namespace ruff::imgproc;
 
 class TestEngine : public Engine
 {
+    int count{};
+    std::vector<ruff::Point2D<uint16_t>> newPixels{};
+    Image mario_image = ImageIO::read(std::filesystem::path(DATA_DIR) / "mario.png");
+
 public:
 	TestEngine(const uint16_t width, const uint16_t height)
 	  : Engine(height, width)
 	{
 	}
-	int count{};
-	std::vector<ruff::Point2D<uint16_t>> newPixels{};
-	ruff::ui::Image mario_image{};
 
 	virtual void onCreate() override
 	{
 		count = 0;
 
-		// Difference between ninja
-		// test(first) and running the
-		// binary(second)
-		mario_image = ruff::ui::Image::read(
-		  std::filesystem::path(DATA_DIR) / "mario.png");
 	}
 	virtual void onUpdate(double deltaTime) override
 	{

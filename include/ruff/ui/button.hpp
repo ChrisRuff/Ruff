@@ -3,9 +3,9 @@
 #include <string>
 #include <memory>
 
-#include "ruff/ui/destructors.hpp"
-#include "ruff/ui/text.hpp"
-#include "ruff/ui/pixel.hpp"
+#include <ruff/imgproc/pixel.hpp>
+#include <ruff/ui/destructors.hpp>
+#include <ruff/ui/text.hpp>
 
 namespace ruff
 {
@@ -24,8 +24,8 @@ namespace ui
 		Point2D<uint16_t> size;
 
 		std::string label{ "" };
-		Pixel color{};
-		Pixel active_color{};
+		imgproc::Pixel color{};
+		imgproc::Pixel active_color{};
 
 		bool pressed{ false };
 
@@ -37,19 +37,19 @@ namespace ui
 
 		Point2D<uint16_t> xy() const { return pos; };
 		Point2D<uint16_t> dims() const { return size; };
-		Pixel getColor() const
+		imgproc::Pixel getColor() const
 		{
 			return pressed ? this->active_color : this->color;
 		};
 		std::string& getLabel() { return label; };
 
-		void setColor(const Pixel& pixel)
+		void setColor(const imgproc::Pixel& pixel)
 		{
 			this->color = pixel;
 			this->active_color =
-			  Pixel(pixel.r + 100, pixel.g + 100, pixel.b + 100, pixel.a);
+			  imgproc::Pixel(pixel.r + 100, pixel.g + 100, pixel.b + 100, pixel.a);
 		}
-		void setActiveColor(const Pixel& pixel)
+		void setActiveColor(const imgproc::Pixel& pixel)
 		{
 			this->active_color = pixel;
 		}

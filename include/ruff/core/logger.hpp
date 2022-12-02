@@ -57,22 +57,19 @@ inline void log(const std::string& message)
 };
 inline void logWarning(const std::string& message)
 {
-#ifndef NDEBUG
 	std::cout << yellow;
 	std::cout << "\n## WARNING: " << message << " ##" << std::endl;
 	std::cout << defaultFG;
-#else
-	(void)message;
-#endif
 };
 inline void logError(const std::string& message)
 {
-#ifndef NDEBUG
 	std::cout << red;
 	std::cout << "\n## ERROR: " << message << " ##" << std::endl;
 	std::cout << defaultFG;
-#else
-	(void)message;
-#endif
+};
+inline void logInfo(const std::string& message)
+{
+	std::cout << "\n## INFO: " << message << " ##" << std::endl;
+	std::cout << defaultFG;
 };
 }// namespace ruff

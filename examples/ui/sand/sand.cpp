@@ -8,14 +8,14 @@ void SandEngine::onCreate()
 	const auto font_path =
 	  std::filesystem::path(DATA_DIR) / "DejaVuSans.ttf";
 	ruff::ui::Button* sand =
-	  addButton({ static_cast<unsigned short>(getWidth()-30), 5 },
+	  addButton({ static_cast<unsigned short>(getWidth() - 30), 5 },
 	            { 20, 10 });
-	sand->setColor(ruff::ui::DARK_YELLOW);
+	sand->setColor(ruff::imgproc::DARK_YELLOW);
 
 	ruff::ui::Button* water =
 	  addButton({ static_cast<unsigned short>(getWidth() - 30), 25 },
 	            { 20, 10 });
-	water->setColor(ruff::ui::DARK_BLUE);
+	water->setColor(ruff::imgproc::DARK_BLUE);
 }
 void SandEngine::onResize()
 {

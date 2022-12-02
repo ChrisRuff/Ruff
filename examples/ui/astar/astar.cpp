@@ -56,7 +56,7 @@ public:
 
 		// Add start button
 		startButton = addButton({ 0, 0 }, { blockWidthX, blockWidthY });
-		startButton->setColor(ruff::ui::GREEN);
+		startButton->setColor(ruff::imgproc::GREEN);
 	}
 	virtual void onResize() override
 	{
@@ -131,7 +131,7 @@ public:
 					           i * blockWidthX + getWidth() / map.size() - gap,
 					           j * blockWidthY + getHeight() / map[0].size()
 					             - gap,
-					           ruff::ui::RED,
+					           ruff::imgproc::RED,
 					           true);
 				}
 				else if(path[i][j] && startButton->isPressed())
@@ -142,7 +142,7 @@ public:
 					           i * blockWidthX + getWidth() / map.size() - gap,
 					           j * blockWidthY + getHeight() / map[0].size()
 					             - gap,
-					           ruff::ui::YELLOW,
+					           ruff::imgproc::YELLOW,
 					           true);
 				}
 			}

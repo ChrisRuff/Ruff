@@ -178,7 +178,7 @@ public:
 				drawCircle(b.px,
 				           b.py,
 				           b.radius,
-				           ruff::ui::Pixel(b.mass, b.mass, b.mass),
+				           ruff::imgproc::Pixel(b.mass, b.mass, b.mass),
 				           true);
 			}
 		}
