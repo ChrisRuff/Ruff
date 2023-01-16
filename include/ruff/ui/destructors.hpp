@@ -11,8 +11,7 @@ namespace ui
 	 * object pointers, this is mainly
 	 * useful for storing SDL object
 	 * pointers as a unique_ptr. Syntax:
-	 * std::unique_ptr<SDL_XXXXXX,
-	 * SDLDestroyer> ptr;
+	 * std::unique_ptr<SDL_XXXXXX, SDLDestroyer> ptr;
 	 */
 	/* ----------------------------------------------------------------------------*/
 	struct SDLDestroyer

@@ -16,6 +16,7 @@ namespace ruff::ai
         {
             auto& settings = m_network.settings;
             auto& layers = m_network.GetLayers();
+				    MeanSquared<FLT_TYPE> cost_func;
 
             for(size_t _iter = 0; _iter < m_network.settings.max_iter; ++_iter)
             {
@@ -39,9 +40,7 @@ namespace ruff::ai
 																				  layer_it->m_func->ComputeDerivative(output) *
 																				  settings.learning_rate;
 					              }
-					              else
-					              {
-					              }
+
 												layer_it->UpdateWeights(w_gradient);
 												layer_it->UpdateBias(b_gradient);
                     }

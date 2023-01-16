@@ -145,6 +145,7 @@ namespace ui
 			}
 			else [[likely]]
 			{
+
 				window = std::unique_ptr<SDL_Window, SDLDestroyer>(
 				  SDL_CreateWindow(title.c_str(),
 				                   SDL_WINDOWPOS_CENTERED,
