@@ -20,11 +20,12 @@ option(BUILD_EXAMPLES "Build examples" ON)
 option(BUILD_DOXY_DOC "Build Doxygen documentation" ON)
 
 option(BUILD_GEOMETRY "Build geometry" ON)
-cmake_dependent_option(BUILD_UI "Build ui engine" ON "BUILD_GEOMETRY" ON)
+cmake_dependent_option(BUILD_UI "Build ui engine" ON "BUILD_GEOMETRY" ON "BUILD_IMGPROC" ON)
 option(BUILD_AI "Build ai module" ON)
 option(BUILD_SECURITY "Build security module" ON)
 option(BUILD_NLP "Build natural language processing module" ON)
 option(BUILD_IMGPROC "Build image processing module" ON)
+cmake_dependent_option(BUILD_PHOTOGRAMMETRY "Build photogrammetry module" ON "BUILD_IMGPROC" ON)
 
 cmake_dependent_option(USE_SDL2 "Use SDL2 for screen" ON "BUILD_UI" ON)
 cmake_dependent_option(USE_EMSCRIPTEN "Generate Emscripten files" OFF "BUILD_UI" ON)

@@ -22,27 +22,40 @@ namespace ruff::ai
             {
                 for(auto& [training_input, training_label] : input_data)
                 {
-                    Tensor<FLT_TYPE> output = Predict(training_input);
-                    Tensor<FLT_TYPE> expected_output = training_label;
-                    Tensor<FLT_TYPE> delta = output - expected_output;
+                    Tensor<> output = Predict(training_input);
+                    Tensor<> expected_output = training_label;
+                    Tensor<> delta = output - expected_output;
 
+								    auto next_layer = layers.rbegin();
+										auto prev_layer = layers.rbegin();
+
+										Tensor<> w_gradient;
+										Tensor<> b_gradient;
                     for(auto layer_it = layers.rbegin(); layer_it != layers.rend(); ++layer_it)
                     {
-												Tensor<FLT_TYPE> w_gradient(layer_it->OutputSize(), layer_it->InputSize());
-												Tensor<FLT_TYPE> b_gradient(layer_it->OutputSize(), 1);
-												if(layer_it == layers.rbegin())
-					              {
-														w_gradient += (training_input *
-												                  delta *
+												prev_layer++;
+
+										    if(layer_it == layers.rend()-1)
+										    {
+														w_gradient = (training_input *
+																					delta *
 																					layer_it->m_func->ComputeDerivative(output) *
 																					settings.learning_rate).Transpose();
-													  b_gradient += delta *
-																				  layer_it->m_func->ComputeDerivative(output) *
-																				  settings.learning_rate;
-					              }
+										    }
+										    else
+										    {
+														w_gradient = (layer_it->LastOutput() *
+																					delta *
+																					layer_it->m_func->ComputeDerivative(output) *
+																					settings.learning_rate).Transpose();
+										    }
+												b_gradient = delta *
+										                 layer_it->m_func->ComputeDerivative(output) *
+										                 settings.learning_rate;
 
 												layer_it->UpdateWeights(w_gradient);
 												layer_it->UpdateBias(b_gradient);
+										    next_layer = layer_it;
                     }
 
                 }

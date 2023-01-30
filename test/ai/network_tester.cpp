@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include <ruff/core/structs/tensor.hpp>
+#include <ruff/core/models/tensor.hpp>
 
 #include <ruff/ai/neural/neural_network.hpp>
 #include <ruff/ai/neural/trainer.hpp>

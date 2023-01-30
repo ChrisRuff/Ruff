@@ -11,7 +11,7 @@
 // Packages
 
 // Source files
-#include <ruff/core/structs/point.hpp> // Point2D
+#include <ruff/core/models/point.hpp> // Point2D
 #include "ruff/core/logger.hpp"
 namespace ruff
 {

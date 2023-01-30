@@ -38,10 +38,20 @@ namespace ruff::imgproc
                 png_write_info(png, info);
                 // if(no alpha)
                 //  png_set_filler(png, 0, PNG_FILLER_AFTER);
-                auto data = m_img.Data();
-                auto data_pointer = data.data();
+                std::vector<unsigned char> data = m_img.Data();
+						    for(size_t i = 0; i < data.size(); ++i)
+						    {
+						    }
 
-                png_write_image(png, reinterpret_cast<png_bytepp>(data_pointer));
+								png_bytep row_pointers[m_img.Height()];
+						    for(int i = 0; i < m_img.Height(); ++i)
+						    {
+								    row_pointers[i] = data.data() + i * m_img.Width() * 4;
+						    }
+						    png_set_rows(png, info, row_pointers);
+                png_write_png(png, info, PNG_TRANSFORM_IDENTITY, nullptr);
+
+								//png_write_image(png, reinterpret_cast<png_bytepp>(data.data()));
                 png_write_end(png, NULL);
 
                 png_destroy_write_struct(&png, &info);
@@ -65,11 +75,11 @@ namespace ruff::imgproc
             if(!out_file.is_open()) { return false; }
             out_file << "P6\n"
                      << m_img.Width() << " " << m_img.Height() << "\n255\n";
-            for(size_t i = 0; i < m_img.Width(); ++i)
+            for(size_t i = 0; i < m_img.Height(); ++i)
             {
-                for(size_t j = 0; j < m_img.Height(); ++j)
+                for(size_t j = 0; j < m_img.Width(); ++j)
                 {
-                    const Pixel &p = m_img.Get(i, j);
+                    const Pixel &p = m_img.Get(j, i);
                     out_file << p.r << p.g << p.b;
                 }
             }
@@ -90,8 +100,30 @@ namespace ruff::imgproc
             if(!in_file.is_open()) { throw std::runtime_error("File could not be found"); }
             std::string line;
 
-            in_file >> line;// Uselss
-            throw std::runtime_error("Filetype not supported");
+            in_file >> line; // magic_number
+				    if(line != "P6") { throw std::runtime_error("Invalid PPM format: Found magic number " + line); }
+
+				    int width, height, max;
+				    in_file >> width >> height >> max;
+				    if(max != 255) { throw std::runtime_error("Invalid PPM format: Found invalid max of " + max); }
+
+				    in_file.ignore(1);
+				    Image img(width, height);
+
+				    for(size_t i = 0; i < height; ++i)
+				    {
+								for(size_t j = 0; j < width; ++j)
+								{
+								    Pixel p;
+								    in_file.read(reinterpret_cast<char*>(&p.r), sizeof(uint8_t));
+										in_file.read(reinterpret_cast<char*>(&p.g), sizeof(uint8_t));
+										in_file.read(reinterpret_cast<char*>(&p.b), sizeof(uint8_t));
+										img.Set(j, i, p);
+								}
+				    }
+
+				    return img;
+
         }
         else if(in_path.extension() == ".png")
         {
@@ -122,8 +154,7 @@ namespace ruff::imgproc
                         pixels.emplace_back(buffer[i],
                                             buffer[i + 1],
                                             buffer[i + 2],
-                                            static_cast<double>(buffer[i + 3])
-                                            / 255.);
+                                            buffer[i + 3]);
                     }
                     Image image(png_image.width, png_image.height, pixels);
                     return image;

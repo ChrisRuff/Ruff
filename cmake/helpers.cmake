@@ -12,7 +12,33 @@ if( NOT WIN32 )
 	endfunction()
 endif()
 
+function(compile_flatbuffer FB_FILES)
+	colourized("Compiling flatbuffer files:" ${BLU})
+	string(REPLACE ";" "\n" fs "${FB_FILES}")
+	colourized("${fs}\n" ${BLU})
+
+	set(OUT_DIR ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/${COMPONENT}/buffer)
+	file(MAKE_DIRECTORY ${OUT_DIR})
+	foreach(F ${FB_FILES})
+		execute_process(
+				COMMAND
+					flatc -c --scoped-enums --gen-object-api --gen-mutable
+				          --filename-suffix _buf --filename-ext hpp
+						  --cpp-std c++17 --cpp-static-reflection --reflect-names
+						  ${F}
+				WORKING_DIRECTORY
+					${OUT_DIR})
+	endforeach()
+endfunction()
+
 function(get_files COMPONENT)
+	file( GLOB_RECURSE FB_${COMPONENT} LIST_DIRECTORIES false CONFIGURE_DEPENDS
+			"${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/${COMPONENT}/*.fbs" )
+	#list(LENGTH ${FB_${COMPONENT}} FB_SIZE)
+	if(FB_${COMPONENT})
+		compile_flatbuffer(${FB_${COMPONENT}})
+	endif()
+
 	file( GLOB_RECURSE SRC_${COMPONENT} LIST_DIRECTORIES false CONFIGURE_DEPENDS
 			"${PROJECT_SOURCE_DIR}/src/${COMPONENT}/*.cpp" )
 	set(SRC_${COMPONENT} ${SRC_${COMPONENT}} PARENT_SCOPE)
@@ -22,11 +48,13 @@ function(get_files COMPONENT)
 			"${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/${COMPONENT}/*.hpp"
 			"${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/${COMPONENT}/*.tpp") # templated implementation files
 	set(HEADERS_${COMPONENT} ${HEADERS_${COMPONENT}} PARENT_SCOPE)
+
 endfunction()
 
+
 function(make_component COMPONENT)
-	get_files(${COMPONENT} HEADERS SRC)
 	colourized("TARGET ${COMPONENT}" ${BLU})
+	get_files(${COMPONENT} HEADERS SRC)
 	string(REPLACE ";" "\n" hs "${HEADERS_${COMPONENT}}")
 	colourized("HEADERS:\n${hs}" ${CYN})
 

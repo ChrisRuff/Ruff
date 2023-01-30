@@ -3,7 +3,7 @@
 //
 #include <iostream>
 #include "doctest/doctest.h"
-#include "ruff/core/structs/tree.hpp"
+#include "ruff/core/models/tree.hpp"
 
 TEST_SUITE("Tree Tests")
 {

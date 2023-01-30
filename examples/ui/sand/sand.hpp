@@ -6,8 +6,8 @@
 #include <iostream>
 
 // Source
-#include <ruff/core/structs/point.hpp>
 #include <ruff/core/logger.hpp>
+#include <ruff/core/models/point.hpp>
 #include <ruff/ui/ui.hpp>
 
 #define EMPTY ruff::imgproc::BLACK

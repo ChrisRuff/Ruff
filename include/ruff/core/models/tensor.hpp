@@ -30,6 +30,7 @@ namespace ruff::core
 				size_t m_cols;
 				std::vector<T> m_data;
 		public:
+		    Tensor() = default;
 				Tensor(size_t rows, size_t cols) : m_rows(rows), m_cols(cols), m_data(rows * cols, 0) {};
 				Tensor(std::initializer_list<T> data) : m_rows(data.size()), m_cols(1), m_data(data) {};
 				Tensor(std::vector<T> input) : m_rows(input.size()), m_cols(1), m_data(input)
@@ -71,4 +72,4 @@ namespace ruff::core
 				Tensor<T>& operator-=(const Tensor<T>& other);
 		};
 };
-#include <ruff/core/structs/tensor.tpp>
+#include <ruff/core/models/tensor.tpp>

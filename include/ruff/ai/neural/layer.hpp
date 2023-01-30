@@ -3,7 +3,7 @@
 #include <vector>
 #include <memory>
 
-#include <ruff/core/structs/tensor.hpp>
+#include <ruff/core/models/tensor.hpp>
 #include <ruff/ai/neural/activation_function.hpp>
 
 namespace ruff::ai

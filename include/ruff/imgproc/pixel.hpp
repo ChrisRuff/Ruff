@@ -18,7 +18,7 @@ namespace ruff::imgproc
 	class Pixel
 	{
 	public:
-		uint8_t r{ 0 }, g{ 0 }, b{ 0 }, a{ 1 };
+		uint8_t r{ 0 }, g{ 0 }, b{ 0 }, a{ 255 };
 
 	public:
 		[[nodiscard]] constexpr Pixel() = default;

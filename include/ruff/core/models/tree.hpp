@@ -7,7 +7,7 @@
 #include <string>
 #include <queue>
 
-#include "ruff/core/structs/data.hpp"
+#include "ruff/core/models/data.hpp"
 
 namespace ruff
 {

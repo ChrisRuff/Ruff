@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include <ruff/core/structs/tensor.hpp>
+#include <ruff/core/models/tensor.hpp>
 TEST_SUITE("Tensor Tests")
 {
     using namespace ruff::core;

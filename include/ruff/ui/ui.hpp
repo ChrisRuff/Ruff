@@ -16,8 +16,8 @@
 
 // Source
 #include <ruff/core/logger.hpp>
+#include <ruff/core/models/point.hpp>
 #include <ruff/imgproc/pixel.hpp>
-#include <ruff/core/structs/point.hpp>
 #include <ruff/ui/destructors.hpp>
 #include <ruff/ui/text.hpp>
 #include <ruff/ui/button.hpp>

@@ -41,6 +41,11 @@ if(${BUILD_NLP})
 else()
     set(CONAN_NLP False)
 endif()
+if(${BUILD_PHOTOGRAMMETRY})
+    set(CONAN_PHOTOGRAMMETRY True)
+else()
+    set(CONAN_PHOTOGRAMMETRY False)
+endif()
 
 conan_cmake_install(PATH_OR_REFERENCE ${PROJECT_SOURCE_DIR}
         OPTIONS
@@ -51,6 +56,7 @@ conan_cmake_install(PATH_OR_REFERENCE ${PROJECT_SOURCE_DIR}
         build_ai=${CONAN_AI}
         build_nlp=${CONAN_NLP}
         build_security=${CONAN_SECURITY}
+        build_photogrammetry=${CONAN_PHOTOGRAMMETRY}
         SETTINGS
         compiler.libcxx=libstdc++11
         BUILD missing)

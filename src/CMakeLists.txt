@@ -14,7 +14,7 @@ if(BUILD_GEOMETRY)
 			core)
 endif(BUILD_GEOMETRY)
 
-if(BUILD_UI AND BUILD_GEOMETRY AND BUILD_IMGPROC)
+if(BUILD_UI)
 	make_component( "ui" )
 	target_link_libraries(ui
 			PUBLIC
@@ -49,6 +49,13 @@ endif(BUILD_UI)
 if(BUILD_AI)
 	make_component( "ai" )
 endif(BUILD_AI)
+
+if(BUILD_PHOTOGRAMMETRY)
+	make_component( "photogrammetry" )
+	target_link_libraries(photogrammetry
+			PUBLIC
+			CONAN_PKG::opencv)
+endif()
 
 if(BUILD_SECURITY)
 	make_component("security")

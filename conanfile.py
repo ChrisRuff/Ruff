@@ -20,6 +20,7 @@ class ruffConan(ConanFile):
         "build_ai": [False, True],
         "build_nlp": [False, True],
         "build_security": [False, True],
+        "build_photogrammetry": [False, True],
     }
     generators = ["cmake_find_package", "cmake_paths", "cmake"]
     default_options = \
@@ -31,7 +32,8 @@ class ruffConan(ConanFile):
             "build_ui": True,
             "build_ai": True,
             "build_nlp": True,
-            "build_security": True
+            "build_security": True,
+            "build_photogrammetry": True,
     }
     exports_sources = ["src/*", "include/*", "CMakeLists.txt", "cmake/*", "tests/*"]
 
@@ -48,6 +50,7 @@ class ruffConan(ConanFile):
         cmake.definitions["BUILD_AI"] = "ON" if self.options.build_ai else "OFF"
         cmake.definitions["BUILD_NLP"] = "ON" if self.options.build_nlp else "OFF"
         cmake.definitions["BUILD_SECURITY"] = "ON" if self.options.build_security else "OFF"
+        cmake.definitions["BUILD_PHOTOGRAMMETRY"] = "ON" if self.options.build_photogrammetry else "OFF"
         cmake.configure()
         return cmake
 
@@ -55,6 +58,8 @@ class ruffConan(ConanFile):
         if self.options.build_ui:
             self.options["sdl"].pulse = False
             self.options["sdl"].nas = False
+        if self.options.build_photogrammetry:
+            self.options["opencv"].with_ade = False
 
     def requirements(self):
         if self.options.build_ui:
@@ -70,6 +75,8 @@ class ruffConan(ConanFile):
             self.requires("doctest/2.4.8")
         if self.options.build_docs:
             self.requires("doxygen/1.9.1")
+        if self.options.build_photogrammetry:
+            self.requires("opencv/4.5.5")
 
     def build(self):
         cmake = self.configure_cmake()

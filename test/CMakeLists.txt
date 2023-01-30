@@ -22,9 +22,10 @@ target_link_libraries(${TARGET_TEST}
 		ruff::nlp
 		ruff::ai
 		ruff::imgproc
-		ruff::security)
+		ruff::security
+		ruff::photogrammetry)
 
-foreach(component core geometry ui nlp ai security imgproc)
+foreach(component core geometry ui nlp ai security imgproc photogrammetry)
 	#file( GLOB_RECURSE FILES LIST_DIRECTORIES false CONFIGURE_DEPENDS ${CMAKE_CURRENT_LIST_DIR}/${component}/*.cpp)
 	add_test(NAME ${component}_test COMMAND ${TARGET_TEST} -sf=${CMAKE_CURRENT_LIST_DIR}/${component}/*.cpp)
 endforeach()

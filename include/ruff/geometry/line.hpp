@@ -3,7 +3,7 @@
 #include <functional>
 #include <type_traits>
 
-#include <ruff/core/structs/point.hpp>
+#include <ruff/core/models/point.hpp>
 
 namespace ruff
 {

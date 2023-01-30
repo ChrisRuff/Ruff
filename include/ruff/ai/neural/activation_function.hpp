@@ -1,11 +1,11 @@
 #pragma once
 #include <math.h>
 
-#include <ruff/core/structs/tensor.hpp>
+#include <ruff/core/models/tensor.hpp>
 
 #define FLT_TYPE double
 
-template<typename T>
+template<typename T = FLT_TYPE>
 using Tensor = ruff::core::Tensor<T>;
 
 namespace ruff::ai

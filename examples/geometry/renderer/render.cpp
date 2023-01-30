@@ -1,4 +1,4 @@
-#include <ruff/core/structs/point.hpp>
+#include <ruff/core/models/point.hpp>
 #include <ruff/imgproc/pixel.hpp>
 #include <ruff/imgproc/image.hpp>
 #include <ruff/geometry/mesh.hpp>

@@ -38,12 +38,29 @@ namespace ruff::imgproc
 		for(size_t i = 0; i < data.size(); i += 4)
 		{
 			const size_t idx = i / 4;
-			data[i] = m_pixels[idx].r;
+			data[i] =     m_pixels[idx].r;
 			data[i + 1] = m_pixels[idx].g;
 			data[i + 2] = m_pixels[idx].b;
 			data[i + 3] = m_pixels[idx].a;
 		}
 		return data;
+
+	}
+	std::vector<unsigned char> Image::BGRData() const
+	{
+			std::vector<unsigned char> data(m_pixels.Size() * 4);
+
+#pragma omp parallel for
+			for(size_t i = 0; i < data.size(); i += 4)
+			{
+					const size_t idx = i / 4;
+					data[i] =     m_pixels[idx].b;
+					data[i + 1] = m_pixels[idx].g;
+					data[i + 2] = m_pixels[idx].r;
+					data[i + 3] = m_pixels[idx].a;
+			}
+			return data;
+
 	}
 
 	void Image::Clear(const Pixel& p)

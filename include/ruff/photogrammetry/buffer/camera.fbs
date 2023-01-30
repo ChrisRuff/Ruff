@@ -1,0 +1,31 @@
+native_include "../models/camera.hpp";
+
+namespace ruff.photogrammetry;
+struct IntrinsicsBuf
+{
+    fx:double;
+    fy:double;
+    cx:double;
+    cy:double;
+}
+
+struct ExtrinsicsBuf
+{
+    rotation:[double:9];
+    translation:[double:3];
+}
+
+struct DistortionCoeffsBuf
+{
+    radial:[double:3];
+    tangential:[double:2];
+}
+
+table CameraBuf (native_type:"Camera")
+{
+    intrinsics:IntrinsicsBuf;
+    extrinsics:ExtrinsicsBuf;
+    dist_coeffs:DistortionCoeffsBuf;
+}
+
+root_type CameraBuf;

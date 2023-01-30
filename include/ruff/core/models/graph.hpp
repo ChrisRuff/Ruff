@@ -6,7 +6,7 @@
 #include <map>
 #include <cstddef>// size_t
 
-#include <ruff/core/structs/data.hpp>
+#include <ruff/core/models/data.hpp>
 #include "ruff/core/logger.hpp"
 
 namespace ruff

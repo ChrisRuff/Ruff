@@ -3,7 +3,7 @@
 //
 #include "doctest/doctest.h"
 
-#include "ruff/core/structs/graph.hpp"
+#include "ruff/core/models/graph.hpp"
 TEST_SUITE("Graph Tests")
 {
 	TEST_CASE("Create and populate Adjacency List")
