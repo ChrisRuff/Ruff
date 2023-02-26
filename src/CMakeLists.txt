@@ -1,7 +1,12 @@
 include(helpers)
 
 make_component("core")
-#target_link_libraries(core)
+
+find_package(OpenMP)
+if(OpenMP_CXX_FOUND)
+	target_link_libraries(core PUBLIC OpenMP::OpenMP_CXX)
+endif()
+target_link_libraries(core PUBLIC CONAN_PKG::jsoncpp)
 
 if(BUILD_IMGPROC)
 	make_component( "imgproc" )

@@ -14,7 +14,7 @@ set_target_properties( ${TARGET_TEST}
 	RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
 )
 
-target_link_libraries(${TARGET_TEST} doctest::doctest)
+target_link_libraries(${TARGET_TEST} CONAN_PKG::doctest)
 target_link_libraries(${TARGET_TEST}
 		ruff::core
 		ruff::geometry

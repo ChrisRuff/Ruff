@@ -116,4 +116,31 @@ TEST_SUITE("Tensor Tests")
         }
         catch(...) {}
     }
+		TEST_CASE("JSON Testing")
+		{
+				Tensor<int> m1(2, 2);
+				m1(0,0) = 1;
+				m1(0,1) = 2;
+				m1(1,0) = 4;
+				m1(1,1) = 5;
+
+				auto json = m1.ToJSON();
+				CHECK_EQ(json["rows"], m1.rows());
+				CHECK_EQ(json["cols"], m1.cols());
+
+				auto data_it = json["data"].begin();
+				for(size_t i = 0; i < m1.Size(); ++i)
+				{
+						CHECK_EQ(*data_it, m1[i]);
+						++data_it;
+				}
+				Tensor<int> m2(json);
+				CHECK_EQ(m1.rows(), m2.rows());
+				CHECK_EQ(m1.cols(), m2.cols());
+				for(size_t i = 0; i < m1.Size(); ++i)
+				{
+						CHECK_EQ(m1[i], m2[i]);
+				}
+
+		}
 }

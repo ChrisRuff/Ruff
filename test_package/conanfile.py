@@ -14,6 +14,13 @@ class ruffTestConan(ConanFile):
         cmake.configure()
         cmake.build()
 
+    def config_options(self):
+        self.options["ruff"].build_geometry = True
+        self.options["ruff"].build_ui = True
+        self.options["ruff"].build_ai = True
+        self.options["ruff"].build_nlp = True
+        self.options["ruff"].build_security = True
+        self.options["ruff"].build_photogrammetry = True
     def imports(self):
         self.copy("*.dll", dst="bin", src="bin")
         self.copy("*.dylib*", dst="bin", src="lib")

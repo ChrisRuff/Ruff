@@ -1,6 +1,7 @@
 #include <vector>
 #include <iostream>
 
+/*
 #include "ruff/geometry/point.hpp"
 #include "ruff/ui/ui.hpp"
 
@@ -28,4 +29,8 @@ int main()
 	std::cout << p1 + p2 << std::endl;
 	TestEngine engine(500, 500, std::string("Title"));
 	engine.launch();
+}
+*/
+int main()
+{
 }

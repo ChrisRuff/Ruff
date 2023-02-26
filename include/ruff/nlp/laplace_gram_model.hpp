@@ -64,7 +64,6 @@ public:
 				return *type_it;
 			}
 		}
-		std::cout << cumulativeProb << std::endl;
 		return *GramModel<T, N>::types.rbegin();
 	}
 };

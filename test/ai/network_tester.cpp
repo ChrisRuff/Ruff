@@ -21,6 +21,7 @@ TEST_SUITE("Neural Networks")
         };
 
         NeuralNetworkSettings settings;
+				settings.max_iter = 5000;
         NeuralNetwork network(2, settings);
         network.AddLayer<RELU>(1);
 
@@ -49,6 +50,7 @@ TEST_SUITE("Neural Networks")
         };
 
         NeuralNetworkSettings settings;
+				settings.max_iter = 5000;
         NeuralNetwork network(2, settings);
         network.AddLayer<RELU>(1);
 
@@ -78,8 +80,11 @@ TEST_SUITE("Neural Networks")
 		};
 
 		NeuralNetworkSettings settings;
+		settings.learning_rate = 0.005f;
+		settings.max_iter = 10000;
+
 		NeuralNetwork network(2, settings);
-		network.AddLayer<RELU>(2);
+	  network.AddLayer<RELU>(16);
 		network.AddLayer<RELU>(1);
 
 		Trainer trainer(network);
@@ -93,7 +98,8 @@ TEST_SUITE("Neural Networks")
 			for(size_t j = 0; j < 2; ++j)
 			{
 				input(1, 0) = j;
-				CHECK_EQ(std::round(predictor.Predict(input)(0,0)), i ^ j);
+				auto out = predictor.Predict(input)(0,0);
+				CHECK_EQ(std::round(out), i ^ j);
 			}
 		}
 	}

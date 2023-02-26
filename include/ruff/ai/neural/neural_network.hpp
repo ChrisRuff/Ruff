@@ -14,6 +14,8 @@ namespace ruff::ai
     {
         FLT_TYPE learning_rate = 0.01;
         size_t max_iter = 10000;
+		    size_t batch_size = 1;
+		    size_t log_interval = 1000;
 
         std::unique_ptr<ActivationFunction> activation_func = std::make_unique<SIGMOID>();
         std::unique_ptr<LossFunction<FLT_TYPE>> loss_func = std::make_unique<MeanSquared<FLT_TYPE>>();

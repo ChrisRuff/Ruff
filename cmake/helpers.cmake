@@ -17,9 +17,8 @@ function(compile_flatbuffer FB_FILES)
 	string(REPLACE ";" "\n" fs "${FB_FILES}")
 	colourized("${fs}\n" ${BLU})
 
-	set(OUT_DIR ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/${COMPONENT}/buffer)
-	file(MAKE_DIRECTORY ${OUT_DIR})
 	foreach(F ${FB_FILES})
+		get_filename_component(OUT_DIR ${F} DIRECTORY)
 		execute_process(
 				COMMAND
 					flatc -c --scoped-enums --gen-object-api --gen-mutable
@@ -76,14 +75,13 @@ function(make_component COMPONENT)
 	target_compile_options( ${COMPONENT} PRIVATE ${OPTS} )
 
 	target_include_directories( ${COMPONENT} PUBLIC 
-		${OpenCV_INCLUDE_DIRS}
 		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 		$<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>)
 
-	find_package(OpenMP)
-	if(OpenMP_CXX_FOUND)
-		target_link_libraries(${COMPONENT} PUBLIC OpenMP::OpenMP_CXX)
+	if(OPENMP_FOUND)
+		target_link_libraries( ${COMPONENT} PUBLIC OpenMP::OpenMP_CXX)
 	endif()
+
 	install(TARGETS ${COMPONENT}
 					EXPORT  ${COMPONENT}-targets
 					COMPONENT ${COMPONENT}

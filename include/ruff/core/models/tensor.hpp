@@ -5,6 +5,8 @@
 #include <string>
 #include <iostream>
 
+#include <json/json.h>
+
 #include <ruff/core/random.hpp>
 
 namespace ruff::core
@@ -58,11 +60,12 @@ namespace ruff::core
 
 			public:
 				Tensor<T> Transpose() const;
-				T Dot(const Tensor<T>& other) const;
 
+				T Dot(const Tensor<T>& other) const;
 				Tensor<T> Multiply(const Tensor<T>& other) const;
 
 				Tensor<T> operator*(const Tensor<T>& other) const;
+				Tensor<T> operator*=(const Tensor<T>& other) { return *this = *this * other; };
 				Tensor<T> operator*(T other) const;
 
 				Tensor<T> operator+(const Tensor<T>& other) const;
@@ -70,6 +73,20 @@ namespace ruff::core
 
 				Tensor<T> operator-(const Tensor<T>& other) const;
 				Tensor<T>& operator-=(const Tensor<T>& other);
-		};
+		  public:
+		    std::string ToString() const;
+		    Tensor(const Json::Value& json) : m_rows(json["rows"].as<T>()), m_cols(json["cols"].as<T>())
+		    {
+				    if(json["data"].size() != Size())
+				    {
+						    // Throw
+				    }
+				    for(auto it = json["data"].begin(); it != json["data"].end(); ++it)
+				    {
+						    m_data.push_back(it->as<T>());
+				    }
+		    }
+		    Json::Value ToJSON() const;
+    };
 };
 #include <ruff/core/models/tensor.tpp>

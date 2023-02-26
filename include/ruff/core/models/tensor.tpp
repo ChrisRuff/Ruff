@@ -1,10 +1,13 @@
 #pragma once
+//#define RUFF_MULTITHREADED _Pragma("omp parallel for")
+#define RUFF_MULTITHREADED
+
 namespace ruff::core
 {
 template<typename T>
 void Tensor<T>::Fill(T val)
 {
-#pragma omp parallel for
+RUFF_MULTITHREADED
 		for(size_t i = 0; i < m_data.size(); ++i)
 		{
 				(*this)[i] = val;
@@ -32,8 +35,10 @@ template<typename T>
 Tensor<T> Tensor<T>::Transpose() const
 {
 		Tensor<T> output(cols(), rows());
+RUFF_MULTITHREADED
 		for(size_t i = 0; i < rows(); ++i)
 		{
+RUFF_MULTITHREADED
 				for(size_t j = 0; j < cols(); ++j)
 				{
 						output(j, i) = (*this)(i, j);
@@ -60,6 +65,8 @@ Tensor<T> Tensor<T>::Multiply(const Tensor<T>& other) const
 {
 		TensorAssert(other, rows() == other.rows() && cols() == other.cols(), "elementwise multiplied");
 		Tensor<T> out = *this;
+
+RUFF_MULTITHREADED
 		for(size_t i = 0; i < m_data.size(); ++i)
 		{
 				out[i] *= other[i];
@@ -73,10 +80,13 @@ Tensor<T> Tensor<T>::operator*(const Tensor<T>& other) const
 		TensorAssert(other, cols() == other.rows(), "multiplied");
 
 		Tensor<T> output(rows(), other.cols());
+RUFF_MULTITHREADED
 		for(size_t i = 0; i < rows(); ++i)
 		{
+RUFF_MULTITHREADED
 				for(size_t j = 0; j < other.cols(); ++j)
 				{
+RUFF_MULTITHREADED
 						for(size_t k = 0; k < cols(); ++k)
 						{
 								output(i, j) += (*this)(i, k) * other(k, j);
@@ -101,6 +111,7 @@ Tensor<T> Tensor<T>::operator+(const Tensor<T>& other) const
 		TensorAssert(other, rows() == other.rows() && cols() == other.cols(), "added");
 
 		Tensor<T> output = *this;
+RUFF_MULTITHREADED
 		for(size_t i = 0; i < m_rows*m_cols; ++i)
 		{
 				output[i] += other[i];
@@ -111,6 +122,7 @@ template<typename T>
 Tensor<T>& Tensor<T>::operator+=(const Tensor<T>& other)
 {
 		TensorAssert(other, rows() == other.rows() && cols() == other.cols(), "added");
+RUFF_MULTITHREADED
 		for(size_t i = 0; i < m_rows*m_cols; ++i)
 		{
 				(*this)[i] += other[i];
@@ -124,6 +136,7 @@ Tensor<T> Tensor<T>::operator-(const Tensor<T>& other) const
 		TensorAssert(other, rows() == other.rows() && cols() == other.cols(), "subtracted");
 
 		Tensor<T> output = *this;
+RUFF_MULTITHREADED
 		for(size_t i = 0; i < m_rows*m_cols; ++i)
 		{
 				output[i] -= other[i];
@@ -134,10 +147,45 @@ template<typename T>
 Tensor<T>& Tensor<T>::operator-=(const Tensor<T>& other)
 {
 		TensorAssert(other, rows() == other.rows() && cols() == other.cols(), "subtracted");
+RUFF_MULTITHREADED
 		for(size_t i = 0; i < m_rows*m_cols; ++i)
 		{
 				(*this)[i] -= other[i];
 		}
 		return *this;
+}
+
+template<typename T>
+std::string Tensor<T>::ToString() const
+{
+		std::string msg = "[";
+		for(size_t i = 0; i < rows(); ++i)
+		{
+				for(size_t j = 0; j < cols(); ++j)
+				{
+						 msg += std::to_string((*this)(i, j));
+						 if(j != cols() - 1)
+								 msg += ", ";
+				}
+				if(i != rows() - 1)
+						msg += "\n ";
+		}
+		msg += "]";
+		return msg;
+}
+
+template<typename T>
+Json::Value Tensor<T>::ToJSON() const
+{
+		Json::Value root;
+		root["rows"] = rows();
+		root["cols"] = cols();
+		Json::Value data;
+		for(size_t i = 0; i < Size(); ++i)
+		{
+				data.append(m_data[i]);
+		}
+		root["data"] = data;
+		return root;
 }
 };

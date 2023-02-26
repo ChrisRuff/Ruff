@@ -1,3 +1,4 @@
+find_package(Doxygen REQUIRED)
 set( DOXYGEN_EXTRACT_ALL YES )
 set( DOXYGEN_BUILTIN_STL_SUPPORT YES )
 

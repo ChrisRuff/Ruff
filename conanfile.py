@@ -4,7 +4,7 @@ from conans import ConanFile, CMake
 
 class ruffConan(ConanFile):
     name = "ruff"
-    version = "1.0"
+    version = "0.2.0"
     license = "MIT"
     author = "Chris Ruff"
     url = "https://github.com/ChrisRuff/Ruff"
@@ -22,20 +22,20 @@ class ruffConan(ConanFile):
         "build_security": [False, True],
         "build_photogrammetry": [False, True],
     }
-    generators = ["cmake_find_package", "cmake_paths", "cmake"]
+    generators = ["cmake", "cmake_find_package"]
     default_options = \
     {
-            "build_docs": False, 
-            "build_tests": False, 
+            "build_docs": False,
+            "build_tests": False,
             "build_examples": False,
-            "build_geometry": False,
+            "build_geometry": True,
             "build_ui": True,
             "build_ai": True,
             "build_nlp": True,
             "build_security": True,
             "build_photogrammetry": True,
     }
-    exports_sources = ["src/*", "include/*", "CMakeLists.txt", "cmake/*", "tests/*"]
+    exports_sources = ["src/*", "include/*", "CMakeLists.txt", "cmake/*", "test/*", "docs/*", "examples/*"]
 
     def build_requirements(self):
         self.build_requires("cmake/[>=3.20.4]")
@@ -62,13 +62,14 @@ class ruffConan(ConanFile):
             self.options["opencv"].with_ade = False
 
     def requirements(self):
+        self.requires("jsoncpp/1.9.5")
         if self.options.build_ui:
             self.requires("zlib/1.2.12", override=True)
             self.requires("sdl/2.0.16")
             self.requires("libpng/1.6.37")
         if self.options.build_security:
             self.requires("gmp/6.1.2")
-            self.requires("openssl/1.1.1q")
+            self.requires("openssl/1.1.1s")
         if self.options.build_nlp:
             self.requires("ctre/3.7")
         if self.options.build_tests:
@@ -84,12 +85,22 @@ class ruffConan(ConanFile):
 
     def package(self):
         self.copy("*.hpp", dst="include", src="include")
+        self.copy("*.tpp", dst="include", src="include")
         self.copy("*{name}.lib".format(name=self.name), dst="lib", keep_path=False)
         self.copy("*.dll", dst="bin", keep_path=False)
-        self.copy("*.so", dst="lib", keep_path=False)
         self.copy("*.dylib", dst="lib", keep_path=False)
+
+        self.copy("*.so", dst="lib", keep_path=False)
         self.copy("*.a", dst="lib", keep_path=False)
 
     def package_info(self):
-        self.cpp_info.libs = ["ruff-core", "ruff-geometry", "ruff-ui",
-                              "ruff-nlp", "ruff-ai", "ruff-security"]
+        self.cpp_info.libs =  ["ruff-core"]
+
+        if self.options.build_ui:
+            self.cpp_info.libs.append("ruff-ui")
+        if self.options.build_security:
+            self.cpp_info.libs.append("ruff-security")
+        if self.options.build_nlp:
+            self.cpp_info.libs.append("ruff-nlp")
+        if self.options.build_photogrammetry:
+            self.cpp_info.libs.append("ruff-photogrammetry")

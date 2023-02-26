@@ -34,7 +34,13 @@ option(SILENT_CONAN "Suppress conan messages" ON)
 if(SILENT_CONAN)
 	set(CONAN_CMAKE_SILENT_OUTPUT ON)
 endif()
-include("${PROJECT_SOURCE_DIR}/cmake/Conan.cmake")
+
+if(CONAN_EXPORTED)
+	include( ${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo.cmake )
+    conan_basic_setup( TARGETS )
+else()
+	include(${PROJECT_SOURCE_DIR}/cmake/Conan.cmake)
+endif()
 
 if(USE_EMSCRIPTEN)
 	set(CMAKE_EXECUTABLE_SUFFIX ".html")
@@ -62,24 +68,18 @@ endif()
 
 colourized( "Compile Options: ${OPTS}" ${YLW} )
 
-# Add deps
-include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
-set(CMAKE_BUILD_TYPE "Debug")
-
 add_compile_definitions(DATA_DIR="${PROJECT_SOURCE_DIR}/data")
 # Add target Ruff
 colourized( "Configuring Ruff Library" ${BLU} )
 add_subdirectory(src)
 
 if(BUILD_DOXY_DOC)
-	find_package(Doxygen REQUIRED)
 	colourized( "Configuring Docs" ${BLU} )
 	add_subdirectory(docs)
 endif()
 
 if(BUILD_TESTERS)
 	colourized( "Configuring Testers Library" ${BLU} )
-	find_package(doctest REQUIRED)
 	enable_testing()
 
 	add_subdirectory(test)

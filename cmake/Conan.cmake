@@ -47,7 +47,7 @@ else()
     set(CONAN_PHOTOGRAMMETRY False)
 endif()
 
-conan_cmake_install(PATH_OR_REFERENCE ${PROJECT_SOURCE_DIR}
+conan_cmake_install(PATH_OR_REFERENCE ../conanfile.py
         OPTIONS
         build_tests=${CONAN_TESTS}
         build_docs=${CONAN_DOCS}
@@ -62,6 +62,5 @@ conan_cmake_install(PATH_OR_REFERENCE ${PROJECT_SOURCE_DIR}
         BUILD missing)
 
 
-include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup(TARGETS)
